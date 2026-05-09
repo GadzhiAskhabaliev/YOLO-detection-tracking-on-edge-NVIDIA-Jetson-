@@ -25,14 +25,6 @@ This repository **closes one reproducible slice** of the wider study:
 
 Comparable detection metrics across heterogeneous stacks should therefore rely on **shared ground truth** and **`scripts/eval_coco_predictions.py`** once upstream models emit COCO-style box lists (see [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)). FPS remains backend-specific and must be recorded under our canon (`fps_forward` vs `fps_predict`) with definitions in each run’s `notes`.
 
-## Visual summary
-
-Benchmark JSON drives **`scripts/plot_group_b_results.py`**. Figures summarize accuracy versus throughput and slot-wise mAP50 (gray bars = manifest slots still awaiting upstream runs).
-
-![Group B: mAP50 versus throughput](results/figures/group_b_scatter_map_fps.png)
-
-![Group B: mAP50 by manifest slot](results/figures/group_b_map50_bars.png)
-
 ## Layout
 
 | Path | Purpose |
