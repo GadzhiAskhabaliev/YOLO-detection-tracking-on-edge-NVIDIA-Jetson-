@@ -46,9 +46,11 @@ python3 scripts/bench_runner.py \
 
 Либо сохраните свой JSON-патч и передайте его как `--patch-json` (поля `group`, `detector_id`, `detector_label` и при необходимости `metrics`, `notes`).
 
-### FreeYOLO и NumPy 2.x
+### FreeYOLO и NumPy 2.x / `np.int`
 
-Если `AttributeError: numpy has no attribute int` — в venv нужен **NumPy `<2`**. Скрипт `run_freeyolo_crowdhuman.sh` это принуждает; на старом venv переустановите вручную:
+Скрипт делает два слоя защиты: **`numpy<2` в venv** и **патч исходников** (`patch_freeyolo_numpy_aliases.py`: `np.int`→`int` и т.д.), если всё же подтянулся NumPy 2.x.
+
+Ручная переустановка только NumPy 1.x:
 
 ```bash
 source /workspace/group_b/venv_freeyolo/bin/activate

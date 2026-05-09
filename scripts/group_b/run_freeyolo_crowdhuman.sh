@@ -31,6 +31,9 @@ fi
 echo "--- Патч FreeYOLO: torch.load(weights_only=False) для PyTorch 2.6+ ---"
 python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
 
+echo "--- Патч FreeYOLO: np.int / np.float / np.bool → встроенные типы (совместимость NumPy 2.x) ---"
+python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
+
 if [[ ! -f "${WEIGHT_PATH}" ]]; then
   echo "--- Скачивание весов FreeYOLO (CrowdHuman nano) ---"
   wget -O "${WEIGHT_PATH}.part" "${WEIGHT_URL}"
@@ -43,27 +46,32 @@ if [[ ! -d "${VENV}" ]]; then
 fi
 # shellcheck disable=SC1090
 source "${VENV}/bin/activate"
-pip install -q --upgrade pip wheel
-pip install -q "numpy>=1.23,<2"
-pip install -q torch torchvision --index-url "${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu124}"
-pip install -q opencv-python scipy matplotlib pycocotools loguru thop Pillow
-# зависимости выше могут подтянуть numpy 2.x — вернуть <2 для FreeYOLO
-pip install -q "numpy>=1.23,<2" --force-reinstall --no-deps
+PY="${VENV}/bin/python"
+PIP="${VENV}/bin/pip"
+"${PIP}" install -q --upgrade pip wheel
+"${PIP}" install -q "numpy>=1.23,<2"
+"${PIP}" install -q torch torchvision --index-url "${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu124}"
+"${PIP}" install -q opencv-python scipy matplotlib pycocotools loguru thop Pillow
+# зависимости выше могут подтянуть numpy 2.x — вернуть <2 (исходники уже патчим под NumPy 2 на всякий случай)
+"${PIP}" install -q "numpy>=1.23,<2" --force-reinstall --no-deps
+
+echo "--- Версия NumPy в venv (ожидается 1.x; при 2.x исходники FreeYOLO патчятся под совместимость) ---"
+"${PY}" -c "import numpy as np; print('numpy', np.__version__)"
 
 echo "--- Подготовка CrowdHuman для FreeYOLO ---"
 FREEYOLO_CH_BRIDGE="${BRIDGE}" CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT}" \
-  python scripts/group_b/freeyolo_prepare_crowdhuman.py \
+  "${PY}" scripts/group_b/freeyolo_prepare_crowdhuman.py \
   --crowdhuman-root "${CROWDHUMAN_ROOT}" \
   --bridge-root "${BRIDGE}"
 
 VAL_JSON="${BRIDGE}/CrowdHuman/annotations/val.json"
-NIMG="$(python -c "import json; print(len(json.load(open('${VAL_JSON}'))['images']))")"
+NIMG="$("${PY}" -c "import json; print(len(json.load(open('${VAL_JSON}'))['images']))")"
 
 LOG="$(mktemp)"
 SEC0="$(date +%s)"
 set +e
 cd "${FREEYOLO_HOME}"
-python eval.py \
+"${PY}" eval.py \
   --cuda \
   -d crowdhuman \
   -v "${FREEYOLO_VARIANT}" \
@@ -83,7 +91,7 @@ if [[ "${EC}" -ne 0 ]]; then
   exit "${EC}"
 fi
 
-python scripts/group_b/freeyolo_save_run.py \
+"${PY}" scripts/group_b/freeyolo_save_run.py \
   --eval-log "${LOG}" \
   --weights "${WEIGHT_PATH}" \
   --variant "${FREEYOLO_VARIANT}" \
