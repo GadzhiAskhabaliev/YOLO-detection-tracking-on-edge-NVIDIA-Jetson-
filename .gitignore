@@ -1,0 +1,10 @@
+# Данные и артефакты не коммитим в git (на Vast лежат в /workspace)
+data/
+models/
+results/
+*.pt
+*.onnx
+*.engine
+__pycache__/
+.venv/
+.env
