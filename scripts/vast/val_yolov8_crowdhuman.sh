@@ -11,6 +11,13 @@ export DATA_YAML="${DATA_YAML:-${REPO_ROOT}/configs/datasets/crowdhuman_val.yaml
 export BATCH="${BATCH:-8}"
 export IMGSZ="${IMGSZ:-640}"
 
+if [[ ! -f "${WEIGHTS}" ]]; then
+  echo "Missing weights: ${WEIGHTS}" >&2
+  echo "Run: bash scripts/vast/download_yolov8n_crowdhuman.sh" >&2
+  echo "Or set WEIGHTS=/path/to/yolov8n_crowdhuman.pt" >&2
+  exit 1
+fi
+
 python3 <<PY
 from ultralytics import YOLO
 import os

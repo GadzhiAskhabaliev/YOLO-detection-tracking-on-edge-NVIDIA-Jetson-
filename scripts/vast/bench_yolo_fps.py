@@ -20,9 +20,17 @@ def main():
     p.add_argument("--out-json", default="")
     args = p.parse_args()
 
+    wp = Path(args.weights)
+    if not wp.is_file():
+        raise SystemExit(
+            f"Weights not found: {wp}\n"
+            "Run: bash scripts/vast/download_yolov8n_crowdhuman.sh\n"
+            "Or pass --weights /full/path/to.pt"
+        )
+
     from ultralytics import YOLO
 
-    model = YOLO(args.weights).to(args.device)
+    model = YOLO(str(wp)).to(args.device)
     dummy = np.zeros((args.imgsz, args.imgsz, 3), dtype=np.uint8)
 
     for _ in range(args.warmup):
