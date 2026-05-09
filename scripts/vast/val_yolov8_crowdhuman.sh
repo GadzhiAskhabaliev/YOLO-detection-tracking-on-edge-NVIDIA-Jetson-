@@ -18,6 +18,14 @@ if [[ ! -f "${WEIGHTS}" ]]; then
   exit 1
 fi
 
+YOLO_ROOT="${CROWDHUMAN_ROOT:-/workspace/data/crowdhuman}/yolo"
+if [[ ! -d "${YOLO_ROOT}/images/val" ]] || [[ -z "$(ls -A "${YOLO_ROOT}/images/val" 2>/dev/null || true)" ]]; then
+  echo "Missing dataset layout: ${YOLO_ROOT}/images/val" >&2
+  echo "Run after ODGT→YOLO labels exist:" >&2
+  echo "  bash scripts/vast/prepare_crowdhuman_yolo_layout.sh" >&2
+  exit 1
+fi
+
 python3 <<PY
 from ultralytics import YOLO
 import os
