@@ -2,21 +2,20 @@
   "model": "yolov8n_crowdhuman",
   "weights": "/workspace/models/yolov8n_crowdhuman.pt",
   "weights_hub": "yakhyo/yolov8-crowdhuman",
-  "backend": "ultralytics_yolo",
-  "date": "2026-05-09T13:32:20Z",
+  "date": "2026-05-09T14:37:40Z",
   "hardware": "NVIDIA GeForce RTX 4090",
   "batch_size": 1,
   "imgsz": 640,
   "metrics": {
-    "fps_forward": 106.248,
-    "forward_time_ms_mean": 9.412,
-    "fps_predict": 104.621,
-    "inference_time_ms_predict": 9.5583,
+    "fps_forward": 117.368,
+    "forward_time_ms_mean": 8.5202,
+    "fps_predict": 127.104,
+    "inference_time_ms_predict": 7.8676,
     "mAP50": 0.74707,
     "mAP50-95": 0.464225,
     "precision": 0.811255,
     "recall": 0.650122,
-    "inference_time_ms": 8.2044
+    "inference_time_ms": 6.9666
   },
   "tracking": {},
   "tensorrt": {
@@ -26,5 +25,6 @@
   "notes": [],
   "group": "B",
   "detector_id": 6,
-  "detector_label": "YOLOv8n-CrowdHuman"
+  "detector_label": "YOLOv8n-CrowdHuman",
+  "backend": "ultralytics_yolo"
 }
