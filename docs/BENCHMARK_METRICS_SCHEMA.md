@@ -80,6 +80,38 @@ python3 scripts/bench_runner.py --merge-json results/runs/your_model.json \
 
 **FPS** этим скриптом не считается — для каждого бэкенда замеряйте отдельно и дописывайте в тот же JSON через второй merge или вручную.
 
+### Цепочка для моделей **не YOLO / не FreeYOLO** (FCOS, SSD, YOLOX в MMDet, …)
+
+YOLOv8 и FreeYOLO у вас уже зафиксированы своими прогонами. Дальше задача — **в их окружении** получить **реальный инференс** и файл предиктов под **тот же** `val.json` (те же `image_id`), что в CrowdHuman bridge / вашем COCO-GT.
+
+**Шаг A — инференс в родном репо модели**  
+Пример для **MMDetection**: ставишь mmcv + mmdet под свой CUDA, конфиг и `.pth` из Model Zoo, гоняешь `tools/test.py` (или эквивалент в MMDet 3.x) на датасете в формате COCO с **тем же** `annotations/val.json`. Нужен артефакт вида списка результатов bbox (часто это отдельный `.json` / `.pkl` + постобработка — смотри документацию **вашей** версии MMDet: ключевые слова *coco bbox results*, *dump*, *format_only*).
+
+Если движок сохраняет не тот формат — одним коротким скриптом приводишь к списку детекций:
+
+`[{ "image_id", "category_id", "bbox": [x,y,w,h], "score" }, ...]`
+
+**Шаг B — единый счёт (этот репозиторий)**
+
+```bash
+python3 scripts/eval_coco_predictions.py \
+  --gt-json "${FREEYOLO_CH_BRIDGE}/CrowdHuman/annotations/val.json" \
+  --dt-json /tmp/model_preds.json \
+  --strict \
+  --out-patch-json /tmp/metrics_patch.json
+```
+
+**Шаг C — строка в таблице**
+
+```bash
+python3 scripts/bench_runner.py --merge-json results/runs/<model_slug>.json \
+  --patch-json /tmp/metrics_patch.json
+```
+
+**CrowdDet / Pedestron / PeopleNet / FairMOT** — то же самое по смыслу: только шаг A делается **в их** Docker/репо; сюда приносишь уже **dt-json** + при необходимости FPS отдельным замером и вторым merge.
+
+В этом репозитории **нет** установленного MMDet и **нет** универсального «запустить все чужие модели» — только **`eval_coco_predictions.py`** как общая математика по уже полученным предиктам.
+
 ## Шаблон для ручного merge
 
 См. [`docs/templates/benchmark_run_canonical.example.json`](templates/benchmark_run_canonical.example.json).
