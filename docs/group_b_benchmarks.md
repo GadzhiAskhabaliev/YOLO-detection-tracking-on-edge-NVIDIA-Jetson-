@@ -53,7 +53,9 @@ python3 scripts/bench_runner.py --model-name yolov8n_crowdhuman \
 
 ## CrowdDet, Pedestron, PeopleNet
 
-Different codebases (CrowdDet repo, Pedestron / MMDetection, NVIDIA TAO). After inference and FPS in **their** stack:
+Different codebases (CrowdDet repo, Pedestron / MMDetection, NVIDIA TAO). Remote GPU flow (CrowdDet dump → DT JSON → `eval_coco_predictions.py`): see **[group_b_remote_mmdet_bridge.md](group_b_remote_mmdet_bridge.md)** and repo **[CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect)**.
+
+After inference and FPS in **their** stack:
 
 1. Record metrics in `results/runs/<slug>.json` or merge patches.
 2. Set **`group`: `"B"`** and **`detector_id`** `4`, `5`, or `8` for plots.
