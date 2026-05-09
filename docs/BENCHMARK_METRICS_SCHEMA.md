@@ -60,6 +60,24 @@
 
 Использовать те же ключи; в `notes`: «proxy для joint, без трекера». `backend`: например `ultralytics_yolo`.
 
+## Единая оценка по файлу предиктов (рекомендация научного контура)
+
+Чтобы **не зависеть от встроенного val** каждого фреймворка, модель должна выгрузить детекции в **COCO bbox JSON** (список объектов с `image_id`, `category_id`, `bbox` \[xywh\], `score`). Один и тот же **GT** (`val.json` в формате COCO instances) для всех моделей.
+
+Скрипт **`scripts/eval_coco_predictions.py`** считает **`mAP50`**, **`mAP50-95`**, **`recall`** (= COCO AR maxDets=100, см. выше) через **pycocotools COCOeval**. Так метрики качества сопоставимы между MMDet, ONNX, самописным дампом и т.д.
+
+```bash
+python3 scripts/eval_coco_predictions.py \
+  --gt-json path/to/CrowdHuman/annotations/val.json \
+  --dt-json path/to/model_predictions_bbox.json \
+  --out-patch-json /tmp/metrics_patch.json
+
+python3 scripts/bench_runner.py --merge-json results/runs/your_model.json \
+  --patch-json /tmp/metrics_patch.json
+```
+
+**FPS** этим скриптом не считается — для каждого бэкенда замеряйте отдельно и дописывайте в тот же JSON через второй merge или вручную.
+
 ## Шаблон для ручного merge
 
 См. [`docs/templates/benchmark_run_canonical.example.json`](templates/benchmark_run_canonical.example.json).
