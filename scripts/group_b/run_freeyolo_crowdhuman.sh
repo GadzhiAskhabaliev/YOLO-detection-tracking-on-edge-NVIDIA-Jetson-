@@ -67,7 +67,8 @@ FREEYOLO_CH_BRIDGE="${BRIDGE}" CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT}" \
 VAL_JSON="${BRIDGE}/CrowdHuman/annotations/val.json"
 NIMG="$("${PY}" -c "import json; print(len(json.load(open('${VAL_JSON}'))['images']))")"
 
-LOG="$(mktemp)"
+mkdir -p "${ROOT}/results/logs"
+FREEYOLO_LOG="${ROOT}/results/logs/freeyolo_${FREEYOLO_VARIANT}_$(date -u +%Y%m%dT%H%M%SZ).log"
 SEC0="$(date +%s)"
 set +e
 cd "${FREEYOLO_HOME}"
@@ -78,7 +79,7 @@ cd "${FREEYOLO_HOME}"
   --img_size 640 \
   --weight "${WEIGHT_PATH}" \
   --root "${BRIDGE}" \
-  2>&1 | tee "${LOG}"
+  2>&1 | tee "${FREEYOLO_LOG}"
 EC="${PIPESTATUS[0]}"
 set -e
 cd "${ROOT}"
@@ -86,18 +87,16 @@ SEC1="$(date +%s)"
 WALL=$((SEC1 - SEC0))
 
 if [[ "${EC}" -ne 0 ]]; then
-  echo "eval.py завершился с кодом ${EC}" >&2
-  rm -f "${LOG}"
+  echo "eval.py завершился с кодом ${EC}; полный лог: ${FREEYOLO_LOG}" >&2
   exit "${EC}"
 fi
 
 "${PY}" scripts/group_b/freeyolo_save_run.py \
-  --eval-log "${LOG}" \
+  --eval-log "${FREEYOLO_LOG}" \
   --weights "${WEIGHT_PATH}" \
   --variant "${FREEYOLO_VARIANT}" \
   --weights-uri "${WEIGHT_URL}" \
   --wall-seconds "${WALL}" \
   --num-images "${NIMG}"
 
-rm -f "${LOG}"
-echo "--- FreeYOLO готов; обновите графики: python3 scripts/plot_group_b_results.py ---"
+echo "--- FreeYOLO готов; лог: ${FREEYOLO_LOG}; графики: python3 scripts/plot_group_b_results.py ---"

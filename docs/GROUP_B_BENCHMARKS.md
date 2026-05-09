@@ -2,6 +2,15 @@
 
 Манифест моделей: [`group_b_pedestrian_detectors.yaml`](group_b_pedestrian_detectors.yaml).
 
+### Куда попадают метрики и логи
+
+- **Сводка по всем прогонам** строится из `results/runs/*.json` → **`results/benchmark_summary.md`** и таблица в **`README.md`** (через `bench_runner.save_result()`).
+- **Сырой лог FreeYOLO** (`eval.py`) сохраняется в **`results/logs/freeyolo_<variant>_<UTC>.log`** (можно коммитить в git).
+- Для **`bench_runner`** / полного `run_group_b_benchmarks.sh` при желании сохраняйте весь stdout одной командой, например:
+  ```bash
+  bash scripts/run_group_b_benchmarks.sh 2>&1 | tee "results/logs/group_b_run_$(date -u +%Y%m%dT%H%M%SZ).log"
+  ```
+
 ## Автоматический прогон из этого репозитория
 
 ### Один скрипт (YOLOv8n + FreeYOLO + памятки по остальным)

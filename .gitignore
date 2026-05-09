@@ -11,6 +11,9 @@ results/*
 !results/figures/
 !results/figures/*.png
 !results/group_b_report.md
+!results/logs/
+!results/logs/.gitkeep
+!results/logs/*.log
 *.pt
 *.onnx
 *.engine
