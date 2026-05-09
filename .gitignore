@@ -1,4 +1,4 @@
-# Project: большие данные и артефакты (на Vast в /workspace)
+# Project: large datasets and build artifacts (typical Vast.ai mount: /workspace)
 data/
 models/
 results/
@@ -88,7 +88,7 @@ target/
 profile_default/
 ipython_config.py
 
-# pipenv / UV / poetry / pdm / pixi (оставлены дефолты GitHub)
+# pipenv / UV / poetry / pdm / pixi (GitHub Python.gitignore defaults)
 # Pipfile.lock
 # uv.lock
 # poetry.lock

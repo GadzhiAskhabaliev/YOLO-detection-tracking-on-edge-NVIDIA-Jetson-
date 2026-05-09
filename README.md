@@ -1,21 +1,21 @@
-# Edge: детекция и трекинг людей (Jetson)
+# Edge: pedestrian detection and tracking (Jetson)
 
-Исследовательский проект: сравнение детекторов пешеходов и связок с трекерами, затем деплой на NVIDIA Jetson. Облако (например Vast.ai) — для первых прогонов; финальные FPS/энергия — только на плате.
+Research codebase: compare pedestrian detectors and detector–tracker stacks, then deploy on NVIDIA Jetson. Cloud (e.g. Vast.ai) for early runs; final FPS and power measurements target the board.
 
-Пока **без заготовленных скриптов**: окружение и код добавляем по мере реальной работы (старт на Vast, потом бенчи, ONNX, MOT и т.д.).
+**No canned automation yet**: environment and code land incrementally (Vast bootstrap, benchmarks, ONNX, MOT, etc.).
 
-## Структура
+## Layout
 
-| Каталог | Назначение |
-|---------|------------|
-| `docs/model_manifest.yaml` | Список моделей под эксперимент — дополняй, когда зафиксируешь веса |
-| `data/` | Датасеты (не в git) |
-| `models/` | Веса (не в git) |
-| `results/runs/` | Логи прогонов, когда начнёте сохранять |
-| `src/` | Позже: C++/PyBind/TRT |
+| Path | Purpose |
+|------|---------|
+| `docs/model_manifest.yaml` | Model inventory for experiments; extend when weights are fixed |
+| `data/` | Datasets (gitignored) |
+| `models/` | Checkpoints (gitignored) |
+| `results/runs/` | Run logs when you start saving them |
+| `src/` | Planned: C++/PyBind/TensorRT |
 
-Репозиторий хранит только то, что уже реально используется; остальное добавляется по мере эксперимента.
+The repo tracks only what is actively used; the rest is added as experiments evolve.
 
-## Репо + Vast.ai
+## Repo + Vast.ai
 
-Коротко: **скрипты и конфиги — здесь в git**; **CrowdHuman, MOT17, `.pt` — только на диске инстанса** (`/workspace`), без коммитов (см. `.gitignore`). На машине один раз `git clone` → перед работой `git pull`. Подробно: [`docs/VAST_WORKFLOW.md`](docs/VAST_WORKFLOW.md).
+**Scripts and configs live in git**; **CrowdHuman, MOT17, `.pt` files stay on the instance disk** (`/workspace`), not in commits (see `.gitignore`). On the machine: one-time `git clone`, then `git pull` before work. Details: [`docs/VAST_WORKFLOW.md`](docs/VAST_WORKFLOW.md).

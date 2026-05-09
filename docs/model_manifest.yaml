@@ -1,8 +1,8 @@
-# Список кандидатов на сравнение. Дополняй по ходу (пути к весам, метрики, статус).
+# Candidate models for benchmarking; extend with weights_path, metrics, status.
 
 models:
   - name: yolov8n_crowdhuman
-    status: первый смоук после поднятия инстанса
+    status: smoke test after instance bootstrap
     weights_path: models/yolov8n_crowdhuman.pt
 
-  # Дальше по мере подключения: fcos_r50, yolox_tiny, crowddet, freeyolo, pedestron, vpd_atss, fairmot ...
+  # Planned entries: fcos_r50, yolox_tiny, crowddet, freeyolo, pedestron, vpd_atss, fairmot ...
