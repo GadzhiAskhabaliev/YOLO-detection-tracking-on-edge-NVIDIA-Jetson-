@@ -46,7 +46,7 @@ if [[ "${SKIP_TORCH:-0}" != "1" ]]; then
   python3 -m pip install --upgrade torch torchvision --index-url "${TORCH_INDEX_URL}"
 fi
 
-python3 -m pip install ultralytics kagglehub opencv-python-headless tqdm
+python3 -m pip install ultralytics kagglehub opencv-python-headless tqdm matplotlib pyyaml
 
 echo "--- Sanity check ---"
 python3 <<'PY'

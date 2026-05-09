@@ -1,0 +1,26 @@
+{
+  "model": "yolov8n_crowdhuman",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "weights_hub": "yakhyo/yolov8-crowdhuman",
+  "date": "2026-05-09T13:32:20Z",
+  "hardware": "NVIDIA GeForce RTX 4090",
+  "batch_size": 1,
+  "imgsz": 640,
+  "metrics": {
+    "fps_forward": 106.248,
+    "forward_time_ms_mean": 9.412,
+    "fps_predict": 104.621,
+    "inference_time_ms_predict": 9.5583,
+    "mAP50": 0.74707,
+    "mAP50-95": 0.464225,
+    "precision": 0.811255,
+    "recall": 0.650122,
+    "inference_time_ms": 8.2044
+  },
+  "tracking": {},
+  "tensorrt": {
+    "engine_exists": false,
+    "fps_fp16": null
+  },
+  "notes": []
+}

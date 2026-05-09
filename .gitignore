@@ -8,6 +8,9 @@ results/*
 !results/runs/
 !results/runs/.gitkeep
 !results/runs/*.json
+!results/figures/
+!results/figures/*.png
+!results/group_b_report.md
 *.pt
 *.onnx
 *.engine

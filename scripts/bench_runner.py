@@ -184,10 +184,13 @@ def default_payload(
     batch_size: int,
     imgsz: int,
     hardware: str | None = None,
+    group: str = "",
+    detector_id: int | None = None,
+    detector_label: str = "",
 ) -> dict[str, Any]:
     hw = hardware or detect_hardware()
     wp = weights_path.resolve()
-    return {
+    out: dict[str, Any] = {
         "model": model_name,
         "weights": str(wp),
         "weights_hub": weights_hub or "",
@@ -200,6 +203,13 @@ def default_payload(
         "tensorrt": tensorrt_meta(wp),
         "notes": [],
     }
+    if group.strip():
+        out["group"] = group.strip()
+    if detector_id is not None:
+        out["detector_id"] = detector_id
+    if detector_label.strip():
+        out["detector_label"] = detector_label.strip()
+    return out
 
 
 def refresh_comparison_md() -> None:
@@ -405,6 +415,9 @@ def run_benchmarks(args: argparse.Namespace) -> dict[str, Any]:
         weights_hub=args.weights_hub or "",
         batch_size=args.batch_size,
         imgsz=args.imgsz,
+        group=getattr(args, "group", "") or "",
+        detector_id=getattr(args, "detector_id", None),
+        detector_label=getattr(args, "detector_label", "") or "",
     )
     modes = set()
     if args.bench_mode == "all":
@@ -491,6 +504,15 @@ def main(argv: list[str] | None = None) -> None:
         default="",
         help='Inline JSON for `tracking`, e.g. \'{"MOTA":0.68,"mot17_seq":"MOT17-02"}\'',
     )
+    p.add_argument(
+        "--patch-json",
+        type=Path,
+        default=None,
+        help="With --merge-json: deep-merge arbitrary JSON into the run file (e.g. group B meta)",
+    )
+    p.add_argument("--group", default="", help='Experiment tag in saved JSON, e.g. "B"')
+    p.add_argument("--detector-id", type=int, default=None, help="Slot id from docs/group_b_pedestrian_detectors.yaml")
+    p.add_argument("--detector-label", default="", help="Display name for reports")
     args = p.parse_args(argv)
 
     if args.merge_json:
@@ -498,7 +520,12 @@ def main(argv: list[str] | None = None) -> None:
         if not run_path.is_file():
             raise SystemExit(f"--merge-json not found: {run_path}")
         patch: dict[str, Any] = {}
-        if args.tracking_json.strip():
+        if args.patch_json:
+            ppath = args.patch_json.expanduser().resolve()
+            if not ppath.is_file():
+                raise SystemExit(f"--patch-json not found: {ppath}")
+            patch = json.loads(ppath.read_text(encoding="utf-8"))
+        elif args.tracking_json.strip():
             patch["tracking"] = json.loads(args.tracking_json)
         elif args.tracking_file:
             tpath = args.tracking_file.expanduser().resolve()
@@ -506,7 +533,9 @@ def main(argv: list[str] | None = None) -> None:
                 raise SystemExit(f"--tracking-file not found: {tpath}")
             patch["tracking"] = json.loads(tpath.read_text(encoding="utf-8"))
         if not patch:
-            raise SystemExit("Nothing to merge: pass --tracking-json or --tracking-file.")
+            raise SystemExit(
+                "Nothing to merge: pass --patch-json, --tracking-json, or --tracking-file."
+            )
         merge_run_json(run_path, patch)
         print(f"Merged into {run_path}")
         return

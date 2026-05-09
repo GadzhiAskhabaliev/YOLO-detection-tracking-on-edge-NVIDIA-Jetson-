@@ -9,6 +9,8 @@ Research codebase: compare pedestrian detectors and detector–tracker stacks, t
 | `scripts/vast/` | Cloud bootstrap: deps, datasets, CrowdHuman→YOLO, bench FPS, val — see [`scripts/vast/README.md`](scripts/vast/README.md) |
 | `configs/datasets/` | Dataset YAML for Ultralytics (e.g. CrowdHuman val) |
 | `docs/model_manifest.yaml` | Model inventory for experiments |
+| `docs/group_b_pedestrian_detectors.yaml` | Группа B: CrowdDet, Pedestron, YOLOv8n-CH, FreeYOLO, PeopleNet |
+| `docs/GROUP_B_BENCHMARKS.md` | Как прогонять группу B и строить графики |
 | `data/` | Local datasets placeholder (gitignored) |
 | `models/` | Local checkpoints (gitignored) |
 | `results/runs/` | Benchmark run JSON |

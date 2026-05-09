@@ -1,8 +1,10 @@
 # Candidate models for benchmarking; extend with weights_path, metrics, status.
+# Группа B (CrowdHuman / MOT17 / специализированные детекторы): docs/group_b_pedestrian_detectors.yaml
 
 models:
   - name: yolov8n_crowdhuman
     status: smoke test after instance bootstrap
     weights_path: models/yolov8n_crowdhuman.pt
+    group_B_detector_id: 6
 
   # Planned entries: fcos_r50, yolox_tiny, crowddet, freeyolo, pedestron, vpd_atss, fairmot ...

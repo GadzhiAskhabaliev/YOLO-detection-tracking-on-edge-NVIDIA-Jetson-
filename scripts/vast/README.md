@@ -40,7 +40,11 @@ bash scripts/vast/run_cloud_bootstrap.sh
 | `convert_crowdhuman_odgt.sh` | Wrapper with default paths |
 | `prepare_crowdhuman_yolo_layout.sh` | Symlinks → `yolo/images/val`, `yolo/labels/val` |
 | `download_yolov8n_crowdhuman.sh` | CrowdHuman YOLOv8n (`yakhyo/yolov8-crowdhuman` → `yolov8n_best.pt`, saved as `yolov8n_crowdhuman.pt`) |
-| `bench_yolo_fps.py` | Predict-loop FPS / latency JSON |
+| `bench_yolo_fps.py` | Predict-loop FPS / latency JSON; `--record-model-name` → `results/runs/` via `scripts/bench_runner.py` |
+| `scripts/bench_runner.py` (из корня репо) | Единый бенч (forward / predict / val), README + `results/benchmark_summary.md` |
+| `scripts/run_group_b_benchmarks.sh` | Группа B: YOLOv8n-CH + FreeYOLO + памятки; см. `docs/GROUP_B_BENCHMARKS.md` |
+| `scripts/group_b/run_remaining_models.sh` | Остальные слоты B без №6 (FreeYOLO + CrowdDet / Pedestron / PeopleNet) |
+| `scripts/plot_group_b_results.py` | Графики группы B → `results/group_b_report.md` |
 | `val_yolov8_crowdhuman.sh` | `model.val` on CrowdHuman yaml |
 | `run_cloud_bootstrap.sh` | Runs install + datasets + convert + layout + weights |
 

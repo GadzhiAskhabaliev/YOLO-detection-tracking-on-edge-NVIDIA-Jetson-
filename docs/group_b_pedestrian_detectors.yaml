@@ -1,0 +1,62 @@
+# Группа B — специализированные pedestrian-детекторы (CrowdHuman / CityPersons / MOT17 / смеси).
+# Поле bench_slug — значение `model` в results/runs/*.json (или см. matching по detector_id + group).
+# integration: ultralytics | manual — что поддерживает этот репозиторий из коробки.
+
+group: B
+title: "Группа B — специализированные pedestrian-детекторы"
+
+detectors:
+  - id: 4
+    short_name: CrowdDet
+    paper_name: "CrowdDet (RCNN EMD Refine)"
+    backbone: "ResNet-50 + FPN"
+    bench_slug: crowddet_r50_fpn_emd
+    repo_url: "https://github.com/xg-chu/CrowdDet"
+    weights_note: ".pth (официальный репозиторий)"
+    onnx: false
+    integration: manual
+    train_domains: ["CrowdHuman", "CityPersons", "COCO"]
+
+  - id: 5
+    short_name: Pedestron
+    paper_name: "Pedestron (Cascade Mask R-CNN)"
+    backbone: "HRNet-W32"
+    bench_slug: pedestron_cascade_hrnet_w32
+    repo_url: "https://github.com/hasanirtiza/Pedestron"
+    weights_note: ".pth"
+    onnx: false
+    integration: manual
+    train_domains: ["CrowdHuman", "CityPersons", "ETH", "KITTI"]
+
+  - id: 6
+    short_name: YOLOv8n-CH
+    paper_name: "YOLOv8n-CrowdHuman"
+    backbone: "YOLO nano"
+    bench_slug: yolov8n_crowdhuman
+    repo_url: "https://huggingface.co/yakhyo/yolov8-crowdhuman"
+    weights_note: "Ultralytics .pt"
+    onnx: unofficial_third_party
+    integration: ultralytics
+    train_domains: ["CrowdHuman"]
+
+  - id: 7
+    short_name: FreeYOLO
+    paper_name: "FreeYOLO (MOT17 / tracking-oriented weights)"
+    backbone: "YOLOX-family"
+    bench_slug: freeyolo_yolox_mot17
+    repo_url: "https://github.com/yjh0410/FreeYOLO"
+    weights_note: "Авторские веса; ONNX см. репозиторий / релизы"
+    onnx: authors_release
+    integration: manual
+    train_domains: ["MOT17", "CrowdHuman", "COCO"]
+
+  - id: 8
+    short_name: PeopleNet
+    paper_name: "NVIDIA PeopleNet"
+    backbone: "ResNet-34"
+    bench_slug: peoplenet_resnet34
+    repo_url: "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/peoplenet"
+    weights_note: "NGC / TAO (.etlt / TensorRT pipeline)"
+    onnx: via_tao_trt
+    integration: manual
+    train_domains: ["проприетарный пайплайн NVIDIA"]
