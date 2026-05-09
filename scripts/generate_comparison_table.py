@@ -94,7 +94,7 @@ def ascii_scatter(
     for row in grid:
         lines.append("|" + "".join(row) + "|")
     lines.append("```")
-    lines.append("\nЛегенда:\n" + "\n".join(labels) + "\n")
+    lines.append("\nLegend:\n" + "\n".join(labels) + "\n")
     return "\n".join(lines)
 
 
@@ -111,11 +111,11 @@ def regenerate(out_path: Path | None = None) -> Path:
 
     parts: list[str] = []
     parts.append("# Model comparison (auto-generated)\n\n")
-    parts.append("Источник: последний прогон на модель из `results/runs/*.json`.\n\n")
+    parts.append("Source: latest run per model from `results/runs/*.json`.\n\n")
 
-    parts.append("## Таблица\n\n")
-    hdr = "| Backend | Модель | mAP50 | FPS forward | FPS predict | MOTA | Дата |\n"
-    sep = "|---------|--------|-------|-------------|-------------|------|------|\n"
+    parts.append("## Table\n\n")
+    hdr = "| Backend | Model | mAP50 | FPS forward | FPS predict | MOTA | Date |\n"
+    sep = "|---------|-------|-------|-------------|-------------|------|------|\n"
     parts.append(hdr + sep)
     scatter_pts: list[tuple[float, float, str]] = []
 

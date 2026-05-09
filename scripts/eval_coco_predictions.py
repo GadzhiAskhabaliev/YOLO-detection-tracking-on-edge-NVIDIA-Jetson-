@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 """
-Один скрипт: подаёшь **разметку сплита** (GT) + **предикты модели** (DT) → получаешь метрики.
+Evaluate detection quality from a fixed split: **GT** (COCO instances JSON) + **DT** (predictions).
 
-Важно про «согласованность» (это не про MS COCO как датасет):
-  • **Один и тот же сплит** — например CrowdHuman **val**: один файл GT описывает все
-    картинки этого сплита (имена файлов, id картинок, рамки людей).
-  • **Предикты** должны быть посчитаны **именно по этим же картинкам**, в том же порядке
-    смысла: каждый объект в DT ссылается на поле **image_id**, которое есть у записи
-    в GT (`images[].id`). Если id не совпадают — метрики бессмысленны.
-  • Файл GT здесь в формате **COCO instances** (так удобно для CrowdHuman и для
-    pycocotools). Это просто **контейнер**, а не «ты обязан использовать train2017 COCO».
+Consistency (not “must be MS COCO train2017”):
+  • **One split** — e.g. CrowdHuman **val**: one GT file lists all images and annotations.
+  • **Predictions** must reference **`image_id`** values present in GT (`images[].id`).
+  • GT uses **COCO instances** as a convenient container for pycocotools.
 
-Формат DT — список детекций (или dict с ключом "annotations"):
+DT format — list of dicts (or a dict with key `"annotations"`):
   {"image_id": int, "category_id": int, "bbox": [x, y, w, h], "score": float}
-  bbox в пикселях, xywh, как в COCO.
+  bbox in pixels, xywh, COCO-style.
 
-Считает: mAP50, mAP50-95, recall (= COCO AR maxDets=100). FPS не считает.
+Outputs: mAP50, mAP50-95, recall (= COCO AR maxDets=100). Does **not** compute FPS.
 
-Пример:
+Example:
   python3 scripts/eval_coco_predictions.py \\
     --gt-json .../CrowdHuman/annotations/val.json \\
     --dt-json .../my_model_val_predictions.json
@@ -35,13 +31,13 @@ def _validate_entries(raw_dt: list[Any]) -> None:
     need = ("image_id", "category_id", "bbox", "score")
     for i, d in enumerate(raw_dt):
         if not isinstance(d, dict):
-            raise SystemExit(f"dt[{i}] должен быть объектом dict")
+            raise SystemExit(f"dt[{i}] must be a dict object")
         for k in need:
             if k not in d:
-                raise SystemExit(f"dt[{i}]: нет ключа {k!r}")
+                raise SystemExit(f"dt[{i}]: missing key {k!r}")
         b = d["bbox"]
         if not isinstance(b, (list, tuple)) or len(b) != 4:
-            raise SystemExit(f"dt[{i}]: bbox должен быть [x,y,w,h] из 4 чисел")
+            raise SystemExit(f"dt[{i}]: bbox must be [x,y,w,h] with four numbers")
 
 
 def _check_image_ids(coco_gt: Any, raw_dt: list[dict[str, Any]], *, strict: bool) -> None:
@@ -51,9 +47,9 @@ def _check_image_ids(coco_gt: Any, raw_dt: list[dict[str, Any]], *, strict: bool
     if not unknown:
         return
     msg = (
-        f"В предиктах есть image_id, которых нет в GT ({len(unknown)} шт.), "
-        f"первые: {unknown[:10]}{'...' if len(unknown) > 10 else ''}. "
-        "GT и предикты относятся к разным сплитам или разным файлам разметки."
+        f"Predictions contain image_id not in GT ({len(unknown)} ids), "
+        f"first: {unknown[:10]}{'...' if len(unknown) > 10 else ''}. "
+        "GT and DT refer to different splits or annotation files."
     )
     if strict:
         raise SystemExit(msg)
@@ -67,29 +63,29 @@ def main() -> None:
         "--dt-json",
         type=Path,
         required=True,
-        help="COCO-style detection list or результат mmcv/json.dump списка",
+        help="COCO-style detection list or mmcv/json dump of a list",
     )
     p.add_argument(
         "--out-metrics-json",
         type=Path,
         default=None,
-        help="Записать только объект metrics (mAP50, mAP50-95, recall=AR)",
+        help="Write metrics object only (mAP50, mAP50-95, recall=AR)",
     )
     p.add_argument(
         "--out-patch-json",
         type=Path,
         default=None,
-        help="Готовый patch для bench_runner --merge-json: {metrics, notes}",
+        help="Patch JSON for bench_runner --merge-json: {metrics, notes}",
     )
     p.add_argument(
         "--quiet-summarize",
         action="store_true",
-        help="Не печатать стандартный блок summarize() в stdout",
+        help="Do not print default pycocotools summarize() block",
     )
     p.add_argument(
         "--strict",
         action="store_true",
-        help="Ошибка exit 1, если в DT есть image_id, которых нет в GT",
+        help="Exit with error if DT references unknown image_id vs GT",
     )
     args = p.parse_args()
 
@@ -98,21 +94,21 @@ def main() -> None:
         from pycocotools.cocoeval import COCOeval
     except ImportError as e:
         raise SystemExit(
-            "Нужен пакет pycocotools: pip install pycocotools\n" + str(e)
+            "Requires pycocotools: pip install pycocotools\n" + str(e)
         ) from e
 
     gt_path = args.gt_json.expanduser().resolve()
     dt_path = args.dt_json.expanduser().resolve()
     if not gt_path.is_file():
-        raise SystemExit(f"GT не найден: {gt_path}")
+        raise SystemExit(f"GT not found: {gt_path}")
     if not dt_path.is_file():
-        raise SystemExit(f"DT не найден: {dt_path}")
+        raise SystemExit(f"DT not found: {dt_path}")
 
     raw_dt = json.loads(dt_path.read_text(encoding="utf-8"))
     if isinstance(raw_dt, dict) and "annotations" in raw_dt:
         raw_dt = raw_dt["annotations"]
     if not isinstance(raw_dt, list):
-        raise SystemExit("dt-json должен быть списком детекций или dict с ключом 'annotations'")
+        raise SystemExit("dt-json must be a list of detections or dict with 'annotations'")
 
     _validate_entries(raw_dt)
 
@@ -135,11 +131,10 @@ def main() -> None:
     if not args.quiet_summarize:
         coco_eval.summarize()
 
-    # Совпадает с порядком stats после summarize() в pycocotools
     stats = coco_eval.stats
     ap5095 = float(stats[0])
     ap50 = float(stats[1])
-    ar100 = float(stats[8])  # AR IoU=0.50:0.95 area=all maxDets=100
+    ar100 = float(stats[8])
 
     metrics: dict[str, Any] = {
         "mAP50": round(ap50, 6),
@@ -149,7 +144,7 @@ def main() -> None:
 
     print(json.dumps(metrics, indent=2))
     print(
-        "\n(recall здесь = COCO AR maxDets=100 IoU=0.50:0.95; см. docs/BENCHMARK_METRICS_SCHEMA.md)",
+        "\n(recall here = COCO AR maxDets=100 IoU=0.50:0.95; see docs/benchmark_metrics_schema.md)",
         file=sys.stderr,
     )
 
@@ -162,8 +157,8 @@ def main() -> None:
         patch = {
             "metrics": metrics,
             "notes": [
-                "Качество: scripts/eval_coco_predictions.py — единый COCOeval bbox по "
-                "--gt-json и --dt-json; recall = COCO AR maxDets=100."
+                "Quality: scripts/eval_coco_predictions.py — unified COCOeval bbox on "
+                "--gt-json and --dt-json; recall = COCO AR maxDets=100."
             ],
         }
         args.out_patch_json.parent.mkdir(parents=True, exist_ok=True)

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# FreeYOLO: eval на CrowdHuman val → JSON в results/runs/ (группа B, detector_id=7).
-# Использует отдельный venv с torch cu124. NumPy закреплён <2 (FreeYOLO использует np.int и др.).
-# При проблемах совместимости: TORCH_INDEX_URL=.../cu118 и т.д.
+# FreeYOLO: CrowdHuman val eval → results/runs/ JSON (Group B, detector_id=7).
+# Separate venv with torch cu124; NumPy pinned <2 (FreeYOLO legacy aliases).
+# If CUDA mismatches: set TORCH_INDEX_URL to cu118 wheels, etc.
 #
 #   CROWDHUMAN_ROOT=/workspace/data/crowdhuman MODEL_DIR=/workspace/models \\
 #     bash scripts/group_b/run_freeyolo_crowdhuman.sh
@@ -21,7 +21,7 @@ FREEYOLO_VARIANT="${FREEYOLO_VARIANT:-yolo_free_nano}"
 WEIGHT_URL="${FREEYOLO_WEIGHT_URL:-https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_ch.pth}"
 WEIGHT_PATH="${FREEYOLO_WEIGHT_PATH:-${MODEL_DIR}/yolo_free_nano_ch.pth}"
 
-# Имя в JSON/README: nano по умолчанию как раньше; иначе freeyolo_ch_<tiny|large|...>
+# JSON/README row name: default nano unchanged; else freeyolo_ch_<tiny|large|...>
 if [[ -z "${FREEYOLO_BENCH_MODEL:-}" ]]; then
   if [[ "${FREEYOLO_VARIANT}" == "yolo_free_nano" ]]; then
     FREEYOLO_BENCH_MODEL="freeyolo_yolox_mot17"
@@ -34,24 +34,24 @@ FREEYOLO_DETECTOR_LABEL="${FREEYOLO_DETECTOR_LABEL:-FreeYOLO ${FREEYOLO_VARIANT}
 mkdir -p "${GROUP_B_ROOT}" "${MODEL_DIR}"
 
 if [[ ! -d "${FREEYOLO_HOME}/.git" ]]; then
-  echo "--- Клонирование FreeYOLO ---"
+  echo "--- Clone FreeYOLO ---"
   git clone --depth 1 https://github.com/yjh0410/FreeYOLO.git "${FREEYOLO_HOME}"
 fi
 
-echo "--- Патч FreeYOLO: torch.load(weights_only=False) для PyTorch 2.6+ ---"
+echo "--- Patch FreeYOLO: torch.load(weights_only=False) for PyTorch 2.6+ ---"
 python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
 
-echo "--- Патч FreeYOLO: np.int / np.float / np.bool → встроенные типы (совместимость NumPy 2.x) ---"
+echo "--- Patch FreeYOLO: np.int / np.float / np.bool → built-ins (NumPy 2.x) ---"
 python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
 
 if [[ ! -f "${WEIGHT_PATH}" ]]; then
-  echo "--- Скачивание весов FreeYOLO (CrowdHuman nano) ---"
+  echo "--- Download FreeYOLO weights ---"
   wget -O "${WEIGHT_PATH}.part" "${WEIGHT_URL}"
   mv "${WEIGHT_PATH}.part" "${WEIGHT_PATH}"
 fi
 
 if [[ ! -d "${VENV}" ]]; then
-  echo "--- Создание venv FreeYOLO ---"
+  echo "--- Create FreeYOLO venv ---"
   python3 -m venv "${VENV}"
 fi
 # shellcheck disable=SC1090
@@ -62,13 +62,13 @@ PIP="${VENV}/bin/pip"
 "${PIP}" install -q "numpy>=1.23,<2"
 "${PIP}" install -q torch torchvision --index-url "${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu124}"
 "${PIP}" install -q opencv-python scipy matplotlib pycocotools loguru thop Pillow
-# зависимости выше могут подтянуть numpy 2.x — вернуть <2 (исходники уже патчим под NumPy 2 на всякий случай)
+# Above deps may pull numpy 2.x — pin back <2 (sources still patched for safety)
 "${PIP}" install -q "numpy>=1.23,<2" --force-reinstall --no-deps
 
-echo "--- Версия NumPy в venv (ожидается 1.x; при 2.x исходники FreeYOLO патчятся под совместимость) ---"
+echo "--- NumPy version in venv (expect 1.x; 2.x triggers alias patches) ---"
 "${PY}" -c "import numpy as np; print('numpy', np.__version__)"
 
-echo "--- Подготовка CrowdHuman для FreeYOLO ---"
+echo "--- Prepare CrowdHuman bridge for FreeYOLO ---"
 FREEYOLO_CH_BRIDGE="${BRIDGE}" CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT}" \
   "${PY}" scripts/group_b/freeyolo_prepare_crowdhuman.py \
   --crowdhuman-root "${CROWDHUMAN_ROOT}" \
@@ -97,7 +97,7 @@ SEC1="$(date +%s)"
 WALL=$((SEC1 - SEC0))
 
 if [[ "${EC}" -ne 0 ]]; then
-  echo "eval.py завершился с кодом ${EC}; полный лог: ${FREEYOLO_LOG}" >&2
+  echo "eval.py exited ${EC}; full log: ${FREEYOLO_LOG}" >&2
   exit "${EC}"
 fi
 
@@ -113,4 +113,4 @@ fi
   --wall-seconds "${WALL}" \
   --num-images "${NIMG}"
 
-echo "--- FreeYOLO готов; лог: ${FREEYOLO_LOG}; графики: python3 scripts/plot_group_b_results.py ---"
+echo "--- FreeYOLO done; log: ${FREEYOLO_LOG}; plots: python3 scripts/plot_group_b_results.py ---"

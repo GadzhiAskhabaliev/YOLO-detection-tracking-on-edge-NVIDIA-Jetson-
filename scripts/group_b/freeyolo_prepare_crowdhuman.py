@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Собирает дерево, которое ожидают FreeYOLO eval.py и CrowdHumanDataset:
+Build the CrowdHuman tree expected by FreeYOLO eval.py / CrowdHumanDataset:
   BRIDGE/CrowdHuman/annotations/val.json
   BRIDGE/CrowdHuman/CrowdHuman_val/Images -> CROWDHUMAN_ROOT/Images
 
-Источник — типичный Vast layout после download_crowdhuman_val.sh:
+Typical source layout after scripts/vast/download_crowdhuman_val.sh:
   CROWDHUMAN_ROOT/Images/*.jpg
   CROWDHUMAN_ROOT/annotation_val.odgt
 """
@@ -26,12 +26,12 @@ def main() -> None:
     p.add_argument(
         "--crowdhuman-root",
         default=os.environ.get("CROWDHUMAN_ROOT", "/workspace/data/crowdhuman"),
-        help="Где лежат Images/ и annotation_val.odgt",
+        help="Directory containing Images/ and annotation_val.odgt",
     )
     p.add_argument(
         "--bridge-root",
         default=os.environ.get("FREEYOLO_CH_BRIDGE", "/workspace/group_b/freeyolo_crowdhuman_bridge"),
-        help="Каталог-родитель для поддерева CrowdHuman/ (его передают как --root в eval.py)",
+        help="Parent directory for CrowdHuman/ subtree (passed as --root to eval.py)",
     )
     args = p.parse_args()
 
@@ -44,9 +44,9 @@ def main() -> None:
     images_src = ch / "Images"
 
     if not odgt.is_file():
-        raise SystemExit(f"Нет {odgt}")
+        raise SystemExit(f"Missing {odgt}")
     if not images_src.is_dir():
-        raise SystemExit(f"Нет каталога {images_src}")
+        raise SystemExit(f"Missing directory {images_src}")
 
     ann_dir.mkdir(parents=True, exist_ok=True)
     val_img_link.parent.mkdir(parents=True, exist_ok=True)
@@ -64,7 +64,7 @@ def main() -> None:
         img_id = ann_data["ID"]
         img_path = images_src / f"{img_id}.jpg"
         if not img_path.is_file():
-            raise SystemExit(f"Нет изображения {img_path}")
+            raise SystemExit(f"Missing image {img_path}")
 
         from PIL import Image
 

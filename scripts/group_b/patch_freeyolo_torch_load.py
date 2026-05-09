@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-FreeYOLO хранит чекпойнты со старым pickle (numpy.scalar и т.д.).
-PyTorch 2.6+ делает torch.load(..., weights_only=True) по умолчанию → UnpicklingError.
+FreeYOLO checkpoints use legacy pickle (numpy.scalar, etc.).
+PyTorch 2.6+ defaults torch.load(..., weights_only=True) → UnpicklingError.
 
-Патчит utils/misc.py load_weight: weights_only=False (+ fallback без аргумента для torch<2.6).
+Patches utils/misc.py load_weight to pass weights_only=False (fallback for torch<2.6).
 
-Запускать после git clone / перед eval.py. Идемпотентен.
+Run after clone / before eval.py. Idempotent.
 """
 from __future__ import annotations
 
@@ -26,17 +26,17 @@ def main() -> None:
     args = p.parse_args()
     misc = args.freeyolo_home / "utils" / "misc.py"
     if not misc.is_file():
-        print(f"skip: нет {misc}", file=sys.stderr)
+        print(f"skip: missing {misc}", file=sys.stderr)
         sys.exit(0)
     text = misc.read_text(encoding="utf-8")
     if "weights_only=False" in text and "path_to_ckpt" in text:
-        print("patch: уже применён")
+        print("patch: already applied")
         return
     if OLD not in text:
-        print("patch: паттерн torch.load не найден — проверьте версию FreeYOLO", file=sys.stderr)
+        print("patch: torch.load pattern not found — check FreeYOLO version", file=sys.stderr)
         sys.exit(1)
     misc.write_text(text.replace(OLD, NEW, 1), encoding="utf-8")
-    print(f"patch: обновлён {misc}")
+    print(f"patch: updated {misc}")
 
 
 if __name__ == "__main__":

@@ -3,8 +3,8 @@
 Orchestrate pedestrian-detector benchmarks, persist unified JSON under results/runs/,
 and refresh README + benchmark_summary.md.
 
-Канон имён метрик и поле `backend`: docs/BENCHMARK_METRICS_SCHEMA.md.
-Встроенный драйвер для весов YOLO (.pt) через Ultralytics — один из бэкендов, не эталон таблицы.
+Canonical metric names and `backend`: docs/benchmark_metrics_schema.md.
+Built-in Ultralytics driver for `.pt` weights is one backend, not the sole reference.
 
 Examples:
   python scripts/bench_runner.py --model-name yolov8n_crowdhuman \\
@@ -41,7 +41,7 @@ TABLE_END = "<!-- TABLE_END -->"
 
 
 def run_backend_label(data: dict[str, Any]) -> str:
-    """Короткий тег фреймворка для таблиц (см. docs/BENCHMARK_METRICS_SCHEMA.md)."""
+    """Short framework tag for tables (see docs/benchmark_metrics_schema.md)."""
     v = data.get("backend") or data.get("framework")
     return str(v).strip() if v else ""
 
@@ -298,8 +298,8 @@ def update_readme_table() -> None:
     models.sort(key=sort_key, reverse=True)
 
     lines = [
-        "| Backend | Модель | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Дата |",
-        "|---------|--------|-------|----------|---------------|---------------|------|----------|------|",
+        "| Backend | Model | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |",
+        "|---------|-------|-------|----------|---------------|---------------|------|----------|------|",
     ]
     for d in models:
         met = d.get("metrics") or {}
@@ -353,8 +353,8 @@ def generate_benchmark_summary_md() -> None:
     parts: list[str] = []
     parts.append("# Benchmark runs (auto-generated)\n")
     parts.append(
-        "Файлы-источники: `results/runs/*.json`. Обновляется `scripts/bench_runner.py` "
-        "и скрипты, которые вызывают `save_result` / `merge_run_json`.\n"
+        "Sources: `results/runs/*.json`. Updated by `scripts/bench_runner.py` and callers of "
+        "`save_result` / `merge_run_json`.\n"
     )
 
     for path, data in rows_sorted:
@@ -367,7 +367,7 @@ def generate_benchmark_summary_md() -> None:
         notes = data.get("notes") or []
 
         parts.append(f"\n## [{model}] — {dt}\n")
-        parts.append(f"- **Файл**: `{path.relative_to(REPO_ROOT)}`\n")
+        parts.append(f"- **File**: `{path.relative_to(REPO_ROOT)}`\n")
         parts.append(f"- **Weights (path)**: `{weights}`\n")
         if hub:
             parts.append(f"- **Weights (id / hub)**: `{hub}`\n")
@@ -379,11 +379,11 @@ def generate_benchmark_summary_md() -> None:
         parts.append(f"- **FPS forward**: {_fmt_cell(met.get('fps_forward'))}\n")
         parts.append(f"- **FPS predict**: {_fmt_cell(met.get('fps_predict'))}\n")
         if notes:
-            parts.append(f"- **Примечания**: {'; '.join(str(n) for n in notes)}\n")
+            parts.append(f"- **Notes**: {'; '.join(str(n) for n in notes)}\n")
 
-    parts.append("\n---\n\n## Сводная таблица (все прогоны)\n\n")
+    parts.append("\n---\n\n## Summary table (all runs)\n\n")
     hdr = (
-        "| Backend | Модель | Дата | mAP50 | mAP50-95 | Precision | Recall | "
+        "| Backend | Model | Date | mAP50 | mAP50-95 | Precision | Recall | "
         "Infer (ms) | FPS fwd | FPS pred | MOTA | TRT |\n"
     )
     sep = "|---------|--------|------|-------|----------|-----------|--------|"
@@ -477,7 +477,7 @@ def run_benchmarks(args: argparse.Namespace) -> dict[str, Any]:
 
     if args.bench_mode == "tracking":
         payload["notes"].append(
-            "Режим tracking не выполняется в bench_runner; добавьте метрики через --merge-json."
+            "Tracking mode is not executed in bench_runner; add metrics via --merge-json."
         )
 
     return payload
@@ -532,7 +532,7 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument(
         "--backend",
         default="ultralytics_yolo",
-        help="Тег фреймворка для сводки (см. docs/BENCHMARK_METRICS_SCHEMA.md), по умолчанию для встроенного драйвера YOLO",
+        help="Framework tag for summary tables (docs/benchmark_metrics_schema.md); default for Ultralytics driver",
     )
     args = p.parse_args(argv)
 

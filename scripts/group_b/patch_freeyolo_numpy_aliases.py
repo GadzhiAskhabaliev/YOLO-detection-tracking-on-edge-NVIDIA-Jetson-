@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-FreeYOLO использует np.int / np.float / np.bool и т.д.; в NumPy 2.x эти алиасы удалены.
+FreeYOLO uses np.int / np.float / np.bool; NumPy 2.x removed these aliases.
 
-Заменяем только целые токены (не трогаем np.int32, np.float64, …). Идемпотентно для повторных запусков.
+Replace whole tokens only (np.int32, np.float64 stay untouched). Idempotent.
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import re
 import sys
 from pathlib import Path
 
-# порядок важен: более длинные имена не нужны — границы слова отсекают np.int64 и т.п.
+# Word boundaries exclude np.int64, etc.
 SUBSTS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\bnp\.bool\b"), "bool"),
     (re.compile(r"\bnp\.long\b"), "int"),
@@ -40,7 +40,7 @@ def main() -> None:
     args = p.parse_args()
     root: Path = args.freeyolo_home
     if not root.is_dir():
-        print(f"skip: нет каталога {root}", file=sys.stderr)
+        print(f"skip: directory missing {root}", file=sys.stderr)
         sys.exit(0)
 
     n = 0
@@ -50,7 +50,7 @@ def main() -> None:
         if patch_file(py):
             print(f"patch_numpy_aliases: {py.relative_to(root)}")
             n += 1
-    print(f"patch_numpy_aliases: обновлено файлов: {n}")
+    print(f"patch_numpy_aliases: updated files: {n}")
 
 
 if __name__ == "__main__":

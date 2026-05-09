@@ -1,6 +1,10 @@
 # Vast.ai / cloud scripts
 
-Run from repo root **or** use absolute paths as below. Prefer **tmux** so SSH drops do not kill downloads (`docs/VAST_WORKFLOW.md`).
+Run from repo root **or** use absolute paths below. Use **tmux** so SSH disconnects do not kill long jobs.
+
+## Layout vs instances
+
+Git holds **code and configs**. **Datasets and weights** stay on instance disk (for example `/workspace`) and must not be committed (see `.gitignore`). Clone once per machine, then `git pull` before sessions.
 
 ## Environment (optional)
 
@@ -18,34 +22,34 @@ Run from repo root **or** use absolute paths as below. Prefer **tmux** so SSH dr
 3. `bash scripts/vast/download_mot17.sh`
 4. `bash scripts/vast/convert_crowdhuman_odgt.sh`
 5. `bash scripts/vast/prepare_crowdhuman_yolo_layout.sh`
-6. Edit `configs/datasets/crowdhuman_val.yaml` if your `path` is not `/workspace/data/crowdhuman/yolo`
+6. Edit `configs/datasets/crowdhuman_val.yaml` if `path:` is not `/workspace/data/crowdhuman/yolo`
 7. `bash scripts/vast/download_yolov8n_crowdhuman.sh`
 8. `python3 scripts/vast/bench_yolo_fps.py --weights "$MODEL_DIR/yolov8n_crowdhuman.pt" --out-json /workspace/bench_yolov8n.json`
 9. `bash scripts/vast/val_yolov8_crowdhuman.sh`
 
-Or run steps 1–7 together:
+Or steps 1–7 via:
 
 ```bash
 bash scripts/vast/run_cloud_bootstrap.sh
 ```
 
-## Files
+## Scripts
 
 | Script | Role |
 |--------|------|
-| `install_deps.sh` | apt + pip + CUDA PyTorch wheels + ultralytics deps |
+| `install_deps.sh` | apt + pip + CUDA PyTorch + Ultralytics deps |
 | `download_crowdhuman_val.sh` | HF CrowdHuman val zip + `annotation_val.odgt` |
 | `download_mot17.sh` | MOT17 via kagglehub |
-| `crowdhuman_odgt_to_yolo.py` | ODGT → `labels_val/` (called by `convert_crowdhuman_odgt.sh`) |
-| `convert_crowdhuman_odgt.sh` | Wrapper with default paths |
+| `crowdhuman_odgt_to_yolo.py` | ODGT → `labels_val/` |
+| `convert_crowdhuman_odgt.sh` | Wrapper |
 | `prepare_crowdhuman_yolo_layout.sh` | Symlinks → `yolo/images/val`, `yolo/labels/val` |
-| `download_yolov8n_crowdhuman.sh` | CrowdHuman YOLOv8n (`yakhyo/yolov8-crowdhuman` → `yolov8n_best.pt`, saved as `yolov8n_crowdhuman.pt`) |
-| `bench_yolo_fps.py` | Predict-loop FPS / latency JSON; `--record-model-name` → `results/runs/` via `scripts/bench_runner.py` |
-| `scripts/bench_runner.py` (из корня репо) | Единый бенч (forward / predict / val), README + `results/benchmark_summary.md` |
-| `scripts/run_group_b_benchmarks.sh` | Группа B: YOLOv8n-CH + FreeYOLO + памятки; см. `docs/GROUP_B_BENCHMARKS.md` |
-| `scripts/group_b/run_remaining_models.sh` | Остальные слоты B без №6 (FreeYOLO + CrowdDet / Pedestron / PeopleNet) |
-| `scripts/plot_group_b_results.py` | Графики группы B → `results/group_b_report.md` |
+| `download_yolov8n_crowdhuman.sh` | YOLOv8n CrowdHuman weights → `yolov8n_crowdhuman.pt` |
+| `bench_yolo_fps.py` | Predict-loop FPS JSON; `--record-model-name` → `results/runs/` via `bench_runner.py` |
+| `../bench_runner.py` | Unified bench (forward / predict / val), README + `results/benchmark_summary.md` |
+| `../run_group_b_benchmarks.sh` | Group B driver; see `docs/group_b_benchmarks.md` |
+| `../group_b/run_remaining_models.sh` | FreeYOLO path + CrowdDet/Pedestron/PeopleNet notes |
+| `../plot_group_b_results.py` | Group B figures → `results/group_b_report.md` |
 | `val_yolov8_crowdhuman.sh` | `model.val` on CrowdHuman yaml |
-| `run_cloud_bootstrap.sh` | Runs install + datasets + convert + layout + weights |
+| `run_cloud_bootstrap.sh` | install + datasets + convert + layout + weights |
 
-Config: `configs/datasets/crowdhuman_val.yaml` (paths for Vast).
+Config: `configs/datasets/crowdhuman_val.yaml`.

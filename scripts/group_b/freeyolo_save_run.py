@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Пишет unified JSON прогона FreeYOLO через bench_runner.save_result."""
+"""Persist FreeYOLO benchmark rows via bench_runner.save_result."""
 from __future__ import annotations
 
 import argparse
@@ -16,7 +16,7 @@ from bench_runner import default_payload, save_result
 
 
 def parse_eval_log(text: str) -> tuple[float | None, float | None, float | None]:
-    """ap50_95, ap50, recall_ar (COCO AR IoU=0.50:0.95, area=all, maxDets=100 из summarize)."""
+    """Parse ap50_95, ap50, recall_ar (COCO AR IoU=0.50:0.95, area=all, maxDets=100 from summarize)."""
     ap50_95 = ap50 = recall_ar = None
     m = re.search(r"ap50_95\s*:\s*([\d.eE+-]+)", text)
     if m:
@@ -24,7 +24,7 @@ def parse_eval_log(text: str) -> tuple[float | None, float | None, float | None]
     m = re.search(r"ap50\s*:\s*([\d.eE+-]+)", text)
     if m:
         ap50 = float(m.group(1))
-    # summarize допускает пробелы: | area=   all | maxDets= 100 ] или maxDets=100
+    # summarize tolerates spaces: | area=   all | maxDets= 100 ] or maxDets=100
     m_ar = re.search(
         r"Average Recall\s+\(AR\)\s+@\[\s*IoU=0\.50:0\.95\s*\|\s*area=\s*all\s*\|\s*"
         r"maxDets\s*=\s*100\s*\]\s*=\s*([\d.eE+-]+)",
@@ -71,7 +71,7 @@ def run_speed_bench(
             check=False,
         )
     except (OSError, subprocess.TimeoutExpired) as e:
-        print(f"freeyolo_speed_bench: не запущен ({e})", file=sys.stderr)
+        print(f"freeyolo_speed_bench: not started ({e})", file=sys.stderr)
         return None
     if proc.returncode != 0:
         print(
@@ -84,7 +84,7 @@ def run_speed_bench(
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
-        print(f"freeyolo_speed_bench: не JSON в stdout: {raw[:200]!r}", file=sys.stderr)
+        print(f"freeyolo_speed_bench: stdout not JSON: {raw[:200]!r}", file=sys.stderr)
         return None
 
 
@@ -100,7 +100,7 @@ def main() -> None:
         "--freeyolo-home",
         type=Path,
         default=None,
-        help="Клон FreeYOLO; если задан — после eval запускается микробенч скорости (тот же Python/venv).",
+        help="FreeYOLO clone path; if set, runs speed microbench after eval (same Python/venv).",
     )
     p.add_argument("--skip-speed-bench", action="store_true")
     p.add_argument("--speed-warmup", type=int, default=20)
@@ -108,16 +108,16 @@ def main() -> None:
     p.add_argument(
         "--model-name",
         default="freeyolo_yolox_mot17",
-        help="Имя строки в results/runs и README (разные варианты — разные имена)",
+        help="Row name in results/runs and README (variants should differ)",
     )
-    p.add_argument("--detector-label", default="", help="Подпись для отчётов (опционально)")
+    p.add_argument("--detector-label", default="", help="Optional display label for reports")
     p.add_argument("--imgsz", type=int, default=640)
     args = p.parse_args()
 
     text = args.eval_log.read_text(encoding="utf-8", errors="replace")
     ap5095, ap50, recall_ar = parse_eval_log(text)
     if ap50 is None:
-        raise SystemExit("Не удалось распарсить ap50 из лога eval.py")
+        raise SystemExit("Could not parse ap50 from eval.py log")
 
     fy_home = args.freeyolo_home
     if fy_home is None:
@@ -159,8 +159,8 @@ def main() -> None:
     if recall_ar is not None:
         payload["metrics"]["recall"] = round(recall_ar, 6)
         payload["notes"].append(
-            "recall: COCO Average Recall (AR) IoU=0.50:0.95, maxDets=100 из summarize pycocotools; "
-            "см. определение recall в docs/BENCHMARK_METRICS_SCHEMA.md — не смешивать с другими протоколами val."
+            "recall: COCO Average Recall (AR) IoU=0.50:0.95, maxDets=100 from pycocotools summarize; "
+            "see docs/benchmark_metrics_schema.md — do not mix with other val protocols."
         )
     if speed:
         for k in (
@@ -176,11 +176,11 @@ def main() -> None:
             payload["notes"].append(str(speed["speed_note"]))
     elif fy_home and not args.skip_speed_bench:
         payload["notes"].append(
-            "Микробенч скорости не выполнен (см. stderr); FPS не заполнены."
+            "Speed microbench failed (see stderr); FPS fields unset."
         )
     elif not fy_home and not args.skip_speed_bench:
         payload["notes"].append(
-            "Микробенч скорости не запускался: задайте --freeyolo-home или переменную FREEYOLO_HOME."
+            "Speed microbench skipped: pass --freeyolo-home or set FREEYOLO_HOME."
         )
 
     if fps_eval_e2e is not None:
@@ -188,12 +188,12 @@ def main() -> None:
         payload["metrics"]["eval_wall_seconds"] = round(args.wall_seconds, 3)
         payload["metrics"]["eval_images"] = args.num_images
         payload["notes"].append(
-            "eval_throughput_fps = число кадров валидации / wall-clock всего eval.py "
-            "(включает COCOeval на CPU); для сравнения с YOLOv8 используйте fps_predict из микробенча."
+            "eval_throughput_fps = num_validation_frames / wall_time(eval.py) "
+            "(includes COCOeval on CPU); compare to YOLOv8 using fps_predict from the microbench."
         )
     payload["notes"].append(
-        f"FreeYOLO eval.py -d crowdhuman, variant={args.variant}, bench model={args.model_name}. "
-        "Веса — сплит CrowdHuman; имя freeyolo_yolox_mot17 — исторический слот группы B для nano."
+        f"FreeYOLO eval.py -d crowdhuman, variant={args.variant}, bench model={args.model_name}; "
+        "CrowdHuman val split."
     )
 
     out = save_result(payload)

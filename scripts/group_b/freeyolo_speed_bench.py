@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Микробенч скорости FreeYOLO (ValTransforms + GPU).
+FreeYOLO speed microbench (ValTransforms + GPU).
 
-Ключи выходного JSON — канон из docs/BENCHMARK_METRICS_SCHEMA.md:
+Output JSON keys follow docs/benchmark_metrics_schema.md:
 fps_forward / forward_time_ms_mean — model(x), no_decode=True;
-fps_predict / inference_time_ms — ValTransforms + полный decode/NMS (no_decode=False).
+fps_predict / inference_time_ms — ValTransforms + full decode/NMS (no_decode=False).
 
-Печатает одну строку JSON в stdout; интерпретатор — venv FreeYOLO, cwd репозитория.
+Prints one JSON line to stdout; run under FreeYOLO venv.
 
   FREEYOLO_HOME=/path/to/FreeYOLO /path/to/venv/bin/python scripts/group_b/freeyolo_speed_bench.py \\
     --freeyolo-home "$FREEYOLO_HOME" --weights model.pth --variant yolo_free_nano
@@ -35,7 +35,7 @@ def main() -> None:
     p.add_argument("--img-size", type=int, default=640)
     p.add_argument("--warmup", type=int, default=20)
     p.add_argument("--iters", type=int, default=100)
-    p.add_argument("--device", default="", help="cuda | cpu; по умолчанию cuda если доступен")
+    p.add_argument("--device", default="", help="cuda | cpu; default cuda if available")
     args = p.parse_args()
 
     fy = args.freeyolo_home.resolve()
@@ -99,7 +99,7 @@ def main() -> None:
         if device.type == "cuda":
             torch.cuda.synchronize()
 
-    # --- forward-only path (no_decode): без NMS / без numpy cpu ---
+    # --- forward-only path (no_decode): no NMS / no numpy cpu-heavy decode ---
     model.no_decode = True
     with torch.no_grad():
         for _ in range(args.warmup):
@@ -114,7 +114,7 @@ def main() -> None:
     ms_fwd = (dt_fwd / args.iters) * 1000.0
     fps_fwd = args.iters / dt_fwd
 
-    # --- predict-like path: препроцесс + полный decode (как eval) ---
+    # --- predict-like path: preprocess + full decode (as in eval) ---
     model.no_decode = False
     with torch.no_grad():
         for _ in range(args.warmup):
@@ -142,7 +142,7 @@ def main() -> None:
         "speed_iters": args.iters,
         "speed_note": (
             "FreeYOLO: forward=no_decode tensor output; predict=ValTransforms+full decode/NMS "
-            "(см. docs/BENCHMARK_METRICS_SCHEMA.md)."
+            "(docs/benchmark_metrics_schema.md)."
         ),
     }
     print(json.dumps(out))

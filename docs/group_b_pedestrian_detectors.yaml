@@ -1,9 +1,9 @@
-# Группа B — специализированные pedestrian-детекторы (CrowdHuman / CityPersons / MOT17 / смеси).
-# Поле bench_slug — значение `model` в results/runs/*.json (или см. matching по detector_id + group).
-# integration: ultralytics | manual — что поддерживает этот репозиторий из коробки.
+# Group B — specialized pedestrian detectors (CrowdHuman, CityPersons, MOT17, mixes).
+# bench_slug matches `model` in results/runs/*.json (or match via detector_id + group).
+# integration: ultralytics | manual — supported natively in this repo vs external only.
 
 group: B
-title: "Группа B — специализированные pedestrian-детекторы"
+title: "Pedestrian detectors (crowded scenes)"
 
 detectors:
   - id: 4
@@ -12,7 +12,7 @@ detectors:
     backbone: "ResNet-50 + FPN"
     bench_slug: crowddet_r50_fpn_emd
     repo_url: "https://github.com/xg-chu/CrowdDet"
-    weights_note: ".pth (официальный репозиторий)"
+    weights_note: ".pth (upstream repository)"
     onnx: false
     integration: manual
     train_domains: ["CrowdHuman", "CityPersons", "COCO"]
@@ -45,7 +45,7 @@ detectors:
     backbone: "YOLOX-family"
     bench_slug: freeyolo_yolox_mot17
     repo_url: "https://github.com/yjh0410/FreeYOLO"
-    weights_note: "Авторские веса; ONNX см. репозиторий / релизы"
+    weights_note: "Author checkpoints; ONNX via upstream releases"
     onnx: authors_release
     integration: manual
     train_domains: ["MOT17", "CrowdHuman", "COCO"]
@@ -59,4 +59,4 @@ detectors:
     weights_note: "NGC / TAO (.etlt / TensorRT pipeline)"
     onnx: via_tao_trt
     integration: manual
-    train_domains: ["проприетарный пайплайн NVIDIA"]
+    train_domains: ["NVIDIA proprietary training pipeline"]

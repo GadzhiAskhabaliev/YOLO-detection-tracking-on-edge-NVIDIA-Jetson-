@@ -1,40 +1,70 @@
-# Edge: pedestrian detection and tracking (Jetson)
+# Pedestrian detection and tracking on edge hardware
 
-Research codebase: compare pedestrian detectors and detector–tracker stacks, then deploy on NVIDIA Jetson. Cloud (e.g. Vast.ai) for early runs; final FPS and power measurements target the board.
+This repository supports **quantitative comparison** of pedestrian detectors aimed ultimately at **NVIDIA Jetson-class edge deployment**. Benchmarks are run primarily on cloud GPUs (e.g. Vast.ai); throughput and energy targets remain board-local measurements elsewhere.
+
+## What we benchmark
+
+All detectors tracked here belong to **Group B** — crowded-scene pedestrian models enumerated in [`docs/group_b_pedestrian_detectors.yaml`](docs/group_b_pedestrian_detectors.yaml):
+
+| ID | Short name | Description |
+|----|------------|-------------|
+| 4 | **CrowdDet** | RCNN EMD Refine, ResNet-50 + FPN |
+| 5 | **Pedestron** | Cascade Mask R-CNN, HRNet-W32 |
+| 6 | **YOLOv8n-CH** | YOLOv8 nano trained on CrowdHuman (`integration: ultralytics`) |
+| 7 | **FreeYOLO** | YOLOX-family; MOT17-oriented checkpoints (`integration: manual`) |
+| 8 | **PeopleNet** | NVIDIA TAO / NGC pipeline |
+
+**Currently persisted runs** under [`results/runs/`](results/runs/) cover slots **6** and **7** only (YOLOv8n-CrowdHuman and two FreeYOLO CrowdHuman variants). Slots **4, 5, and 8** require **upstream codebases** (CrowdDet, Pedestron, TAO) that are **not vendored here**.
+
+### Scientific scope (explicit boundary)
+
+This repository **closes one reproducible slice** of the wider study:
+
+- **We integrate**: Ultralytics for slot 6, plus tooling + reproducible scripts for FreeYOLO on CrowdHuman val (slot 7).
+- **We do not ship**: MMDetection installs, CrowdDet/Pedestron forks, NVIDIA TAO containers, or a universal multi-framework launcher.
+
+Comparable detection metrics across heterogeneous stacks should therefore rely on **shared ground truth** and **`scripts/eval_coco_predictions.py`** once upstream models emit COCO-style box lists (see [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)). FPS remains backend-specific and must be recorded under our canon (`fps_forward` vs `fps_predict`) with definitions in each run’s `notes`.
+
+## Visual summary
+
+Benchmark JSON drives **`scripts/plot_group_b_results.py`**. Figures summarize accuracy versus throughput and slot-wise mAP50 (gray bars = manifest slots still awaiting upstream runs).
+
+![Group B: mAP50 versus throughput](results/figures/group_b_scatter_map_fps.png)
+
+![Group B: mAP50 by manifest slot](results/figures/group_b_map50_bars.png)
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `scripts/vast/` | Cloud bootstrap: deps, datasets, CrowdHuman→YOLO, bench FPS, val — see [`scripts/vast/README.md`](scripts/vast/README.md) |
-| `configs/datasets/` | Dataset YAML for Ultralytics (e.g. CrowdHuman val) |
-| `docs/model_manifest.yaml` | Model inventory for experiments |
-| `docs/group_b_pedestrian_detectors.yaml` | Группа B: CrowdDet, Pedestron, YOLOv8n-CH, FreeYOLO, PeopleNet |
-| `docs/GROUP_B_BENCHMARKS.md` | Как прогонять группу B и строить графики |
-| `data/` | Local datasets placeholder (gitignored) |
-| `models/` | Local checkpoints (gitignored) |
-| `results/runs/` | Benchmark run JSON |
-| `scripts/bench_runner.py` | Unified bench + README / summary refresh |
-| `scripts/generate_comparison_table.py` | mAP50 vs FPS comparison → `results/model_comparison.md` |
-| `src/` | Planned: C++/PyBind/TensorRT |
+| [`scripts/vast/`](scripts/vast/) | Cloud bootstrap, datasets, CrowdHuman→YOLO layout |
+| [`configs/datasets/`](configs/datasets/) | Ultralytics dataset YAML (CrowdHuman val) |
+| [`docs/group_b_pedestrian_detectors.yaml`](docs/group_b_pedestrian_detectors.yaml) | Canonical detector list & URLs |
+| [`docs/group_b_benchmarks.md`](docs/group_b_benchmarks.md) | Operational notes for Group B runs |
+| [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md) | JSON schema & metric definitions |
+| [`results/runs/`](results/runs/) | One JSON file per benchmark run |
+| [`scripts/bench_runner.py`](scripts/bench_runner.py) | Orchestration + README / summary refresh |
+| [`scripts/eval_coco_predictions.py`](scripts/eval_coco_predictions.py) | Unified COCOeval on dumped predictions |
 
-## Benchmark Results
+## Benchmark table (auto-generated)
 
-После прогона `scripts/bench_runner.py` таблица ниже обновляется автоматически (между HTML-комментариями). Детальный лог: [`results/benchmark_summary.md`](results/benchmark_summary.md).
+After each `bench_runner.py` save/merge, the block below updates automatically.
 
 <!-- TABLE_START -->
 
-| Backend | Модель | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Дата |
-|---------|--------|-------|----------|---------------|---------------|------|----------|------|
+| Backend | Model | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
+|---------|-------|-------|----------|---------------|---------------|------|----------|------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.7471 | 0.4642 | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |
 | freeyolo | freeyolo_ch_tiny | 0.7166 | 0.3564 | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
 | freeyolo | freeyolo_yolox_mot17 | 0.6822 | 0.3204 | 57.935 | 23.988 |  | no | 2026-05-09T14:47:53Z |
 
 <!-- TABLE_END -->
 
-### Команды
+Detailed narratives live in [`results/benchmark_summary.md`](results/benchmark_summary.md). ASCII comparison: [`results/model_comparison.md`](results/model_comparison.md) (`scripts/generate_comparison_table.py`).
 
-Полный прогон (forward + predict + val на CrowdHuman YAML из конфига):
+## Commands
+
+Full Ultralytics run (forward + predict + validation):
 
 ```bash
 python3 scripts/bench_runner.py \
@@ -45,7 +75,7 @@ python3 scripts/bench_runner.py \
   --data-yaml configs/datasets/crowdhuman_val.yaml
 ```
 
-Только predict FPS через отдельный скрипт, но с записью в тот же формат `results/runs/`:
+Predict FPS helper (`bench_runner`-compatible JSON):
 
 ```bash
 python3 scripts/vast/bench_yolo_fps.py \
@@ -54,13 +84,13 @@ python3 scripts/vast/bench_yolo_fps.py \
   --weights-hub yakhyo/yolov8-crowdhuman
 ```
 
-Таблица сравнения моделей (mAP50 vs FPS):
+Group B orchestrator:
 
 ```bash
-python3 scripts/generate_comparison_table.py
+bash scripts/run_group_b_benchmarks.sh
 ```
 
-Добавить метрики трекинга к уже сохранённому JSON (`--model-name` и `--weights` не нужны):
+Merge tracking metrics:
 
 ```bash
 python3 scripts/bench_runner.py \
@@ -68,6 +98,13 @@ python3 scripts/bench_runner.py \
   --tracking-json '{"mot17_seq":"MOT17-02","MOTA":0.68,"HOTA":0.52,"IDF1":0.61}'
 ```
 
-## Repo + Vast.ai
+Regenerate Group B figures:
 
-**Scripts and configs live in git**; **CrowdHuman, MOT17, `.pt` files stay on the instance disk** (`/workspace`), not in commits (see `.gitignore`). On the machine: one-time `git clone`, then `git pull` before work. Details: [`docs/VAST_WORKFLOW.md`](docs/VAST_WORKFLOW.md).
+```bash
+pip install matplotlib pyyaml
+python3 scripts/plot_group_b_results.py
+```
+
+## Repository vs cloud disk
+
+**Git** holds scripts and tiny configs. **Datasets, checkpoints, and large logs** stay on the instance (for example `/workspace`) per [`.gitignore`](.gitignore). Workflow notes: [`scripts/vast/README.md`](scripts/vast/README.md).
