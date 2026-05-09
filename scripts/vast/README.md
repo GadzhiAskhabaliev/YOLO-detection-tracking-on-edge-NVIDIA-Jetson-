@@ -39,7 +39,7 @@ bash scripts/vast/run_cloud_bootstrap.sh
 | `crowdhuman_odgt_to_yolo.py` | ODGT → `labels_val/` (called by `convert_crowdhuman_odgt.sh`) |
 | `convert_crowdhuman_odgt.sh` | Wrapper with default paths |
 | `prepare_crowdhuman_yolo_layout.sh` | Symlinks → `yolo/images/val`, `yolo/labels/val` |
-| `download_yolov8n_crowdhuman.sh` | Weights `akanametov/yolov8-crowdhuman` |
+| `download_yolov8n_crowdhuman.sh` | CrowdHuman YOLOv8n (`yakhyo/yolov8-crowdhuman` → `yolov8n_best.pt`, saved as `yolov8n_crowdhuman.pt`) |
 | `bench_yolo_fps.py` | Predict-loop FPS / latency JSON |
 | `val_yolov8_crowdhuman.sh` | `model.val` on CrowdHuman yaml |
 | `run_cloud_bootstrap.sh` | Runs install + datasets + convert + layout + weights |

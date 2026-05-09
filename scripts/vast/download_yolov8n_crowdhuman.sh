@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Official-ish CrowdHuman-trained YOLOv8n weights (akanametov).
-# Truncated downloads cause torch EOFError — we enforce a minimum file size.
+# CrowdHuman-trained YOLOv8n: yakhyo/yolov8-crowdhuman release weights → saved as yolov8n_crowdhuman.pt.
+# (Old akanametov/yolov8-crowdhuman release URLs currently 404.)
+# Truncated downloads cause torch EOFError — minimum size enforced.
 
 export MODEL_DIR="${MODEL_DIR:-/workspace/models}"
 mkdir -p "${MODEL_DIR}"
 
-URL="https://github.com/akanametov/yolov8-crowdhuman/releases/download/v1.0/yolov8n_crowdhuman.pt"
+URL="https://github.com/yakhyo/yolov8-crowdhuman/releases/download/weights/yolov8n_best.pt"
 DEST="${MODEL_DIR}/yolov8n_crowdhuman.pt"
 # yolov8n*.pt is usually ~6 MiB; reject obviously broken files
 MIN_BYTES=$((4 * 1024 * 1024))
