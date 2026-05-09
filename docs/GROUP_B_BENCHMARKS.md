@@ -110,4 +110,40 @@ python3 scripts/plot_group_b_results.py
 - `results/figures/group_b_map50_bars.png` — столбцы mAP50 по слотам группы B.
 - `results/group_b_report.md` — таблица + статус «есть прогон / нет».
 
-Сравнение по **одному и тому же валидационному протоколу** для всех RCNN/YOLOX моделей на CrowdHuman возможно только после **единого eval-скрипта** (отдельная задача); пока в отчёте явно смотрите поле `notes` и источник метрик.
+Сопоставимое качество на одном сплите: выгрузить bbox-предикты под тот же `val.json`, что и GT, и прогнать **`scripts/eval_coco_predictions.py`** (см. **[`BENCHMARK_METRICS_SCHEMA.md`](BENCHMARK_METRICS_SCHEMA.md)**). В сводке всегда смотрите `notes` и источник FPS.
+
+---
+
+## Замыкание исследования: что уже есть и что осталось
+
+**Уже зафиксировано в `results/runs/` (можно строить таблицу и графики):**
+
+| Слот | Модель | JSON |
+|------|--------|------|
+| 6 | YOLOv8n-CrowdHuman | `yolov8n_crowdhuman_*.json` |
+| 7 | FreeYOLO (variants) | `freeyolo_ch_tiny_*.json`, `freeyolo_yolox_mot17_*.json` |
+
+**Нет прогона в репо — финальные mAP/FPS появятся только после вашего шага в их кодовой базе:**
+
+| Слот | Модель | Действие |
+|------|--------|----------|
+| 4 | CrowdDet | Инференс на том же CrowdHuman val → dt-json → `eval_coco_predictions.py` → `bench_runner --merge-json` |
+| 5 | Pedestron | То же |
+| 8 | PeopleNet (TAO) | Инференс / экспорт под вашим протоколом → dt-json или канон `metrics` + FPS → merge |
+
+**MMDet (FCOS / SSD / YOLOX и т.д., если сравниваете отдельно от слотов B):** не в манифесте YAML, но тот же контракт — предикты + **`eval_coco_predictions.py`** + свой `results/runs/<slug>.json`.
+
+### Чеклист до «итоговых резов» по каждой недостающей модели
+
+1. Зафиксировать **версию** фреймворка и **команду** воспроизведения (commit / Docker image / pip freeze фрагмент).
+2. Убедиться, что GT — **тот же** `annotations/val.json` (те же `image_id`), что для уже замеренных моделей (bridge CrowdHuman → COCO).
+3. Прогнать инференс, сохранить **список** `{image_id, category_id, bbox [xywh], score}` (строго под канон из **`BENCHMARK_METRICS_SCHEMA.md`**).
+4. Локально в этом репо:  
+   `python3 scripts/eval_coco_predictions.py --gt-json … --dt-json … --strict --out-patch-json /tmp/p.json`
+5. Создать или дополнить **`results/runs/<bench_slug>_….json`**, затем  
+   `python3 scripts/bench_runner.py --merge-json … --patch-json /tmp/p.json`  
+   и при необходимости вторым патчем дописать **FPS** (`fps_predict`, `inference_time_ms`, …).
+6. Для группы B: в патче **`group`: `"B"`**, **`detector_id`**: `4`, `5` или `8` по [`group_b_pedestrian_detectors.yaml`](group_b_pedestrian_detectors.yaml).
+7. `python3 scripts/plot_group_b_results.py` — обновить **`results/group_b_report.md`** и фигуры.
+
+Пока пункты 1–7 для слота не выполнены, в таблице по этой модели будет пробел — это ожидаемо: репозиторий даёт **единую математику и формат**, но не ставит чужие стеки.
