@@ -66,6 +66,8 @@
 
 Скрипт **`scripts/eval_coco_predictions.py`** считает **`mAP50`**, **`mAP50-95`**, **`recall`** (= COCO AR maxDets=100, см. выше) через **pycocotools COCOeval**. Так метрики качества сопоставимы между MMDet, ONNX, самописным дампом и т.д.
 
+**Согласованность:** один файл GT (= один сплит, напр. CrowdHuman val) и предикты с теми же **`image_id`**, что в этом GT. Иначе числа бессмысленны; флаг **`--strict`** в скрипте завершает с ошибкой, если в DT есть чужие `image_id`.
+
 ```bash
 python3 scripts/eval_coco_predictions.py \
   --gt-json path/to/CrowdHuman/annotations/val.json \
