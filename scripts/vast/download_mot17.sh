@@ -26,12 +26,19 @@ if [[ -d "${DATA_ROOT}/MOT17/train" ]]; then
 fi
 
 MOT17_SRC="$(python3 <<'PY'
+import contextlib
+import io
 import sys
 from pathlib import Path
 
 import kagglehub
 
-base = Path(kagglehub.dataset_download("wenhoujinjust/mot-17"))
+# kagglehub prints progress to stdout; capturing breaks MOT17_SRC=$(...)
+_buf = io.StringIO()
+with contextlib.redirect_stdout(_buf):
+    cache_root = kagglehub.dataset_download("wenhoujinjust/mot-17")
+
+base = Path(cache_root).resolve()
 print(f"Kagglehub cache path: {base}", file=sys.stderr)
 
 chosen = None
