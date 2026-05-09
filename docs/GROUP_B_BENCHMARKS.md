@@ -87,6 +87,14 @@ pip install "numpy>=1.23,<2" --force-reinstall --no-deps
 python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home /workspace/group_b/FreeYOLO
 ```
 
+### Согласование метрик (FreeYOLO и любые другие бэкенды)
+
+Общий контракт полей JSON для **всех** моделей в сводке (MMDet, FairMOT, YOLO-семейство, FreeYOLO, ONNX/MMDeploy и т.д.): **[`BENCHMARK_METRICS_SCHEMA.md`](BENCHMARK_METRICS_SCHEMA.md)**.
+
+После `eval.py` скрипт **`freeyolo_save_run.py`** вызывает **`scripts/group_b/freeyolo_speed_bench.py`** (нужен `--freeyolo-home` или `FREEYOLO_HOME`), чтобы заполнить канонические **`fps_forward`** / **`fps_predict`** / **`inference_time_ms`**. У FreeYOLO: forward — проход с `no_decode=True`; predict — `ValTransforms` + полный decode/NMS (`no_decode=False`). **`eval_throughput_fps`** — только wall-clock всего `eval.py` (включая COCOeval на CPU), для честного FPS не использовать как основной столбец.
+
+Если из лога доступна строка COCO **Average Recall (AR)** (`maxDets=100`), она может быть записана в **`recall`** — в `notes` обязательно указать, что это AR, а не «mean recall» из другого отчёта val.
+
 ## Визуализация группы B
 
 После появления JSON в `results/runs/`:

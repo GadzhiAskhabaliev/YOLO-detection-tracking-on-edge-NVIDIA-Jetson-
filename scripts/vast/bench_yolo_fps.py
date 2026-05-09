@@ -85,6 +85,7 @@ def main():
             weights_hub=args.weights_hub.strip(),
             batch_size=1,
             imgsz=args.imgsz,
+            backend="ultralytics_yolo",
         )
         full["metrics"]["fps_predict"] = round(fps, 3)
         full["metrics"]["inference_time_ms_predict"] = round(ms, 4)

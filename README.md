@@ -10,6 +10,7 @@ Research codebase: compare pedestrian detectors and detector–tracker stacks, t
 | `configs/datasets/` | Dataset YAML for Ultralytics (e.g. CrowdHuman val) |
 | `docs/model_manifest.yaml` | Model inventory for experiments |
 | `docs/group_b_pedestrian_detectors.yaml` | Группа B: CrowdDet, Pedestron, YOLOv8n-CH, FreeYOLO, PeopleNet |
+| `docs/BENCHMARK_METRICS_SCHEMA.md` | **Единый контракт** полей JSON и таблицы для MMDet, FairMOT, YOLO, ONNX/MMDeploy и т.д. |
 | `docs/GROUP_B_BENCHMARKS.md` | Как прогонять группу B и строить графики |
 | `data/` | Local datasets placeholder (gitignored) |
 | `models/` | Local checkpoints (gitignored) |
@@ -24,7 +25,9 @@ Research codebase: compare pedestrian detectors and detector–tracker stacks, t
 
 <!-- TABLE_START -->
 
-*(нет сохранённых прогонов — выполните `bench_runner.py` на машине с GPU / данными)*
+| Backend | Модель | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Дата |
+|---------|--------|-------|----------|---------------|---------------|------|----------|------|
+| ultralytics_yolo | yolov8n_crowdhuman | 0.7471 | 0.4642 | 106.248 | 104.621 |  | no | 2026-05-09T13:32:20Z |
 
 <!-- TABLE_END -->
 

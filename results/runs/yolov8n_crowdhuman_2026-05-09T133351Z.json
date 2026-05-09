@@ -2,6 +2,7 @@
   "model": "yolov8n_crowdhuman",
   "weights": "/workspace/models/yolov8n_crowdhuman.pt",
   "weights_hub": "yakhyo/yolov8-crowdhuman",
+  "backend": "ultralytics_yolo",
   "date": "2026-05-09T13:32:20Z",
   "hardware": "NVIDIA GeForce RTX 4090",
   "batch_size": 1,
@@ -22,5 +23,8 @@
     "engine_exists": false,
     "fps_fp16": null
   },
-  "notes": []
+  "notes": [],
+  "group": "B",
+  "detector_id": 6,
+  "detector_label": "YOLOv8n-CrowdHuman"
 }

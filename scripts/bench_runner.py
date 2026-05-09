@@ -3,7 +3,8 @@
 Orchestrate pedestrian-detector benchmarks, persist unified JSON under results/runs/,
 and refresh README + benchmark_summary.md.
 
-Integrates with Ultralytics YOLO (same assumptions as scripts/vast/bench_yolo_fps.py).
+Канон имён метрик и поле `backend`: docs/BENCHMARK_METRICS_SCHEMA.md.
+Встроенный драйвер для весов YOLO (.pt) через Ultralytics — один из бэкендов, не эталон таблицы.
 
 Examples:
   python scripts/bench_runner.py --model-name yolov8n_crowdhuman \\
@@ -37,6 +38,12 @@ RUNS_DIR = REPO_ROOT / "results" / "runs"
 SUMMARY_MD = REPO_ROOT / "results" / "benchmark_summary.md"
 TABLE_START = "<!-- TABLE_START -->"
 TABLE_END = "<!-- TABLE_END -->"
+
+
+def run_backend_label(data: dict[str, Any]) -> str:
+    """Короткий тег фреймворка для таблиц (см. docs/BENCHMARK_METRICS_SCHEMA.md)."""
+    v = data.get("backend") or data.get("framework")
+    return str(v).strip() if v else ""
 
 
 def _utc_now_iso() -> str:
@@ -184,6 +191,7 @@ def default_payload(
     batch_size: int,
     imgsz: int,
     hardware: str | None = None,
+    backend: str = "",
     group: str = "",
     detector_id: int | None = None,
     detector_label: str = "",
@@ -209,6 +217,8 @@ def default_payload(
         out["detector_id"] = detector_id
     if detector_label.strip():
         out["detector_label"] = detector_label.strip()
+    if backend.strip():
+        out["backend"] = backend.strip()
     return out
 
 
@@ -288,8 +298,8 @@ def update_readme_table() -> None:
     models.sort(key=sort_key, reverse=True)
 
     lines = [
-        "| Модель | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Дата |",
-        "|--------|-------|----------|---------------|---------------|------|----------|------|",
+        "| Backend | Модель | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Дата |",
+        "|---------|--------|-------|----------|---------------|---------------|------|----------|------|",
     ]
     for d in models:
         met = d.get("metrics") or {}
@@ -303,6 +313,7 @@ def update_readme_table() -> None:
             "| "
             + " | ".join(
                 [
+                    run_backend_label(d),
                     str(d.get("model", "")),
                     _fmt_cell(met.get("mAP50")),
                     _fmt_cell(met.get("mAP50-95")),
@@ -361,6 +372,9 @@ def generate_benchmark_summary_md() -> None:
         if hub:
             parts.append(f"- **Weights (id / hub)**: `{hub}`\n")
         parts.append(f"- **Hardware**: {hw}\n")
+        bk = run_backend_label(data)
+        if bk:
+            parts.append(f"- **Backend**: `{bk}`\n")
         parts.append(f"- **mAP50**: {_fmt_cell(met.get('mAP50'))}\n")
         parts.append(f"- **FPS forward**: {_fmt_cell(met.get('fps_forward'))}\n")
         parts.append(f"- **FPS predict**: {_fmt_cell(met.get('fps_predict'))}\n")
@@ -369,10 +383,10 @@ def generate_benchmark_summary_md() -> None:
 
     parts.append("\n---\n\n## Сводная таблица (все прогоны)\n\n")
     hdr = (
-        "| Модель | Дата | mAP50 | mAP50-95 | Precision | Recall | "
+        "| Backend | Модель | Дата | mAP50 | mAP50-95 | Precision | Recall | "
         "Infer (ms) | FPS fwd | FPS pred | MOTA | TRT |\n"
     )
-    sep = "|--------|------|-------|----------|-----------|--------|"
+    sep = "|---------|--------|------|-------|----------|-----------|--------|"
     sep += "------------|---------|----------|------|-----|\n"
     parts.append(hdr + sep)
 
@@ -385,6 +399,7 @@ def generate_benchmark_summary_md() -> None:
             "| "
             + " | ".join(
                 [
+                    run_backend_label(data),
                     str(data.get("model", "")),
                     str(data.get("date", "")),
                     _fmt_cell(met.get("mAP50")),
@@ -415,6 +430,7 @@ def run_benchmarks(args: argparse.Namespace) -> dict[str, Any]:
         weights_hub=args.weights_hub or "",
         batch_size=args.batch_size,
         imgsz=args.imgsz,
+        backend=(getattr(args, "backend", None) or "").strip(),
         group=getattr(args, "group", "") or "",
         detector_id=getattr(args, "detector_id", None),
         detector_label=getattr(args, "detector_label", "") or "",
@@ -513,6 +529,11 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--group", default="", help='Experiment tag in saved JSON, e.g. "B"')
     p.add_argument("--detector-id", type=int, default=None, help="Slot id from docs/group_b_pedestrian_detectors.yaml")
     p.add_argument("--detector-label", default="", help="Display name for reports")
+    p.add_argument(
+        "--backend",
+        default="ultralytics_yolo",
+        help="Тег фреймворка для сводки (см. docs/BENCHMARK_METRICS_SCHEMA.md), по умолчанию для встроенного драйвера YOLO",
+    )
     args = p.parse_args(argv)
 
     if args.merge_json:

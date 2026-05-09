@@ -114,18 +114,20 @@ def regenerate(out_path: Path | None = None) -> Path:
     parts.append("Источник: последний прогон на модель из `results/runs/*.json`.\n\n")
 
     parts.append("## Таблица\n\n")
-    hdr = "| Модель | mAP50 | FPS forward | FPS predict | MOTA | Дата |\n"
-    sep = "|--------|-------|-------------|-------------|------|------|\n"
+    hdr = "| Backend | Модель | mAP50 | FPS forward | FPS predict | MOTA | Дата |\n"
+    sep = "|---------|--------|-------|-------------|-------------|------|------|\n"
     parts.append(hdr + sep)
     scatter_pts: list[tuple[float, float, str]] = []
 
     for d in latest:
         met = d.get("metrics") or {}
         tr = d.get("tracking") or {}
+        bk = d.get("backend") or d.get("framework") or ""
         parts.append(
             "| "
             + " | ".join(
                 [
+                    str(bk).strip(),
                     str(d.get("model", "")),
                     _fmt(met.get("mAP50")),
                     _fmt(met.get("fps_forward")),

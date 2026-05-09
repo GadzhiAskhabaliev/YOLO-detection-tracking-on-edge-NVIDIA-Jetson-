@@ -108,6 +108,8 @@ fi
   --weights-uri "${WEIGHT_URL}" \
   --model-name "${FREEYOLO_BENCH_MODEL}" \
   --detector-label "${FREEYOLO_DETECTOR_LABEL}" \
+  --freeyolo-home "${FREEYOLO_HOME}" \
+  --imgsz 640 \
   --wall-seconds "${WALL}" \
   --num-images "${NIMG}"
 
