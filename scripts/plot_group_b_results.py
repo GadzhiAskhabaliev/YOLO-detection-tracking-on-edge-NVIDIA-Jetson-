@@ -194,9 +194,11 @@ def regenerate(*, manifest_path: Path | None = None, out_md: Path | None = None)
         title=f"Group {group}: mAP50 by manifest slot (gray = no run)",
     )
 
-    rows_md.append("\n## Figures\n\n")
-    rows_md.append("![mAP50 vs FPS scatter](figures/group_b_scatter_map_fps.png)\n\n")
-    rows_md.append("![mAP50 bars](figures/group_b_map50_bars.png)\n\n")
+    rows_md.append("\n## Outputs (paths only)\n\n")
+    rows_md.append(
+        f"- `{scatter_path.relative_to(REPO_ROOT)}`\n"
+        f"- `{bars_path.relative_to(REPO_ROOT)}`\n\n"
+    )
 
     out = out_md or OUT_MD
     out.parent.mkdir(parents=True, exist_ok=True)
