@@ -11,8 +11,56 @@ Research codebase: compare pedestrian detectors and detector–tracker stacks, t
 | `docs/model_manifest.yaml` | Model inventory for experiments |
 | `data/` | Local datasets placeholder (gitignored) |
 | `models/` | Local checkpoints (gitignored) |
-| `results/runs/` | Run logs |
+| `results/runs/` | Benchmark run JSON |
+| `scripts/bench_runner.py` | Unified bench + README / summary refresh |
+| `scripts/generate_comparison_table.py` | mAP50 vs FPS comparison → `results/model_comparison.md` |
 | `src/` | Planned: C++/PyBind/TensorRT |
+
+## Benchmark Results
+
+После прогона `scripts/bench_runner.py` таблица ниже обновляется автоматически (между HTML-комментариями). Детальный лог: [`results/benchmark_summary.md`](results/benchmark_summary.md).
+
+<!-- TABLE_START -->
+
+*(нет сохранённых прогонов — выполните `bench_runner.py` на машине с GPU / данными)*
+
+<!-- TABLE_END -->
+
+### Команды
+
+Полный прогон (forward + predict + val на CrowdHuman YAML из конфига):
+
+```bash
+python3 scripts/bench_runner.py \
+  --model-name yolov8n_crowdhuman \
+  --weights /workspace/models/yolov8n_crowdhuman.pt \
+  --weights-hub yakhyo/yolov8-crowdhuman \
+  --bench-mode all \
+  --data-yaml configs/datasets/crowdhuman_val.yaml
+```
+
+Только predict FPS через отдельный скрипт, но с записью в тот же формат `results/runs/`:
+
+```bash
+python3 scripts/vast/bench_yolo_fps.py \
+  --weights /workspace/models/yolov8n_crowdhuman.pt \
+  --record-model-name yolov8n_crowdhuman \
+  --weights-hub yakhyo/yolov8-crowdhuman
+```
+
+Таблица сравнения моделей (mAP50 vs FPS):
+
+```bash
+python3 scripts/generate_comparison_table.py
+```
+
+Добавить метрики трекинга к уже сохранённому JSON (`--model-name` и `--weights` не нужны):
+
+```bash
+python3 scripts/bench_runner.py \
+  --merge-json results/runs/yolov8n_crowdhuman_2026-05-09T120000Z.json \
+  --tracking-json '{"mot17_seq":"MOT17-02","MOTA":0.68,"HOTA":0.52,"IDF1":0.61}'
+```
 
 ## Repo + Vast.ai
 

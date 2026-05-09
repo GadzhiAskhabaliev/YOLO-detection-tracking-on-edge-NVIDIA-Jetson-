@@ -1,7 +1,13 @@
 # Project: large datasets and build artifacts (typical Vast.ai mount: /workspace)
 data/
 models/
-results/
+# Ignore bulky artifacts under results/ but keep benchmark manifests / reports.
+results/*
+!results/benchmark_summary.md
+!results/model_comparison.md
+!results/runs/
+!results/runs/.gitkeep
+!results/runs/*.json
 *.pt
 *.onnx
 *.engine
