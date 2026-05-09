@@ -39,17 +39,22 @@ def parse_args():
 
 
 def image_key_and_path(raw: dict, images_dir: Path) -> tuple[str, Path] | None:
+    """CrowdHuman IDs look like '273271,deadbeef.jpg' — basename MUST keep the numeric prefix."""
     ref = raw.get("ID") or raw.get("img_path") or raw.get("name")
     if not ref:
         return None
-    if isinstance(ref, str) and "," in ref:
-        ref = ref.split(",")[-1].strip()
-    fname = Path(ref).name
+    ref_str = str(ref).strip().replace("\\", "/")
+    fname = Path(ref_str).name
     stem = Path(fname).stem
     img_path = images_dir / fname
-    if not img_path.is_file():
-        return None
-    return stem, img_path
+    if img_path.is_file():
+        return stem, img_path
+    # Rare dumps use nested paths inside img_path; try basename-only anywhere (slow fallback).
+    matches = list(images_dir.glob(fname))
+    if len(matches) == 1:
+        p = matches[0]
+        return p.stem, p
+    return None
 
 
 def pick_box(gt: dict, priority: str) -> list[float] | None:
