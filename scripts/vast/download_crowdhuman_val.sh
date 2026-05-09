@@ -4,7 +4,7 @@ set -euo pipefail
 # Default DATA_ROOT: /workspace/data/crowdhuman
 # Override: DATA_ROOT=/path/to/crowdhuman bash scripts/vast/download_crowdhuman_val.sh
 
-DATA_ROOT="${DATA_ROOT:-/workspace/data/crowdhuman}"
+DATA_ROOT="${CROWDHUMAN_ROOT:-${DATA_ROOT:-/workspace/data/crowdhuman}}"
 ZIP_URL="https://huggingface.co/datasets/sshao0516/CrowdHuman/resolve/main/CrowdHuman_val.zip"
 ODGT_URL="https://huggingface.co/datasets/sshao0516/CrowdHuman/resolve/main/annotation_val.odgt"
 

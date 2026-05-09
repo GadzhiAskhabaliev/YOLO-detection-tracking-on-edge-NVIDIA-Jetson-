@@ -8,7 +8,7 @@ set -euo pipefail
 # Override destination:
 #   DATA_ROOT=/mnt/data/mot17 bash scripts/vast/download_mot17.sh
 
-DATA_ROOT="${DATA_ROOT:-/workspace/data/mot17}"
+DATA_ROOT="${MOT17_ROOT:-${DATA_ROOT:-/workspace/data/mot17}}"
 
 mkdir -p "${DATA_ROOT}"
 

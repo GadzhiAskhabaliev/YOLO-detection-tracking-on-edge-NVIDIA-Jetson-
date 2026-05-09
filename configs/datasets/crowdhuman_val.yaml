@@ -1,0 +1,10 @@
+# CrowdHuman val in Ultralytics layout (after scripts/vast/prepare_crowdhuman_yolo_layout.sh).
+# Default paths target Vast /workspace — edit `path` if your tree differs.
+
+path: /workspace/data/crowdhuman/yolo
+train: images/val
+val: images/val
+
+nc: 1
+names:
+  0: person
