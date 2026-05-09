@@ -21,6 +21,16 @@ FREEYOLO_VARIANT="${FREEYOLO_VARIANT:-yolo_free_nano}"
 WEIGHT_URL="${FREEYOLO_WEIGHT_URL:-https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_ch.pth}"
 WEIGHT_PATH="${FREEYOLO_WEIGHT_PATH:-${MODEL_DIR}/yolo_free_nano_ch.pth}"
 
+# Имя в JSON/README: nano по умолчанию как раньше; иначе freeyolo_ch_<tiny|large|...>
+if [[ -z "${FREEYOLO_BENCH_MODEL:-}" ]]; then
+  if [[ "${FREEYOLO_VARIANT}" == "yolo_free_nano" ]]; then
+    FREEYOLO_BENCH_MODEL="freeyolo_yolox_mot17"
+  else
+    FREEYOLO_BENCH_MODEL="freeyolo_ch_${FREEYOLO_VARIANT#yolo_free_}"
+  fi
+fi
+FREEYOLO_DETECTOR_LABEL="${FREEYOLO_DETECTOR_LABEL:-FreeYOLO ${FREEYOLO_VARIANT} CrowdHuman}"
+
 mkdir -p "${GROUP_B_ROOT}" "${MODEL_DIR}"
 
 if [[ ! -d "${FREEYOLO_HOME}/.git" ]]; then
@@ -96,6 +106,8 @@ fi
   --weights "${WEIGHT_PATH}" \
   --variant "${FREEYOLO_VARIANT}" \
   --weights-uri "${WEIGHT_URL}" \
+  --model-name "${FREEYOLO_BENCH_MODEL}" \
+  --detector-label "${FREEYOLO_DETECTOR_LABEL}" \
   --wall-seconds "${WALL}" \
   --num-images "${NIMG}"
 

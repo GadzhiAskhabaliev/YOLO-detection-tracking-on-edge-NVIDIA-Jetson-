@@ -32,6 +32,12 @@ def main() -> None:
     p.add_argument("--weights-uri", default="https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_ch.pth")
     p.add_argument("--wall-seconds", type=float, default=None)
     p.add_argument("--num-images", type=int, default=None)
+    p.add_argument(
+        "--model-name",
+        default="freeyolo_yolox_mot17",
+        help="Имя строки в results/runs и README (разные варианты — разные имена)",
+    )
+    p.add_argument("--detector-label", default="", help="Подпись для отчётов (опционально)")
     args = p.parse_args()
 
     text = args.eval_log.read_text(encoding="utf-8", errors="replace")
@@ -43,15 +49,16 @@ def main() -> None:
     if args.wall_seconds and args.num_images and args.wall_seconds > 0:
         fps_infer = round(args.num_images / args.wall_seconds, 4)
 
+    label = args.detector_label.strip() or f"FreeYOLO {args.variant} CrowdHuman"
     payload = default_payload(
-        model_name="freeyolo_yolox_mot17",
+        model_name=args.model_name.strip(),
         weights_path=args.weights.resolve(),
         weights_hub=args.weights_uri,
         batch_size=1,
         imgsz=640,
         group="B",
         detector_id=7,
-        detector_label="FreeYOLO (CrowdHuman ckpt)",
+        detector_label=label,
     )
     payload["metrics"]["mAP50"] = round(ap50, 6)
     if ap5095 is not None:
@@ -61,8 +68,8 @@ def main() -> None:
         payload["metrics"]["eval_wall_seconds"] = round(args.wall_seconds, 3)
         payload["metrics"]["eval_images"] = args.num_images
     payload["notes"].append(
-        f"FreeYOLO eval.py -d crowdhuman, variant={args.variant}. "
-        "Веса — CrowdHuman (nano); официальные MOT17 релизы в README часто пустые — слот группы B сохранён как freeyolo_yolox_mot17."
+        f"FreeYOLO eval.py -d crowdhuman, variant={args.variant}, bench model={args.model_name}. "
+        "Веса — сплит CrowdHuman; имя freeyolo_yolox_mot17 — исторический слот группы B для nano."
     )
 
     out = save_result(payload)

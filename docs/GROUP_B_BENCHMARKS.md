@@ -26,6 +26,19 @@ bash scripts/run_group_b_benchmarks.sh
 Отключить всё кроме YOLOv8: `GROUP_B_EXTRA_MODELS=0 bash scripts/run_group_b_benchmarks.sh`  
 Отключить только FreeYOLO: `GROUP_B_FREEYOLO=0 bash scripts/group_b/run_remaining_models.sh`
 
+#### Другой размер FreeYOLO на том же CrowdHuman val (tiny / large / …)
+
+Пример **Tiny** (отдельный `.pt`, отдельная строка в таблице `freeyolo_ch_tiny`):
+
+```bash
+FREEYOLO_VARIANT=yolo_free_tiny \
+FREEYOLO_WEIGHT_URL=https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_tiny_ch.pth \
+FREEYOLO_WEIGHT_PATH="${MODEL_DIR:-/workspace/models}/yolo_free_tiny_ch.pth" \
+bash scripts/group_b/run_freeyolo_crowdhuman.sh
+```
+
+**Large:** `-v yolo_free_large`, файл `yolo_free_large_ch.pth` (URL в README FreeYOLO releases).
+
 ### Только YOLOv8 (как раньше)
 
 Через `scripts/bench_runner.py` — см. корневой `README.md`; для группы B используйте `--group B --detector-id 6`.
