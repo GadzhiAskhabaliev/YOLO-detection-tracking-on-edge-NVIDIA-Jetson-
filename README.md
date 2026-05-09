@@ -1,4 +1,4 @@
-# Pedestrian detection and tracking on edge hardware
+# Pedestrian detection and tracking on edge hardware(YOLO models)
 
 This repository supports **quantitative comparison** of pedestrian detectors aimed ultimately at **NVIDIA Jetson-class edge deployment**. Benchmarks are run primarily on cloud GPUs (e.g. Vast.ai); throughput and energy targets remain board-local measurements elsewhere.
 
