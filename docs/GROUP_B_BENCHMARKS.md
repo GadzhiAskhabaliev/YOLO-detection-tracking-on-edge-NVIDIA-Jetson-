@@ -46,6 +46,14 @@ python3 scripts/bench_runner.py \
 
 Либо сохраните свой JSON-патч и передайте его как `--patch-json` (поля `group`, `detector_id`, `detector_label` и при необходимости `metrics`, `notes`).
 
+### FreeYOLO и PyTorch 2.6+
+
+Если `eval.py` падает с `WeightsUnpickler error` / `weights_only`, после `git pull` скрипт `run_freeyolo_crowdhuman.sh` сам патчит `FreeYOLO/utils/misc.py`. На уже склонированном дереве без обновления репо:
+
+```bash
+python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home /workspace/group_b/FreeYOLO
+```
+
 ## Визуализация группы B
 
 После появления JSON в `results/runs/`:

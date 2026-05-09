@@ -28,6 +28,9 @@ if [[ ! -d "${FREEYOLO_HOME}/.git" ]]; then
   git clone --depth 1 https://github.com/yjh0410/FreeYOLO.git "${FREEYOLO_HOME}"
 fi
 
+echo "--- Патч FreeYOLO: torch.load(weights_only=False) для PyTorch 2.6+ ---"
+python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
+
 if [[ ! -f "${WEIGHT_PATH}" ]]; then
   echo "--- Скачивание весов FreeYOLO (CrowdHuman nano) ---"
   wget -O "${WEIGHT_PATH}.part" "${WEIGHT_URL}"
