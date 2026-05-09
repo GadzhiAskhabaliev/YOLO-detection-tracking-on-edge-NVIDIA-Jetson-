@@ -46,6 +46,15 @@ python3 scripts/bench_runner.py \
 
 Либо сохраните свой JSON-патч и передайте его как `--patch-json` (поля `group`, `detector_id`, `detector_label` и при необходимости `metrics`, `notes`).
 
+### FreeYOLO и NumPy 2.x
+
+Если `AttributeError: numpy has no attribute int` — в venv нужен **NumPy `<2`**. Скрипт `run_freeyolo_crowdhuman.sh` это принуждает; на старом venv переустановите вручную:
+
+```bash
+source /workspace/group_b/venv_freeyolo/bin/activate
+pip install "numpy>=1.23,<2" --force-reinstall --no-deps
+```
+
 ### FreeYOLO и PyTorch 2.6+
 
 Если `eval.py` падает с `WeightsUnpickler error` / `weights_only`, после `git pull` скрипт `run_freeyolo_crowdhuman.sh` сам патчит `FreeYOLO/utils/misc.py`. На уже склонированном дереве без обновления репо:

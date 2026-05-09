@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # FreeYOLO: eval на CrowdHuman val → JSON в results/runs/ (группа B, detector_id=7).
-# Использует отдельный venv с torch cu124; если eval.py падает на совместимости, попробуйте
-#   TORCH_INDEX_URL=https://download.pytorch.org/whl/cu118  и более старый torch вручную.
+# Использует отдельный venv с torch cu124. NumPy закреплён <2 (FreeYOLO использует np.int и др.).
+# При проблемах совместимости: TORCH_INDEX_URL=.../cu118 и т.д.
 #
 #   CROWDHUMAN_ROOT=/workspace/data/crowdhuman MODEL_DIR=/workspace/models \\
 #     bash scripts/group_b/run_freeyolo_crowdhuman.sh
@@ -44,8 +44,11 @@ fi
 # shellcheck disable=SC1090
 source "${VENV}/bin/activate"
 pip install -q --upgrade pip wheel
+pip install -q "numpy>=1.23,<2"
 pip install -q torch torchvision --index-url "${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu124}"
-pip install -q opencv-python scipy matplotlib numpy pycocotools loguru thop Pillow
+pip install -q opencv-python scipy matplotlib pycocotools loguru thop Pillow
+# зависимости выше могут подтянуть numpy 2.x — вернуть <2 для FreeYOLO
+pip install -q "numpy>=1.23,<2" --force-reinstall --no-deps
 
 echo "--- Подготовка CrowdHuman для FreeYOLO ---"
 FREEYOLO_CH_BRIDGE="${BRIDGE}" CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT}" \
