@@ -53,6 +53,8 @@ After each `bench_runner.py` save/merge, the block below updates automatically.
 | freeyolo | freeyolo_ch_tiny | 0.7166 | 0.3564 | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
 | freeyolo | freeyolo_yolox_mot17 | 0.6822 | 0.3204 | 57.935 | 23.988 |  | no | 2026-05-09T14:47:53Z |
 | ultralytics_yolo | yolov8n_crowdhuman | 0.5703 | 0.2716 | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |
+| mmdet | fcos_r50_crowdhuman | 0.3284 | 0.144 |  |  |  | no | 2026-05-11T00:00:00Z |
+| mmdet | ssd300_crowdhuman | 0.2874 | 0.0965 |  |  |  | no | 2026-05-11T00:00:00Z |
 
 <!-- TABLE_END -->
 
