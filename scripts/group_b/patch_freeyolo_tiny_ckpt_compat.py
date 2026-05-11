@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """
-Align FreeYOLO `yolo_free_tiny` config with the **official** GitHub
-`yolo_free_tiny_ch.pth` (~49.5 MB): upstream uses `fpn_depthwise: False` and
-`head_depthwise: False` (reg head convs are [64, 64, 3, 3], not depthwise [64, 1, 3, 3]).
+Reset `yolo_free_tiny` config flags mistaken for a wrong checkpoint file.
 
-An earlier bench revision flipped both to True after a **wrong** download: the
-nano checkpoint (~16.2 MB) was saved as `yolo_free_tiny_ch.pth`, which confused
-diagnostics. If your FreeYOLO config was patched that way, this script **reverts**
-`fpn_depthwise` and `head_depthwise` to **False** inside the `yolo_free_tiny` block.
+Official `yolo_free_tiny_ch.pth` (~49.5 MiB) matches upstream `fpn_depthwise: False`
+and `head_depthwise: False`. If those were set to True in `yolo_free_config.py`,
+this script sets them back to False inside the `yolo_free_tiny` block only.
 
   python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home /path/to/FreeYOLO
 """

@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
 """
-Evaluate detection quality from a fixed split: **GT** (COCO instances JSON) + **DT** (predictions).
+Evaluate bbox detection: COCO-instances **GT** JSON + list of **DT** dicts.
 
-Consistency (not “must be MS COCO train2017”):
-  • **One split** — e.g. CrowdHuman **val**: one GT file lists all images and annotations.
-  • **Predictions** must reference **`image_id`** values present in GT (`images[].id`).
-  • GT uses **COCO instances** as a convenient container for pycocotools.
+GT is any single split (e.g. CrowdHuman val) with `images[].id`. DT rows must use
+those `image_id` values. Each DT dict: `image_id`, `category_id`, `bbox` [x,y,w,h]
+pixels xywh, `score`.
 
-DT format — list of dicts (or a dict with key `"annotations"`):
-  {"image_id": int, "category_id": int, "bbox": [x, y, w, h], "score": float}
-  bbox in pixels, xywh, COCO-style.
+Outputs: mAP50, mAP50-95, recall (COCO AR maxDets=100, IoU 0.50:0.95). No FPS.
 
-Outputs: mAP50, mAP50-95, recall (= COCO AR maxDets=100). Does **not** compute FPS.
-
-Example:
-  python3 scripts/eval_coco_predictions.py \\
-    --gt-json .../CrowdHuman/annotations/val.json \\
-    --dt-json .../my_model_val_predictions.json
+  python3 scripts/eval_coco_predictions.py --gt-json .../val.json --dt-json .../dt.json
 """
 from __future__ import annotations
 

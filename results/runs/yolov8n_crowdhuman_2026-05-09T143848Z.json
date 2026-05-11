@@ -3,6 +3,7 @@
   "weights": "/workspace/models/yolov8n_crowdhuman.pt",
   "weights_hub": "yakhyo/yolov8-crowdhuman",
   "date": "2026-05-09T14:37:40Z",
+  "date_updated": "2026-05-11T14:16:00Z",
   "hardware": "NVIDIA GeForce RTX 4090",
   "batch_size": 1,
   "imgsz": 640,
@@ -11,10 +12,9 @@
     "forward_time_ms_mean": 8.5202,
     "fps_predict": 127.104,
     "inference_time_ms_predict": 7.8676,
-    "mAP50": 0.74707,
-    "mAP50-95": 0.464225,
-    "precision": 0.811255,
-    "recall": 0.650122,
+    "mAP50": 0.570286,
+    "mAP50-95": 0.271584,
+    "recall": 0.402259,
     "inference_time_ms": 6.9666
   },
   "tracking": {},
@@ -22,7 +22,13 @@
     "engine_exists": false,
     "fps_fp16": null
   },
-  "notes": [],
+  "notes": [
+    "mAP50 / mAP50-95 / recall: scripts/eval_coco_predictions.py (pycocotools COCOeval bbox) on DT from scripts/dump_ultralytics_coco_dt.py; CrowdHuman val GT aligned with FreeYOLO bridge val.json; conf=0.001, imgsz=640, NMS iou=0.7, max_det=300. recall = COCO AR maxDets=100 IoU=0.50:0.95 (see docs/benchmark_metrics_schema.md).",
+    "Log: results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log",
+    "fps_forward / fps_predict / inference_time_ms: from bench_runner Ultralytics microbench (2026-05-09); not recomputed in unified quality run.",
+    "Prior model.val() mAP/recall/precision removed from metrics to avoid mixing protocols; compare README historical row only with that caveat.",
+    "MOT17 train FRCNN (separate split): eval_coco_predictions.py on dump_ultralytics_mot17.py DT; mAP50=0.647584, mAP50-95=0.334005, recall=0.427085 (AR maxDets=100). Not merged into metrics{} — CrowdHuman val remains canonical there; see docs/benchmark_group_b_unified_two_domains.md + results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log."
+  ],
   "group": "B",
   "detector_id": 6,
   "detector_label": "YOLOv8n-CrowdHuman",

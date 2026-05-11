@@ -1,6 +1,12 @@
 # Group B — unified detection metrics (CrowdHuman val + MOT17 train)
 
-Single reference for **cross-dataset** rows when quality is computed with **`scripts/eval_coco_predictions.py`** (pycocotools `COCOeval`, bbox IoU, same DT list shape). **FPS** always comes from the existing `results/runs/*.json` microbenches unless you re-measure and merge.
+**This repo:** scripts under `scripts/`, GT builders (`mot17_gt_to_coco.py`), dumpers
+(`dump_ultralytics_*.py`, `dump_freeyolo_mot17.py`), and **`eval_coco_predictions.py`**
+(pycocotools `COCOeval`, bbox IoU). **Elsewhere:** Ultralytics (pip), FreeYOLO
+([yjh0410/FreeYOLO](https://github.com/yjh0410/FreeYOLO) clone + venv on the GPU host),
+CrowdDet / MMDet workflows in other repos (see `docs/group_b_remote_mmdet_bridge.md`).
+
+**FPS** in the tables below always comes from `results/runs/*.json` microbenches unless you re-bench and merge.
 
 Detailed CrowdHuman-only doc (repro, merge): [`benchmark_unified_cocoeval.md`](benchmark_unified_cocoeval.md).
 
@@ -22,7 +28,7 @@ GT: [`scripts/mot17_gt_to_coco.py`](../scripts/mot17_gt_to_coco.py) → one COCO
 
 | Backend | Model | mAP50 | mAP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
 |---------|-------|-------|----------|---------------------------|-------------|-------------|--------|
-| ultralytics_yolo | yolov8n_crowdhuman | 0.647584 | 0.334005 | 0.427085 | 117.368 | 127.104 | Dump → eval on instance; log [`yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log`](../results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log) (IDE buffer had no full `summarize()` block) |
+| ultralytics_yolo | yolov8n_crowdhuman | 0.647584 | 0.334005 | 0.427085 | 117.368 | 127.104 | [`yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log`](../results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log) |
 | freeyolo | freeyolo_ch_tiny | 0.649053 | 0.321077 | 0.406507 | 93.256 | 34.588 | [`run_freeyolo_mot17_unified_eval.sh`](../scripts/group_b/run_freeyolo_mot17_unified_eval.sh); log [`freeyolo_tiny_mot17_train_unified_20260511T144123Z.log`](../results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log) |
 | freeyolo | freeyolo_yolox_mot17 | 0.63572 | 0.316118 | 0.409424 | 57.935 | 23.988 | [`run_freeyolo_mot17_unified_eval.sh`](../scripts/group_b/run_freeyolo_mot17_unified_eval.sh); log [`freeyolo_nano_mot17_train_unified_20260511T144951Z.log`](../results/logs/freeyolo_nano_mot17_train_unified_20260511T144951Z.log) |
 
@@ -49,13 +55,7 @@ python3 scripts/eval_coco_predictions.py \
   --out-metrics-json /tmp/yolov8_mot17_unified_metrics.json
 ```
 
-**Full log (YOLOv8):** wrap dump + eval in `{ ...; } 2>&1 | tee ~/yolov8_mot17_full.log` or re-run eval only:
-
-```bash
-python3 scripts/eval_coco_predictions.py ... 2>&1 | tee ~/yolov8_mot17_eval_full.log
-```
-
-**FreeYOLO MOT17 (dump + eval, one tee’d log)** — use FreeYOLO venv; clone/patches/weights same idea as [`run_freeyolo_crowdhuman.sh`](../scripts/group_b/run_freeyolo_crowdhuman.sh):
+**FreeYOLO MOT17** — FreeYOLO venv on the host; clone + patches + weights as in [`run_freeyolo_crowdhuman.sh`](../scripts/group_b/run_freeyolo_crowdhuman.sh):
 
 ```bash
 export MOT17_ROOT=/root/data/mot17
@@ -82,13 +82,6 @@ bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh
 **Logs in this repo (full tee):** FreeYOLO tiny — [`freeyolo_tiny_mot17_train_unified_20260511T144123Z.log`](../results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log); FreeYOLO nano — [`freeyolo_nano_mot17_train_unified_20260511T144951Z.log`](../results/logs/freeyolo_nano_mot17_train_unified_20260511T144951Z.log).
 
 Inference matches **CrowdHumanEvaluator** rescale (`bboxes * max(orig_h, orig_w)`). Defaults: `conf_thresh=0.005`, `nms_thresh=0.6`, `topk=1000`, `img_size=640`.
-
----
-
-## Outstanding (next steps)
-
-1. All three MOT17 unified rows filled (2026-05-11); FreeYOLO logs are full tee under `results/logs/`.
-2. Keep **FPS** from CrowdHuman microbenches for table readability, or re-bench on MOT17-sized loops and document in `notes`.
 
 ---
 

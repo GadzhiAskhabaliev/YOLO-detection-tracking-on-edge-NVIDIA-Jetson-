@@ -1,24 +1,10 @@
 #!/usr/bin/env python3
 """
-Run FreeYOLO on MOT17 train frames (same COCO GT as dump_ultralytics_mot17.py) and write:
+Dump FreeYOLO boxes on MOT17 train: COCO DT JSON for eval_coco_predictions.py, plus
+optional MOT `det.txt` trees under --mot-det-root (same layout as dump_ultralytics_mot17.py).
 
-1. COCO detection list for scripts/eval_coco_predictions.py
-2. Optional MOT det.txt trees under --mot-det-root (same layout as dump_ultralytics_mot17.py)
-
-**Run with the FreeYOLO venv Python** (torch + FreeYOLO imports), e.g.:
-
-  FREEYOLO_HOME=/path/to/FreeYOLO \\
-  /path/to/venv_freeyolo/bin/python scripts/group_b/dump_freeyolo_mot17.py \\
-    --freeyolo-home "$FREEYOLO_HOME" \\
-    --variant yolo_free_tiny \\
-    --weights /path/to/yolo_free_tiny_ch.pth \\
-    --gt-json "$MOT17_ROOT/annotations/mot17_train_frcnn_gt.json" \\
-    --mot17-train-root "$MOT17_ROOT/MOT17/train" \\
-    --out-coco-dt-json /tmp/freeyolo_tiny_mot17_train_dt.json \\
-    --mot-det-root "$MOT17_ROOT/detections/freeyolo_tiny_mot17_train"
-
-Inference rescaling matches evaluator/crowdhuman_evaluator.py: model outputs normalized
-boxes, then multiply by max(orig_h, orig_w).
+Use the FreeYOLO venv interpreter (imports torch + FreeYOLO). Boxes are rescaled like
+upstream CrowdHumanEvaluator: normalized coords times max(orig_h, orig_w).
 """
 from __future__ import annotations
 

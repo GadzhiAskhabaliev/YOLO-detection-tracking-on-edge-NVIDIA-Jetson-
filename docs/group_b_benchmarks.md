@@ -2,11 +2,14 @@
 
 Model manifest: [`group_b_pedestrian_detectors.yaml`](group_b_pedestrian_detectors.yaml). Metric contract: [`benchmark_metrics_schema.md`](benchmark_metrics_schema.md).
 
+Unified CrowdHuman val (pycocotools mAP / AR): [`benchmark_unified_cocoeval.md`](benchmark_unified_cocoeval.md).  
+CrowdHuman + MOT17: [`benchmark_group_b_unified_two_domains.md`](benchmark_group_b_unified_two_domains.md).
+
 ## Where artifacts go
 
 - **`results/runs/*.json`** → **`results/benchmark_summary.md`** and the README table (`bench_runner`).
-- FreeYOLO **`eval.py`** logs: **`results/logs/freeyolo_<variant>_<UTC>.log`** (optional git commit).
-- Optional full transcript: `bash scripts/run_group_b_benchmarks.sh 2>&1 | tee results/logs/group_b_run_<UTC>.log`
+- Optional transcripts: `results/logs/*.log` (unified eval tees, `run_freeyolo_mot17_unified_eval.sh`, etc.; see two-domains doc).
+- Full shell transcript: `bash scripts/run_group_b_benchmarks.sh 2>&1 | tee results/logs/group_b_run_<UTC>.log`
 
 ## Automated runs from this repository
 

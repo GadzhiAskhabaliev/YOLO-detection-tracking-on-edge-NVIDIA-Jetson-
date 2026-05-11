@@ -1,0 +1,25 @@
+# YOLOv8n-CrowdHuman — MOT17 train FRCNN (eval_coco_predictions.py)
+# 2026-05-11 — tmux session [mot17] on cloud instance. Full pycocotools summarize() not in IDE terminal buffer.
+
+[dump_ultralytics_mot17.py — prior step on same machine]
+{
+  "coco_dt": "/tmp/yolov8_mot17_train_dt.json",
+  "detections": 1235937,
+  "mot_sequences": 7,
+  "mot_det_root": "/root/data/mot17/detections/yolov8n_ch_mot17_train",
+  "missing_images": 0
+}
+
+GT: mot17_gt_to_coco.py — 5316 images, 112297 annotations (FRCNN train split).
+
+[eval_coco_predictions.py — stderr tail from host]
+(recall here = COCO AR maxDets=100 IoU=0.50:0.95; see docs/benchmark_metrics_schema.md)
+Wrote /tmp/yolov8_mot17_unified_metrics.json
+Wrote /tmp/yolov8_mot17_unified_patch.json
+
+[metrics JSON]
+{
+  "mAP50": 0.647584,
+  "mAP50-95": 0.334005,
+  "recall": 0.427085
+}
