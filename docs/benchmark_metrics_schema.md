@@ -63,7 +63,7 @@ To avoid framework-specific val quirks, dump boxes as a **COCO-style detection l
 
 (`bbox` is xywh in pixels.)
 
-Use one **GT** file (`val.json`, COCO instances) for all models. **`scripts/eval_coco_predictions.py`** computes **`mAP50`**, **`mAP50-95`**, and **`recall`** (= COCO AR, maxDets=100) via **pycocotools**. **`--strict`** fails if DT references unknown `image_id`.
+Use one **GT** file (`val.json`, COCO instances) for all models. **`scripts/eval_coco_predictions.py`** computes **`mAP50`**, **`mAP50-95`**, and **`recall`** (= COCO AR, maxDets=100) via **pycocotools**. It also writes **`precision`**: greedy **TP/(TP+FP)** after matching detections to GT at **IoU ≥ `--precision-iou-thr`** (default 0.5), same **`category_id`**, one-to-one per image, using only boxes with **score ≥ `--precision-score-thr`** (default 0.5). That scalar is **not** the same as AP; record both when reporting. **`--strict`** fails if DT references unknown `image_id`.
 
 ```bash
 python3 scripts/eval_coco_predictions.py \

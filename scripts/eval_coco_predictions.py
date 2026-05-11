@@ -6,7 +6,8 @@ GT is any single split (e.g. CrowdHuman val) with `images[].id`. DT rows must us
 those `image_id` values. Each DT dict: `image_id`, `category_id`, `bbox` [x,y,w,h]
 pixels xywh, `score`.
 
-Outputs: mAP50, mAP50-95, recall (COCO AR maxDets=100, IoU 0.50:0.95). No FPS.
+Outputs: mAP50, mAP50-95, recall (COCO AR maxDets=100, IoU 0.50:0.95), precision
+(greedy TP/(TP+FP) at fixed score / IoU thresholds; see --precision-score-thr). No FPS.
 
   python3 scripts/eval_coco_predictions.py --gt-json .../val.json --dt-json .../dt.json
 """
@@ -15,8 +16,88 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
+
+
+def _xywh_to_xyxy(b: list[float] | tuple[float, ...]) -> tuple[float, float, float, float]:
+    x, y, w, h = (float(b[0]), float(b[1]), float(b[2]), float(b[3]))
+    return x, y, x + w, y + h
+
+
+def _iou_xyxy(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> float:
+    ax1, ay1, ax2, ay2 = a
+    bx1, by1, bx2, by2 = b
+    ix1, iy1 = max(ax1, bx1), max(ay1, by1)
+    ix2, iy2 = min(ax2, bx2), min(ay2, by2)
+    iw, ih = max(0.0, ix2 - ix1), max(0.0, iy2 - iy1)
+    inter = iw * ih
+    if inter <= 0.0:
+        return 0.0
+    area_a = max(0.0, ax2 - ax1) * max(0.0, ay2 - ay1)
+    area_b = max(0.0, bx2 - bx1) * max(0.0, by2 - by1)
+    union = area_a + area_b - inter
+    return inter / union if union > 0.0 else 0.0
+
+
+def _greedy_precision(
+    coco_gt: Any,
+    raw_dt: list[dict[str, Any]],
+    *,
+    score_thr: float,
+    iou_thr: float,
+) -> float:
+    """
+    Global TP/(TP+FP): per image, sort DT by score desc, greedy match to GT (same
+    category_id) at IoU >= iou_thr; each GT matches at most one DT.
+    """
+    by_img: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for d in raw_dt:
+        if float(d["score"]) < score_thr:
+            continue
+        by_img[int(d["image_id"])].append(d)
+    for img_id in by_img:
+        by_img[img_id].sort(key=lambda x: float(x["score"]), reverse=True)
+
+    tp = 0
+    fp = 0
+    for img_id, dets in by_img.items():
+        ann_ids = coco_gt.getAnnIds(imgIds=[img_id])
+        anns = coco_gt.loadAnns(ann_ids)
+        gts: list[dict[str, Any]] = []
+        for a in anns:
+            if a.get("iscrowd", 0) == 1:
+                continue
+            gts.append(
+                {
+                    "bbox": a["bbox"],
+                    "cat": int(a["category_id"]),
+                    "xyxy": _xywh_to_xyxy(a["bbox"]),
+                }
+            )
+        matched = [False] * len(gts)
+
+        for det in dets:
+            dxy = _xywh_to_xyxy(det["bbox"])
+            dcat = int(det["category_id"])
+            best_j = -1
+            best_iou = 0.0
+            for j, g in enumerate(gts):
+                if matched[j] or g["cat"] != dcat:
+                    continue
+                iou = _iou_xyxy(dxy, g["xyxy"])
+                if iou > best_iou:
+                    best_iou = iou
+                    best_j = j
+            if best_j >= 0 and best_iou >= iou_thr:
+                matched[best_j] = True
+                tp += 1
+            else:
+                fp += 1
+
+    denom = tp + fp
+    return float(tp / denom) if denom > 0 else 0.0
 
 
 def _validate_entries(raw_dt: list[Any]) -> None:
@@ -61,7 +142,19 @@ def main() -> None:
         "--out-metrics-json",
         type=Path,
         default=None,
-        help="Write metrics object only (mAP50, mAP50-95, recall=AR)",
+        help="Write metrics object (mAP50, mAP50-95, recall=AR, precision)",
+    )
+    p.add_argument(
+        "--precision-score-thr",
+        type=float,
+        default=0.5,
+        help="Score threshold for greedy precision (default 0.5)",
+    )
+    p.add_argument(
+        "--precision-iou-thr",
+        type=float,
+        default=0.5,
+        help="IoU threshold for greedy match to GT (default 0.5)",
     )
     p.add_argument(
         "--out-patch-json",
@@ -128,15 +221,25 @@ def main() -> None:
     ap50 = float(stats[1])
     ar100 = float(stats[8])
 
+    prec = _greedy_precision(
+        coco_gt,
+        raw_dt,
+        score_thr=args.precision_score_thr,
+        iou_thr=args.precision_iou_thr,
+    )
+
     metrics: dict[str, Any] = {
         "mAP50": round(ap50, 6),
         "mAP50-95": round(ap5095, 6),
         "recall": round(ar100, 6),
+        "precision": round(prec, 6),
     }
 
     print(json.dumps(metrics, indent=2))
     print(
-        "\n(recall here = COCO AR maxDets=100 IoU=0.50:0.95; see docs/benchmark_metrics_schema.md)",
+        "\n(recall = COCO AR maxDets=100 IoU=0.50:0.95; "
+        f"precision = greedy TP/(TP+FP) at score>={args.precision_score_thr}, "
+        f"IoU>={args.precision_iou_thr} vs GT; see docs/benchmark_metrics_schema.md)",
         file=sys.stderr,
     )
 
@@ -150,7 +253,9 @@ def main() -> None:
             "metrics": metrics,
             "notes": [
                 "Quality: scripts/eval_coco_predictions.py — unified COCOeval bbox on "
-                "--gt-json and --dt-json; recall = COCO AR maxDets=100."
+                "--gt-json and --dt-json; recall = COCO AR maxDets=100; "
+                f"precision = greedy TP/(TP+FP), score>={args.precision_score_thr}, "
+                f"IoU>={args.precision_iou_thr}."
             ],
         }
         args.out_patch_json.parent.mkdir(parents=True, exist_ok=True)
