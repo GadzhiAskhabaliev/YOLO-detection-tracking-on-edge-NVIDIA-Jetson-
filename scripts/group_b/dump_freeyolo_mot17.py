@@ -70,12 +70,6 @@ def main() -> None:
         default=1,
         help="category_id in DT (single-class pedestrian → 1)",
     )
-    p.add_argument(
-        "--tiny-head-use-upstream-config",
-        action="store_true",
-        help="For yolo_free_tiny only: do not override fpn_depthwise/head_depthwise. "
-        "Release yolo_free_tiny_ch.pth expects both True (see patch_freeyolo_tiny_ckpt_compat.py).",
-    )
     args = p.parse_args()
 
     fy = args.freeyolo_home.expanduser().resolve()
@@ -124,11 +118,6 @@ def main() -> None:
     )
 
     cfg = copy.deepcopy(build_config(ns))
-    # Release yolo_free_tiny_ch.pth: depthwise FPN (BN channel order in Conv) + depthwise
-    # decoupled head. Upstream tiny sets both False → load_state_dict mismatches.
-    if args.variant == "yolo_free_tiny" and not args.tiny_head_use_upstream_config:
-        cfg["fpn_depthwise"] = True
-        cfg["head_depthwise"] = True
 
     model = build_model(args=ns, cfg=cfg, device=device, num_classes=1, trainable=False)
     model = load_weight(model=model, path_to_ckpt=str(wpath))

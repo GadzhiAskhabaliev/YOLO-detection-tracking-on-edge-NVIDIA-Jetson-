@@ -59,7 +59,7 @@ python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO
 echo "--- Patch FreeYOLO: np.int / np.float / np.bool → built-ins (NumPy 2.x) ---"
 python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
 
-echo "--- Patch FreeYOLO: yolo_free_tiny release weights vs upstream fpn/head depthwise ---"
+echo "--- Patch FreeYOLO: revert mistaken tiny depthwise=True (use official tiny_ch + upstream False/False) ---"
 python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
 
 if [[ ! -f "${WEIGHT_PATH}" ]]; then
