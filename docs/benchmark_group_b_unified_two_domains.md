@@ -23,7 +23,7 @@ GT: [`scripts/mot17_gt_to_coco.py`](../scripts/mot17_gt_to_coco.py) → one COCO
 | Backend | Model | mAP50 | mAP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
 |---------|-------|-------|----------|---------------------------|-------------|-------------|--------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.647584 | 0.334005 | 0.427085 | 117.368 | 127.104 | Dump → eval on instance; log [`yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log`](../results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log) (IDE buffer had no full `summarize()` block) |
-| freeyolo | freeyolo_ch_tiny | **TBD** | **TBD** | **TBD** | 93.256 | 34.588 | Run [`scripts/group_b/run_freeyolo_mot17_unified_eval.sh`](../scripts/group_b/run_freeyolo_mot17_unified_eval.sh) (full log under `results/logs/`); dump: [`dump_freeyolo_mot17.py`](../scripts/group_b/dump_freeyolo_mot17.py) |
+| freeyolo | freeyolo_ch_tiny | 0.649053 | 0.321077 | 0.406507 | 93.256 | 34.588 | [`run_freeyolo_mot17_unified_eval.sh`](../scripts/group_b/run_freeyolo_mot17_unified_eval.sh); full log on bench host: `results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log` |
 | freeyolo | freeyolo_yolox_mot17 | **TBD** | **TBD** | **TBD** | 57.935 | 23.988 | Same script with `FREEYOLO_VARIANT=yolo_free_nano` + nano weights |
 
 **YOLOv8 MOT17 repro** (weights = same `yolov8n_crowdhuman.pt` as CrowdHuman):
@@ -83,7 +83,7 @@ Inference matches **CrowdHumanEvaluator** rescale (`bboxes * max(orig_h, orig_w)
 
 ## Outstanding (next steps)
 
-1. Run **`run_freeyolo_mot17_unified_eval.sh`** for **tiny** and **nano**; paste metrics into the MOT17 table + commit new `results/logs/*.log`.
+1. Run **`run_freeyolo_mot17_unified_eval.sh`** for **nano** (`freeyolo_yolox_mot17`); tiny row filled 2026-05-11. Commit `results/logs/*.log` from the GPU host when convenient.
 2. Keep **FPS** from CrowdHuman microbenches for table readability, or re-bench on MOT17-sized loops and document in `notes`.
 
 ---
@@ -93,5 +93,5 @@ Inference matches **CrowdHumanEvaluator** rescale (`bboxes * max(orig_h, orig_w)
 | Bench slug | Typical checkpoint |
 |------------|-------------------|
 | `yolov8n_crowdhuman` | Ultralytics `yolov8n_crowdhuman.pt` |
-| `freeyolo_ch_tiny` | FreeYOLO `yolo_free_tiny` + `*_ch.pth` |
+| `freeyolo_ch_tiny` | FreeYOLO `yolo_free_tiny` + `yolo_free_tiny_ch.pth` (~49.5 MiB; **not** the ~16 MiB nano file) |
 | `freeyolo_yolox_mot17` | FreeYOLO `yolo_free_nano` (Group B label; MOT17-oriented weights) |
