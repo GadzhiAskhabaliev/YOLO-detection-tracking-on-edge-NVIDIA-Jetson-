@@ -82,6 +82,13 @@ def detect_hardware() -> str:
 
 def deep_merge(base: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
     for k, v in patch.items():
+        if k == "notes" and isinstance(v, list):
+            existing = base.get("notes")
+            if isinstance(existing, list):
+                existing.extend(v)
+            else:
+                base["notes"] = list(v)
+            continue
         if isinstance(v, dict) and isinstance(base.get(k), dict):
             deep_merge(base[k], v)
         else:
@@ -298,6 +305,43 @@ def _fmt_cell(v: Any) -> str:
     return str(v)
 
 
+def _append_unified_eval_bullets(parts: list[str], met: dict[str, Any]) -> None:
+    """Extra lines when metrics come from scripts/eval_coco_predictions.py."""
+    if "AP25" not in met and "coco_ar_iou25" not in met:
+        return
+    ap25 = met.get("AP25")
+    ap75 = met.get("AP75")
+    if ap25 is not None:
+        parts.append(f"- **AP25**: {_fmt_cell(ap25)}\n")
+    if ap75 is not None:
+        parts.append(f"- **AP75**: {_fmt_cell(ap75)}\n")
+    if met.get("recall") is not None:
+        parts.append(
+            f"- **COCO AR (recall, IoU=0.50:0.95, maxDets=100)**: {_fmt_cell(met.get('recall'))}\n"
+        )
+    for suf in ("25", "50", "75"):
+        k = f"coco_ar_iou{suf}"
+        if met.get(k) is not None:
+            parts.append(f"- **coco AR @IoU0.{suf}**: {_fmt_cell(met.get(k))}\n")
+    for suf in ("25", "50", "75"):
+        pr, rc, fd = (
+            met.get(f"precision_iou{suf}"),
+            met.get(f"recall_iou{suf}"),
+            met.get(f"fdr_iou{suf}"),
+        )
+        if pr is None and rc is None and fd is None:
+            continue
+        parts.append(
+            f"- **Greedy micro @IoU0.{suf}** (score≥thr in eval): "
+            f"P={_fmt_cell(pr)} R={_fmt_cell(rc)} FDR={_fmt_cell(fd)}\n"
+        )
+    if met.get("precision") is not None:
+        parts.append(
+            f"- **Greedy legacy** (`precision` / `fdr` @ `--precision-iou-thr`): "
+            f"{_fmt_cell(met.get('precision'))} / {_fmt_cell(met.get('fdr'))}\n"
+        )
+
+
 def update_readme_table() -> None:
     rows_data = _iter_run_json()
     models = _latest_per_model(rows_data)
@@ -309,8 +353,10 @@ def update_readme_table() -> None:
     models.sort(key=sort_key, reverse=True)
 
     lines = [
-        "| Backend | Model | AP50 | AP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |",
-        "|---------|-------|------|---------|---------------|---------------|------|----------|------|",
+        "| Backend | Model | AP25 | AP50 | AP75 | AP50-95 | AR_coco | grP50 | grR50 | grF50 | cAR50 | "
+        "FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |",
+        "|---------|-------|------|------|------|---------|---------|-------|-------|-------|-------|"
+        "---------------|---------------|------|----------|------|",
     ]
     for d in models:
         met = d.get("metrics") or {}
@@ -326,8 +372,15 @@ def update_readme_table() -> None:
                 [
                     run_backend_label(d),
                     str(d.get("model", "")),
+                    _fmt_cell(met.get("AP25")),
                     _fmt_cell(metric_ap50(met)),
+                    _fmt_cell(met.get("AP75")),
                     _fmt_cell(metric_ap5095(met)),
+                    _fmt_cell(met.get("recall")),
+                    _fmt_cell(met.get("precision_iou50")),
+                    _fmt_cell(met.get("recall_iou50")),
+                    _fmt_cell(met.get("fdr_iou50")),
+                    _fmt_cell(met.get("coco_ar_iou50")),
                     _fmt_cell(met.get("fps_forward")),
                     _fmt_cell(met.get("fps_predict")),
                     _fmt_cell(mota) if mota is not None else "",
@@ -387,17 +440,25 @@ def generate_benchmark_summary_md() -> None:
         if bk:
             parts.append(f"- **Backend**: `{bk}`\n")
         parts.append(f"- **AP50**: {_fmt_cell(metric_ap50(met))}\n")
+        _append_unified_eval_bullets(parts, met)
         parts.append(f"- **FPS forward**: {_fmt_cell(met.get('fps_forward'))}\n")
         parts.append(f"- **FPS predict**: {_fmt_cell(met.get('fps_predict'))}\n")
         if notes:
             parts.append(f"- **Notes**: {'; '.join(str(n) for n in notes)}\n")
 
     parts.append("\n---\n\n## Summary table (all runs)\n\n")
+    parts.append(
+        "Legend: **AR_coco** = `metrics.recall` (COCO AR maxDets=100, IoU 0.50:0.95). "
+        "**grP50/grR50/grF50** = greedy micro P/R/FDR at IoU 0.50 (`precision_iou50` / "
+        "`recall_iou50` / `fdr_iou50`), score threshold as in eval notes. "
+        "**cAR50** = `coco_ar_iou50` (COCO AR @ IoU 0.50). Extra columns are blank if the run "
+        "JSON predates unified eval.\n\n"
+    )
     hdr = (
-        "| Backend | Model | Date | AP50 | AP50-95 | Precision | Recall | "
+        "| Backend | Model | Date | AP25 | AP50 | AP75 | AP50-95 | AR_coco | grP50 | grR50 | grF50 | cAR50 | "
         "Infer (ms) | FPS fwd | FPS pred | MOTA | TRT |\n"
     )
-    sep = "|---------|--------|------|-------|----------|-----------|--------|"
+    sep = "|---------|--------|------|------|------|------|---------|---------|-------|-------|-------|-------|"
     sep += "------------|---------|----------|------|-----|\n"
     parts.append(hdr + sep)
 
@@ -413,10 +474,15 @@ def generate_benchmark_summary_md() -> None:
                     run_backend_label(data),
                     str(data.get("model", "")),
                     str(data.get("date", "")),
+                    _fmt_cell(met.get("AP25")),
                     _fmt_cell(metric_ap50(met)),
+                    _fmt_cell(met.get("AP75")),
                     _fmt_cell(metric_ap5095(met)),
-                    _fmt_cell(met.get("precision")),
                     _fmt_cell(met.get("recall")),
+                    _fmt_cell(met.get("precision_iou50")),
+                    _fmt_cell(met.get("recall_iou50")),
+                    _fmt_cell(met.get("fdr_iou50")),
+                    _fmt_cell(met.get("coco_ar_iou50")),
                     _fmt_cell(met.get("inference_time_ms")),
                     _fmt_cell(met.get("fps_forward")),
                     _fmt_cell(met.get("fps_predict")),

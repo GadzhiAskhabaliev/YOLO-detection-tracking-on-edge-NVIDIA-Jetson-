@@ -23,9 +23,14 @@ All detectors tracked here belong to **Group B** — crowded-scene pedestrian mo
 |----------------------|-----------------------------------|
 | `bench_runner.py`, `eval_coco_predictions.py`, dump scripts, `scripts/vast/*`, Group B shell drivers | Ultralytics install, CUDA wheels, datasets under `data/`, weights under `models/` ([`.gitignore`](.gitignore)) |
 | CrowdHuman val YAML, MOT17→COCO GT scripts, unified metric docs | FreeYOLO **upstream tree** cloned on the GPU box (`FREEYOLO_HOME`), its venv, `eval.py` for CrowdHuman-native runs |
-| `results/runs/*.json`, committed `results/logs/*.log` transcripts | CrowdDet / MMDet export pipelines (e.g. [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect) per `docs/group_b_remote_mmdet_bridge.md`) |
+| `results/runs/*.json`, committed `results/logs/*.log` transcripts | CrowdDet / MMDet export pipelines (e.g. [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect)) |
 
-Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`scripts/eval_coco_predictions.py`** once each stack emits a COCO-style DT list ([`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)). **FPS** is defined per backend in each run’s `notes` (`fps_forward` vs `fps_predict`).
+Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`scripts/eval_coco_predictions.py`** once each stack emits a COCO-style DT list. **FPS** is defined per backend in each run’s `notes` (`fps_forward` vs `fps_predict`).
+
+## Canonical docs
+
+- Main unified table (all models, logs, detailed artifacts): [`docs/crowdhuman_val_full_metrics_table.md`](docs/crowdhuman_val_full_metrics_table.md)
+- Metric definitions and benchmark logic: [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)
 
 ## Layout
 
@@ -34,10 +39,8 @@ Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`
 | [`scripts/vast/`](scripts/vast/) | Cloud bootstrap, datasets, CrowdHuman→YOLO layout |
 | [`configs/datasets/`](configs/datasets/) | Ultralytics dataset YAML (CrowdHuman val) |
 | [`docs/group_b_pedestrian_detectors.yaml`](docs/group_b_pedestrian_detectors.yaml) | Canonical detector list & URLs |
-| [`docs/group_b_benchmarks.md`](docs/group_b_benchmarks.md) | Operational notes for Group B runs |
 | [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md) | JSON schema & metric definitions |
-| [`docs/benchmark_unified_cocoeval.md`](docs/benchmark_unified_cocoeval.md) | CrowdHuman val, single `COCOeval` path |
-| [`docs/benchmark_group_b_unified_two_domains.md`](docs/benchmark_group_b_unified_two_domains.md) | CrowdHuman val + MOT17 train (same evaluator) |
+| [`docs/crowdhuman_val_full_metrics_table.md`](docs/crowdhuman_val_full_metrics_table.md) | Unified benchmark table (all models + links to logs/artifacts) |
 | [`results/runs/`](results/runs/) | One JSON file per benchmark run |
 | [`scripts/bench_runner.py`](scripts/bench_runner.py) | Orchestration + README / summary refresh |
 | [`scripts/eval_coco_predictions.py`](scripts/eval_coco_predictions.py) | Unified COCOeval on dumped predictions |
@@ -48,21 +51,20 @@ After each `bench_runner.py` save/merge, the block below updates automatically.
 
 <!-- TABLE_START -->
 
-| Backend | Model | AP50 | AP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
-|---------|-------|------|---------|---------------|---------------|------|----------|------|
-| freeyolo | freeyolo_ch_tiny | 0.7166 | 0.3564 | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
-| freeyolo | freeyolo_yolox_mot17 | 0.6822 | 0.3204 | 57.935 | 23.988 |  | no | 2026-05-09T14:47:53Z |
-| ultralytics_yolo | yolov8n_crowdhuman | 0.5703 | 0.2716 | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |
-| mmdet | fcos_r50_crowdhuman | 0.3284 | 0.144 |  |  |  | no | 2026-05-11T00:00:00Z |
-| mmdet | ssd300_crowdhuman | 0.2874 | 0.0965 |  |  |  | no | 2026-05-11T00:00:00Z |
+| Backend | Model | AP25 | AP50 | AP75 | AP50-95 | AR_coco | grP50 | grR50 | grF50 | cAR50 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
+|---------|-------|------|------|------|---------|---------|-------|-------|-------|-------|---------------|---------------|------|----------|------|
+| freeyolo | freeyolo_ch_tiny |  | 0.7166 |  | 0.3564 | 0.456 |  |  |  |  | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
+| freeyolo | freeyolo_yolox_mot17 |  | 0.6822 |  | 0.3204 | 0.424 |  |  |  |  | 57.935 | 23.988 |  | no | 2026-05-09T14:47:53Z |
+| ultralytics_yolo | yolov8n_crowdhuman |  | 0.5703 |  | 0.2716 | 0.4023 |  |  |  |  | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |
+| mmdet | fcos_r50_crowdhuman | 0.5425 | 0.3284 | 0.1108 | 0.144 | 0.2938 | 0.7714 | 0.0845 | 0.2286 | 0.5899 |  |  |  | no | 2026-05-11T00:00:00Z |
+| mmdet | ssd300_crowdhuman | 0.5976 | 0.2874 | 0.0473 | 0.0965 | 0.181 | 0.7132 | 0.1741 | 0.2868 | 0.4634 |  |  |  | no | 2026-05-11T00:00:00Z |
 
 <!-- TABLE_END -->
 
 ### Unified AP / COCOeval (single evaluator)
 
-CrowdHuman val (YOLOv8 dump + `eval_coco_predictions.py`; FreeYOLO numbers from the same `COCOeval` path in upstream `eval.py`): [`docs/benchmark_unified_cocoeval.md`](docs/benchmark_unified_cocoeval.md).  
-CrowdHuman + MOT17 in one table: [`docs/benchmark_group_b_unified_two_domains.md`](docs/benchmark_group_b_unified_two_domains.md).  
-Example tee: [`results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log).
+Main source of truth (all model rows, full metric dictionary, run/log artifacts): [`docs/crowdhuman_val_full_metrics_table.md`](docs/crowdhuman_val_full_metrics_table.md).  
+Metric math and protocol details: [`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md).
 
 Per-run write-ups: [`results/benchmark_summary.md`](results/benchmark_summary.md). ASCII table: [`results/model_comparison.md`](results/model_comparison.md) (`scripts/generate_comparison_table.py`).
 
@@ -100,13 +102,6 @@ Merge tracking metrics:
 python3 scripts/bench_runner.py \
   --merge-json results/runs/yolov8n_crowdhuman_2026-05-09T120000Z.json \
   --tracking-json '{"mot17_seq":"MOT17-02","MOTA":0.68,"HOTA":0.52,"IDF1":0.61}'
-```
-
-Regenerate Group B figures:
-
-```bash
-pip install matplotlib pyyaml
-python3 scripts/plot_group_b_results.py
 ```
 
 ## Repository vs cloud disk

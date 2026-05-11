@@ -1,7 +1,4 @@
-/workspace/group_b/venv_freeyolo/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
-  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
-use cuda
-eval on crowdhuman ...
+--- dump_freeyolo_crowdhuman_coco_dt (yolo_free_tiny) ---
 ==============================
 Config: YOLO_FREE_TINY ...
 ==============================
@@ -27,42 +24,30 @@ Head: Decoupled Head
 ==============================
 Head: Decoupled Head
 Finished loading model!
-==============================
-GFLOPs : 13.89
-Params : 6.15 M
+{
+  "coco_dt": "/tmp/group_b_unified_yolo_three/freeyolo_yolo_free_tiny_ch_val_dt.json",
+  "detections": 1903207,
+  "variant": "yolo_free_tiny",
+  "weights": "/workspace/models/yolo_free_tiny_ch.pth",
+  "missing_images": 0
+}
+--- eval_coco_predictions ---
 loading annotations into memory...
-Done (t=0.74s)
+Done (t=0.37s)
 creating index...
 index created!
-==============================
-Image Set: val
-Json file: val.json
-use Mosaic Augmentation: 0.0
-use Mixup Augmentation: 0.0
-==============================
-total number of images: 4370
-[Eval: 0 / 4370]
-[Eval: 500 / 4370]
-[Eval: 1000 / 4370]
-[Eval: 1500 / 4370]
-[Eval: 2000 / 4370]
-[Eval: 2500 / 4370]
-[Eval: 3000 / 4370]
-[Eval: 3500 / 4370]
-[Eval: 4000 / 4370]
-evaluating ......
 Loading and preparing results...
-DONE (t=12.34s)
+DONE (t=5.52s)
 creating index...
 index created!
 Running per image evaluation...
 Evaluate annotation type *bbox*
-DONE (t=215.44s).
+DONE (t=184.33s).
 Accumulating evaluation results...
-DONE (t=4.20s).
+DONE (t=4.30s).
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.356
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.717
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.309
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.716
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.308
  Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.175
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.339
  Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.407
@@ -71,6 +56,36 @@ DONE (t=4.20s).
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.456
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.265
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.428
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.517
-ap50_95 :  0.35638033030909927
-ap50 :  0.7165573812460821
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.516
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=24.55s).
+Accumulating evaluation results...
+DONE (t=1.08s).
+{
+  "AP25": 0.860757,
+  "AP50": 0.716403,
+  "AP75": 0.308386,
+  "AP50-95": 0.356308,
+  "recall": 0.456033,
+  "coco_ar_iou25": 0.903338,
+  "coco_precision_r50_iou25": 0.992521,
+  "coco_fdr_r50_iou25": 0.007479,
+  "coco_ar_iou50": 0.802927,
+  "coco_precision_r50_iou50": 0.934811,
+  "coco_fdr_r50_iou50": 0.065189,
+  "coco_ar_iou75": 0.443994,
+  "coco_precision_r50_iou75": 0.0,
+  "coco_fdr_r50_iou75": 1.0,
+  "precision_iou25": 0.765651,
+  "recall_iou25": 0.813462,
+  "fdr_iou25": 0.234349,
+  "precision_iou50": 0.689383,
+  "recall_iou50": 0.732431,
+  "fdr_iou50": 0.310617,
+  "precision_iou75": 0.399298,
+  "recall_iou75": 0.424232,
+  "fdr_iou75": 0.600702,
+  "precision": 0.689383,
+  "fdr": 0.310617
+}

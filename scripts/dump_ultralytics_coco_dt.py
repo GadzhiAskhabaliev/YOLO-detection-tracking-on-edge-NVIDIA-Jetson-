@@ -21,9 +21,10 @@ Example (after preparing GT + images):
     --strict \\
     --out-patch-json /tmp/yolov8_unified_metrics.json
 
-FreeYOLO CrowdHuman eval already builds an equivalent DT list internally
-(`evaluator/crowdhuman_evaluator.py` + pycocotools); rescoring those models via
-this script is optional unless you change conf/NMS and want an exact match.
+FreeYOLO CrowdHuman: for the same COCO DT file fed to `eval_coco_predictions.py`,
+use `scripts/group_b/dump_freeyolo_crowdhuman_coco_dt.py` (FreeYOLO venv). Upstream
+`eval.py` also runs `COCOeval` internally; numbers can differ slightly from a dump
+if decode/NMS paths differ.
 """
 from __future__ import annotations
 

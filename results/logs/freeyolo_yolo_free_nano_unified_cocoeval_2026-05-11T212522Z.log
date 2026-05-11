@@ -1,7 +1,4 @@
-/workspace/group_b/venv_freeyolo/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
-  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
-use cuda
-eval on crowdhuman ...
+--- dump_freeyolo_crowdhuman_coco_dt (yolo_free_nano) ---
 ==============================
 Config: YOLO_FREE_NANO ...
 ==============================
@@ -29,39 +26,27 @@ Head: Decoupled Head
 ==============================
 Head: Decoupled Head
 Finished loading model!
-==============================
-GFLOPs : 4.51
-Params : 1.96 M
+{
+  "coco_dt": "/tmp/group_b_unified_yolo_three/freeyolo_yolo_free_nano_ch_val_dt.json",
+  "detections": 2084192,
+  "variant": "yolo_free_nano",
+  "weights": "/workspace/models/yolo_free_nano_ch.pth",
+  "missing_images": 0
+}
+--- eval_coco_predictions ---
 loading annotations into memory...
-Done (t=0.72s)
+Done (t=1.05s)
 creating index...
 index created!
-==============================
-Image Set: val
-Json file: val.json
-use Mosaic Augmentation: 0.0
-use Mixup Augmentation: 0.0
-==============================
-total number of images: 4370
-[Eval: 0 / 4370]
-[Eval: 500 / 4370]
-[Eval: 1000 / 4370]
-[Eval: 1500 / 4370]
-[Eval: 2000 / 4370]
-[Eval: 2500 / 4370]
-[Eval: 3000 / 4370]
-[Eval: 3500 / 4370]
-[Eval: 4000 / 4370]
-evaluating ......
 Loading and preparing results...
-DONE (t=14.99s)
+DONE (t=6.87s)
 creating index...
 index created!
 Running per image evaluation...
 Evaluate annotation type *bbox*
-DONE (t=213.16s).
+DONE (t=189.34s).
 Accumulating evaluation results...
-DONE (t=4.16s).
+DONE (t=4.31s).
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.320
  Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.682
  Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.260
@@ -74,5 +59,35 @@ DONE (t=4.16s).
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.232
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.392
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.487
-ap50_95 :  0.3203647221793158
-ap50 :  0.6822121740590315
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=25.15s).
+Accumulating evaluation results...
+DONE (t=1.12s).
+{
+  "AP25": 0.841419,
+  "AP50": 0.681859,
+  "AP75": 0.2595,
+  "AP50-95": 0.320213,
+  "recall": 0.423903,
+  "coco_ar_iou25": 0.893517,
+  "coco_precision_r50_iou25": 0.990151,
+  "coco_fdr_r50_iou25": 0.009849,
+  "coco_ar_iou50": 0.780652,
+  "coco_precision_r50_iou50": 0.916699,
+  "coco_fdr_r50_iou50": 0.083301,
+  "coco_ar_iou75": 0.399795,
+  "coco_precision_r50_iou75": 0.0,
+  "coco_fdr_r50_iou75": 1.0,
+  "precision_iou25": 0.750875,
+  "recall_iou25": 0.789347,
+  "fdr_iou25": 0.249125,
+  "precision_iou50": 0.660952,
+  "recall_iou50": 0.694816,
+  "fdr_iou50": 0.339048,
+  "precision_iou75": 0.3567,
+  "recall_iou75": 0.374976,
+  "fdr_iou75": 0.6433,
+  "precision": 0.660952,
+  "fdr": 0.339048
+}

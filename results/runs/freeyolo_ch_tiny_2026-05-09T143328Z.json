@@ -9,12 +9,36 @@
   "metrics": {
     "mAP50": 0.716557,
     "mAP50-95": 0.35638,
-    "recall": 0.456,
+    "recall": 0.456033,
     "fps_forward": 93.256,
     "forward_time_ms_mean": 10.7232,
     "fps_predict": 34.588,
     "inference_time_ms_predict": 28.9121,
-    "inference_time_ms": 28.9121
+    "inference_time_ms": 28.9121,
+    "AP25": 0.860757,
+    "AP50": 0.716403,
+    "AP75": 0.308386,
+    "AP50-95": 0.356308,
+    "coco_ar_iou25": 0.903338,
+    "coco_precision_r50_iou25": 0.992521,
+    "coco_fdr_r50_iou25": 0.007479,
+    "coco_ar_iou50": 0.802927,
+    "coco_precision_r50_iou50": 0.934811,
+    "coco_fdr_r50_iou50": 0.065189,
+    "coco_ar_iou75": 0.443994,
+    "coco_precision_r50_iou75": 0.0,
+    "coco_fdr_r50_iou75": 1.0,
+    "precision_iou25": 0.765651,
+    "recall_iou25": 0.813462,
+    "fdr_iou25": 0.234349,
+    "precision_iou50": 0.689383,
+    "recall_iou50": 0.732431,
+    "fdr_iou50": 0.310617,
+    "precision_iou75": 0.399298,
+    "recall_iou75": 0.424232,
+    "fdr_iou75": 0.600702,
+    "precision": 0.689383,
+    "fdr": 0.310617
   },
   "tracking": {},
   "tensorrt": {
@@ -22,12 +46,12 @@
     "fps_fp16": null
   },
   "notes": [
-    "recall: COCO Average Recall (AR) IoU=0.50:0.95, maxDets=100 from pycocotools summarize; see docs/benchmark_metrics_schema.md — do not mix with other val protocols.",
-    "FreeYOLO: forward=no_decode tensor output; predict=ValTransforms+full decode/NMS (docs/benchmark_metrics_schema.md).",
-    "FreeYOLO eval.py -d crowdhuman, variant=yolo_free_tiny, bench model=freeyolo_ch_tiny; CrowdHuman val split."
+    "Unified CrowdHuman val: dump + scripts/eval_coco_predictions.py (strict); full tee: results/logs/freeyolo_yolo_free_tiny_unified_cocoeval_2026-05-11T211739Z.log",
+    "Quality: scripts/eval_coco_predictions.py \u2014 COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5."
   ],
   "group": "B",
   "detector_id": 7,
   "detector_label": "FreeYOLO yolo_free_tiny CrowdHuman",
-  "backend": "freeyolo"
+  "backend": "freeyolo",
+  "date_updated": "2026-05-11T21:25:22Z"
 }

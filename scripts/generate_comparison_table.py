@@ -117,8 +117,10 @@ def regenerate(out_path: Path | None = None) -> Path:
     parts.append("Source: latest run per model from `results/runs/*.json`.\n\n")
 
     parts.append("## Table\n\n")
-    hdr = "| Backend | Model | AP50 | FPS forward | FPS predict | MOTA | Date |\n"
-    sep = "|---------|-------|-------|-------------|-------------|------|------|\n"
+    hdr = (
+        "| Backend | Model | AP50 | AP25 | grR50 | AR_coco | FPS forward | FPS predict | MOTA | Date |\n"
+    )
+    sep = "|---------|-------|------|------|-------|---------|-------------|-------------|------|------|\n"
     parts.append(hdr + sep)
     scatter_pts: list[tuple[float, float, str]] = []
 
@@ -133,6 +135,9 @@ def regenerate(out_path: Path | None = None) -> Path:
                     str(bk).strip(),
                     str(d.get("model", "")),
                     _fmt(met.get("AP50") if met.get("AP50") is not None else met.get("mAP50")),
+                    _fmt(met.get("AP25")),
+                    _fmt(met.get("recall_iou50")),
+                    _fmt(met.get("recall")),
                     _fmt(met.get("fps_forward")),
                     _fmt(met.get("fps_predict")),
                     _fmt(tr.get("MOTA")),

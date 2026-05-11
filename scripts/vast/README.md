@@ -46,9 +46,9 @@ bash scripts/vast/run_cloud_bootstrap.sh
 | `download_yolov8n_crowdhuman.sh` | YOLOv8n CrowdHuman weights → `yolov8n_crowdhuman.pt` |
 | `bench_yolo_fps.py` | Predict-loop FPS JSON; `--record-model-name` → `results/runs/` via `bench_runner.py` |
 | `../bench_runner.py` | Unified bench (forward / predict / val), README + `results/benchmark_summary.md` |
-| `../run_group_b_benchmarks.sh` | Group B driver; see `docs/group_b_benchmarks.md` |
+| `../run_group_b_benchmarks.sh` | Group B driver (legacy orchestration helper) |
 | `../group_b/run_remaining_models.sh` | FreeYOLO path + CrowdDet/Pedestron/PeopleNet notes |
-| `../plot_group_b_results.py` | Group B figures → `results/group_b_report.md` |
+| `../plot_group_b_results.py` | Group B figure generator (optional, local analysis only) |
 | `val_yolov8_crowdhuman.sh` | `model.val` on CrowdHuman yaml |
 | `run_cloud_bootstrap.sh` | install + datasets + convert + layout + weights |
 
