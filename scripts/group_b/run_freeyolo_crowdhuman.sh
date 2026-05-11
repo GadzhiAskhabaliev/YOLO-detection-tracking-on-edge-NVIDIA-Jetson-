@@ -6,6 +6,9 @@ set -euo pipefail
 #
 #   CROWDHUMAN_ROOT=/workspace/data/crowdhuman MODEL_DIR=/workspace/models \\
 #     bash scripts/group_b/run_freeyolo_crowdhuman.sh
+#
+# Tiny release weights need code at FREEYOLO_REV (default 30ca714…). Existing shallow
+# clone: rm -rf "$FREEYOLO_HOME" and re-run, or FREEYOLO_FORCE_REV=1 (unshallow + checkout).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT}"
@@ -33,9 +36,21 @@ FREEYOLO_DETECTOR_LABEL="${FREEYOLO_DETECTOR_LABEL:-FreeYOLO ${FREEYOLO_VARIANT}
 
 mkdir -p "${GROUP_B_ROOT}" "${MODEL_DIR}"
 
+# Release weights (e.g. yolo_free_tiny_ch.pth) match an older tree; shallow `master`
+# often breaks load_state_dict (FPN 256 vs 512, etc.). Pin a known-good commit by default.
+FREEYOLO_REV="${FREEYOLO_REV:-30ca71424c965bb61917e1a9579dabd71b55c64e}"
 if [[ ! -d "${FREEYOLO_HOME}/.git" ]]; then
-  echo "--- Clone FreeYOLO ---"
-  git clone --depth 1 https://github.com/yjh0410/FreeYOLO.git "${FREEYOLO_HOME}"
+  echo "--- Clone FreeYOLO (full history for checkout ${FREEYOLO_REV}) ---"
+  git clone https://github.com/yjh0410/FreeYOLO.git "${FREEYOLO_HOME}"
+  git -C "${FREEYOLO_HOME}" checkout "${FREEYOLO_REV}"
+elif [[ "${FREEYOLO_FORCE_REV:-0}" == "1" ]]; then
+  echo "--- Checkout FreeYOLO ${FREEYOLO_REV} (FREEYOLO_FORCE_REV=1) ---"
+  if git -C "${FREEYOLO_HOME}" rev-parse --is-shallow-repository 2>/dev/null | grep -q true; then
+    echo "--- Unshallow (needed to reach pinned commit) ---"
+    git -C "${FREEYOLO_HOME}" fetch --unshallow origin || true
+  fi
+  git -C "${FREEYOLO_HOME}" fetch origin
+  git -C "${FREEYOLO_HOME}" checkout "${FREEYOLO_REV}"
 fi
 
 echo "--- Patch FreeYOLO: torch.load(weights_only=False) for PyTorch 2.6+ ---"
@@ -44,7 +59,7 @@ python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO
 echo "--- Patch FreeYOLO: np.int / np.float / np.bool → built-ins (NumPy 2.x) ---"
 python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
 
-echo "--- Patch FreeYOLO: yolo_free_tiny release weights vs upstream head_depthwise ---"
+echo "--- Patch FreeYOLO: yolo_free_tiny release weights vs upstream fpn/head depthwise ---"
 python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
 
 if [[ ! -f "${WEIGHT_PATH}" ]]; then

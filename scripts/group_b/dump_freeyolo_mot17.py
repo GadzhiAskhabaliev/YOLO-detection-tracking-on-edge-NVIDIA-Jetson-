@@ -73,8 +73,8 @@ def main() -> None:
     p.add_argument(
         "--tiny-head-use-upstream-config",
         action="store_true",
-        help="For yolo_free_tiny only: do not override head_depthwise. "
-        "GitHub release yolo_free_tiny_ch.pth matches depthwise head (see script source).",
+        help="For yolo_free_tiny only: do not override fpn_depthwise/head_depthwise. "
+        "Release yolo_free_tiny_ch.pth expects both True (see patch_freeyolo_tiny_ckpt_compat.py).",
     )
     args = p.parse_args()
 
@@ -124,10 +124,10 @@ def main() -> None:
     )
 
     cfg = copy.deepcopy(build_config(ns))
-    # Release yolo_free_tiny_ch.pth was trained with depthwise reg/cls head; upstream
-    # config/yolo_free_config.py now sets head_depthwise False → load_state_dict shape mismatch
-    # (e.g. [64,1,3,3] in ckpt vs [64,64,3,3] in model). Nano already has head_depthwise True.
+    # Release yolo_free_tiny_ch.pth: depthwise FPN (BN channel order in Conv) + depthwise
+    # decoupled head. Upstream tiny sets both False → load_state_dict mismatches.
     if args.variant == "yolo_free_tiny" and not args.tiny_head_use_upstream_config:
+        cfg["fpn_depthwise"] = True
         cfg["head_depthwise"] = True
 
     model = build_model(args=ns, cfg=cfg, device=device, num_classes=1, trainable=False)
