@@ -2,7 +2,7 @@
 
 Model manifest: [`group_b_pedestrian_detectors.yaml`](group_b_pedestrian_detectors.yaml). Metric contract: [`benchmark_metrics_schema.md`](benchmark_metrics_schema.md).
 
-Unified CrowdHuman val (pycocotools mAP / AR): [`benchmark_unified_cocoeval.md`](benchmark_unified_cocoeval.md).  
+Unified CrowdHuman val (pycocotools AP / AR): [`benchmark_unified_cocoeval.md`](benchmark_unified_cocoeval.md).  
 CrowdHuman + MOT17: [`benchmark_group_b_unified_two_domains.md`](benchmark_group_b_unified_two_domains.md).
 
 ## Where artifacts go
@@ -69,7 +69,7 @@ python3 scripts/bench_runner.py \
   --patch-json /tmp/group_b_meta.json
 ```
 
-For comparable **mAP** across stacks, prefer **`eval_coco_predictions.py`** on dumped boxes vs the same GT `val.json`.
+For comparable **AP** across stacks, prefer **`eval_coco_predictions.py`** on dumped boxes vs the same GT `val.json`.
 
 ## FreeYOLO maintenance
 
@@ -86,7 +86,7 @@ python3 scripts/plot_group_b_results.py
 Outputs:
 
 - `results/figures/group_b_scatter_map_fps.png`
-- `results/figures/group_b_map50_bars.png`
+- `results/figures/group_b_ap50_bars.png`
 - `results/group_b_report.md`
 
 ## Closure checklist for missing slots

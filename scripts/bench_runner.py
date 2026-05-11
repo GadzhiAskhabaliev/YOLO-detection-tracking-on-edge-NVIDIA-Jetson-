@@ -3,7 +3,7 @@
 Orchestrate pedestrian-detector benchmarks, persist unified JSON under results/runs/,
 and refresh README + benchmark_summary.md.
 
-Canonical metric names and `backend`: docs/benchmark_metrics_schema.md.
+Canonical metric names (`AP50`, …) and `backend`: docs/benchmark_metrics_schema.md.
 Built-in Ultralytics driver for `.pt` weights is one backend, not the sole reference.
 
 Examples:
@@ -38,6 +38,17 @@ RUNS_DIR = REPO_ROOT / "results" / "runs"
 SUMMARY_MD = REPO_ROOT / "results" / "benchmark_summary.md"
 TABLE_START = "<!-- TABLE_START -->"
 TABLE_END = "<!-- TABLE_END -->"
+
+
+def metric_ap50(m: dict[str, Any]) -> Any:
+    """Unified eval uses AP50; legacy runs use mAP50 (COCO naming)."""
+    v = m.get("AP50")
+    return v if v is not None else m.get("mAP50")
+
+
+def metric_ap5095(m: dict[str, Any]) -> Any:
+    v = m.get("AP50-95")
+    return v if v is not None else m.get("mAP50-95")
 
 
 def run_backend_label(data: dict[str, Any]) -> str:
@@ -167,8 +178,8 @@ def bench_val_metrics(
     out: dict[str, Any] = {}
 
     if box is not None:
-        out["mAP50"] = round(float(getattr(box, "map50", 0.0) or 0.0), 6)
-        out["mAP50-95"] = round(float(getattr(box, "map", 0.0) or 0.0), 6)
+        out["AP50"] = round(float(getattr(box, "map50", 0.0) or 0.0), 6)
+        out["AP50-95"] = round(float(getattr(box, "map", 0.0) or 0.0), 6)
         mp = getattr(box, "mp", None) or getattr(box, "p", None)
         mr = getattr(box, "mr", None) or getattr(box, "r", None)
         if mp is not None:
@@ -293,13 +304,13 @@ def update_readme_table() -> None:
 
     def sort_key(d: dict[str, Any]) -> float:
         m = d.get("metrics") or {}
-        return float(m.get("mAP50") or 0.0)
+        return float(metric_ap50(m) or 0.0)
 
     models.sort(key=sort_key, reverse=True)
 
     lines = [
-        "| Backend | Model | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |",
-        "|---------|-------|-------|----------|---------------|---------------|------|----------|------|",
+        "| Backend | Model | AP50 | AP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |",
+        "|---------|-------|------|---------|---------------|---------------|------|----------|------|",
     ]
     for d in models:
         met = d.get("metrics") or {}
@@ -315,8 +326,8 @@ def update_readme_table() -> None:
                 [
                     run_backend_label(d),
                     str(d.get("model", "")),
-                    _fmt_cell(met.get("mAP50")),
-                    _fmt_cell(met.get("mAP50-95")),
+                    _fmt_cell(metric_ap50(met)),
+                    _fmt_cell(metric_ap5095(met)),
                     _fmt_cell(met.get("fps_forward")),
                     _fmt_cell(met.get("fps_predict")),
                     _fmt_cell(mota) if mota is not None else "",
@@ -375,7 +386,7 @@ def generate_benchmark_summary_md() -> None:
         bk = run_backend_label(data)
         if bk:
             parts.append(f"- **Backend**: `{bk}`\n")
-        parts.append(f"- **mAP50**: {_fmt_cell(met.get('mAP50'))}\n")
+        parts.append(f"- **AP50**: {_fmt_cell(metric_ap50(met))}\n")
         parts.append(f"- **FPS forward**: {_fmt_cell(met.get('fps_forward'))}\n")
         parts.append(f"- **FPS predict**: {_fmt_cell(met.get('fps_predict'))}\n")
         if notes:
@@ -383,7 +394,7 @@ def generate_benchmark_summary_md() -> None:
 
     parts.append("\n---\n\n## Summary table (all runs)\n\n")
     hdr = (
-        "| Backend | Model | Date | mAP50 | mAP50-95 | Precision | Recall | "
+        "| Backend | Model | Date | AP50 | AP50-95 | Precision | Recall | "
         "Infer (ms) | FPS fwd | FPS pred | MOTA | TRT |\n"
     )
     sep = "|---------|--------|------|-------|----------|-----------|--------|"
@@ -402,8 +413,8 @@ def generate_benchmark_summary_md() -> None:
                     run_backend_label(data),
                     str(data.get("model", "")),
                     str(data.get("date", "")),
-                    _fmt_cell(met.get("mAP50")),
-                    _fmt_cell(met.get("mAP50-95")),
+                    _fmt_cell(metric_ap50(met)),
+                    _fmt_cell(metric_ap5095(met)),
                     _fmt_cell(met.get("precision")),
                     _fmt_cell(met.get("recall")),
                     _fmt_cell(met.get("inference_time_ms")),

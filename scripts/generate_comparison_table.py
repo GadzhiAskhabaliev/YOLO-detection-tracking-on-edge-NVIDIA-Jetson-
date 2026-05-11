@@ -3,7 +3,7 @@
 Aggregate results/runs/*.json into results/model_comparison.md.
 
 Produces a Markdown table (latest run per model) and a coarse ASCII scatter:
-mAP50 (vertical) vs FPS forward (horizontal).
+AP50 (vertical) vs FPS forward (horizontal).
 """
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def ascii_scatter(
     width: int = 56,
     height: int = 14,
 ) -> str:
-    """FPS on X, mAP50 on Y (upper rows = higher mAP50)."""
+    """FPS on X, AP50 on Y (upper rows = higher AP50)."""
     if not points:
         return "(no points — run benchmarks first)\n"
 
@@ -74,7 +74,7 @@ def ascii_scatter(
         return int(round((x - min_fps) / (max_fps - min_fps) * (width - 1)))
 
     def clamp_iy(y: float) -> int:
-        # invert so top is high mAP
+        # invert so top is high AP50
         return int(round((max_m - y) / (max_m - min_m) * (height - 1)))
 
     labels: list[str] = []
@@ -86,10 +86,10 @@ def ascii_scatter(
             grid[iy][ix] = ch
         else:
             grid[iy][ix] = "*"
-        labels.append(f"  {ch}: {label} — mAP50 {_fmt(m50)}, FPS fwd {_fmt(fps)}")
+        labels.append(f"  {ch}: {label} — AP50 {_fmt(m50)}, FPS fwd {_fmt(fps)}")
 
     lines = []
-    lines.append(f"FPS forward: {_fmt(min_fps)} … {_fmt(max_fps)}  |  mAP50: {_fmt(min_m)} … {_fmt(max_m)}\n")
+    lines.append(f"FPS forward: {_fmt(min_fps)} … {_fmt(max_fps)}  |  AP50: {_fmt(min_m)} … {_fmt(max_m)}\n")
     lines.append("```")
     for row in grid:
         lines.append("|" + "".join(row) + "|")
@@ -105,7 +105,10 @@ def regenerate(out_path: Path | None = None) -> Path:
 
     def sort_key(d: dict[str, Any]) -> float:
         m = d.get("metrics") or {}
-        return float(m.get("mAP50") or 0.0)
+        v = m.get("AP50")
+        if v is None:
+            v = m.get("mAP50")
+        return float(v or 0.0)
 
     latest.sort(key=sort_key, reverse=True)
 
@@ -114,7 +117,7 @@ def regenerate(out_path: Path | None = None) -> Path:
     parts.append("Source: latest run per model from `results/runs/*.json`.\n\n")
 
     parts.append("## Table\n\n")
-    hdr = "| Backend | Model | mAP50 | FPS forward | FPS predict | MOTA | Date |\n"
+    hdr = "| Backend | Model | AP50 | FPS forward | FPS predict | MOTA | Date |\n"
     sep = "|---------|-------|-------|-------------|-------------|------|------|\n"
     parts.append(hdr + sep)
     scatter_pts: list[tuple[float, float, str]] = []
@@ -129,7 +132,7 @@ def regenerate(out_path: Path | None = None) -> Path:
                 [
                     str(bk).strip(),
                     str(d.get("model", "")),
-                    _fmt(met.get("mAP50")),
+                    _fmt(met.get("AP50") if met.get("AP50") is not None else met.get("mAP50")),
                     _fmt(met.get("fps_forward")),
                     _fmt(met.get("fps_predict")),
                     _fmt(tr.get("MOTA")),
@@ -139,11 +142,11 @@ def regenerate(out_path: Path | None = None) -> Path:
             + " |\n"
         )
         fps = met.get("fps_forward")
-        m50 = met.get("mAP50")
+        m50 = met.get("AP50") if met.get("AP50") is not None else met.get("mAP50")
         if isinstance(fps, (int, float)) and isinstance(m50, (int, float)):
             scatter_pts.append((float(fps), float(m50), str(d.get("model", ""))))
 
-    parts.append("\n## mAP50 vs FPS (ASCII)\n\n")
+    parts.append("\n## AP50 vs FPS (ASCII)\n\n")
     parts.append(ascii_scatter(scatter_pts))
 
     path.parent.mkdir(parents=True, exist_ok=True)

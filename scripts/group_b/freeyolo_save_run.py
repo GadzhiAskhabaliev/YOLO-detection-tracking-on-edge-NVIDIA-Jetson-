@@ -153,9 +153,9 @@ def main() -> None:
         detector_label=label,
     )
 
-    payload["metrics"]["mAP50"] = round(ap50, 6)
+    payload["metrics"]["AP50"] = round(ap50, 6)
     if ap5095 is not None:
-        payload["metrics"]["mAP50-95"] = round(ap5095, 6)
+        payload["metrics"]["AP50-95"] = round(ap5095, 6)
     if recall_ar is not None:
         payload["metrics"]["recall"] = round(recall_ar, 6)
         payload["notes"].append(
@@ -197,7 +197,7 @@ def main() -> None:
     )
 
     out = save_result(payload)
-    print(json.dumps({"saved": str(out.relative_to(REPO_ROOT)), "mAP50": ap50, "mAP50-95": ap5095}, indent=2))
+    print(json.dumps({"saved": str(out.relative_to(REPO_ROOT)), "AP50": ap50, "AP50-95": ap5095}, indent=2))
 
 
 if __name__ == "__main__":

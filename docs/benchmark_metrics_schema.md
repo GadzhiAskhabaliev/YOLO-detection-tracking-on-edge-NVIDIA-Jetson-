@@ -23,10 +23,17 @@ Every detector row in **`results/benchmark_summary.md`** and the README table mu
 
 | Key | Definition |
 |-----|------------|
-| `mAP50` | AP at IoU=0.50 on a **fixed** validation split (often CrowdHuman val in this repo). Other data → document in `notes`. |
-| `mAP50-95` | AP at IoU=0.50:0.95 on the same split. |
+| `AP50` | AP at IoU=0.50 on a **fixed** validation split (often CrowdHuman val). For a **single class**, this is the same scalar COCO reports as “mAP50” (mean over categories has one term). |
+| `AP50-95` | AP at IoU=0.50:0.95 on the same split. |
+| `AP25`, `AP75` | Optional: from unified `eval_coco_predictions.py` — COCOeval AP at IoU=0.25 (extra eval pass) and IoU=0.75 (`stats[2]`). |
+| `mAP50`, `mAP50-95` | **Legacy keys** in older `results/runs/*.json`; readers fall back to these if `AP50` / `AP50-95` are absent. |
+| `coco_ar_iou25`, `coco_ar_iou50`, `coco_ar_iou75` | Optional: **official COCO** Average Recall (AR), maxDets=100, area=all, at that **single** IoU — from `pycocotools` `eval['recall']` (same matching as AP). |
+| `coco_precision_r50_iou25` (and `…iou50`, `…iou75`) | Optional: mean over categories of **official COCO** precision on the PR curve at **recall grid 0.50** (override with `--coco-pr-recall`). Not fixed-score greedy matching. |
+| `coco_fdr_r50_iou25` (…) | Optional: 1 − corresponding `coco_precision_r50_iou*`. |
 | `precision` | Precision under the **protocol you fixed** (e.g. MMDet val report). Do not mix with AP@0.5 without stating so. |
-| `recall` | Recall under the same protocol, **or** COCO Average Recall (AR) — then state IoU range and maxDets in `notes`. |
+| `precision_iou25`, `recall_iou25`, `fdr_iou25` (and `…50`, `…75`) | Optional **greedy micro** metrics from `eval_coco_predictions.py`: score ≥ `--precision-score-thr`, one-to-one match per image vs non-crowd GT at IoU ≥ threshold; `fdr_*` = 1 − `precision_*`. |
+| `fdr` | Optional: 1 − `precision` when `precision` is the greedy scalar at `--precision-iou-thr` (default 0.5). |
+| `recall` | In unified eval JSON this is **COCO AR** maxDets=100, IoU **0.50:0.95** (not single-IoU AR). Single-IoU AR → `coco_ar_iou*`. |
 | `inference_time_ms` | Mean **end-to-end** milliseconds per frame: preprocess + network + decode/NMS, aligned with `fps_predict`. |
 | `fps_forward` | Throughput of the **narrow network path**: tensor already preprocessed, **without** heavy CPU postprocess where separable (document rule in `notes`). |
 | `fps_predict` | Full detector path: preprocess + inference + decode/NMS, batch=1, representative input. |
@@ -63,7 +70,7 @@ To avoid framework-specific val quirks, dump boxes as a **COCO-style detection l
 
 (`bbox` is xywh in pixels.)
 
-Use one **GT** file (`val.json`, COCO instances) for all models. **`scripts/eval_coco_predictions.py`** computes **`mAP50`**, **`mAP50-95`**, and **`recall`** (= COCO AR, maxDets=100) via **pycocotools**. It also writes **`precision`**: greedy **TP/(TP+FP)** after matching detections to GT at **IoU ≥ `--precision-iou-thr`** (default 0.5), same **`category_id`**, one-to-one per image, using only boxes with **score ≥ `--precision-score-thr`** (default 0.5). That scalar is **not** the same as AP; record both when reporting. **`--strict`** fails if DT references unknown `image_id`.
+Use one **GT** file (`val.json`, COCO instances) for all models. **`scripts/eval_coco_predictions.py`** computes **`AP25`** (second COCOeval with `iouThrs=[0.25]` only), **`AP50`**, **`AP75`**, **`AP50-95`**, and **`recall`** (= COCO AR, maxDets=100, IoU 0.50:0.95) via **pycocotools**. For **supervisor-style** numbers straight from the **same** COCO tensors as AP: **`coco_ar_iou25/50/75`** (AR at that IoU), **`coco_precision_r50_iou25/50/75`** and **`coco_fdr_r50_iou*`** (precision / FDR on the official PR grid at recall **0.50**, configurable via **`--coco-pr-recall`**). Separately it adds **greedy micro** **`precision_iou*`** / **`recall_iou*`** / **`fdr_iou*`** for IoUs in **`--greedy-iou-thrs`** (default `0.25,0.5,0.75`): fixed **score ≥ `--precision-score-thr`**, **TP/(TP+FP)**, **TP/N_gt**, **FDR = 1 − precision**. Legacy **`precision`** / **`fdr`** use **`--precision-iou-thr`** (default 0.5). **`--strict`** fails if DT references unknown `image_id`. **`--quiet-summarize`** still fills `stats` (table output is suppressed).
 
 ```bash
 python3 scripts/eval_coco_predictions.py \
@@ -90,8 +97,8 @@ Patch fragment for metrics placeholder:
 {
   "backend": "mmdet",
   "metrics": {
-    "mAP50": null,
-    "mAP50-95": null,
+    "AP50": null,
+    "AP50-95": null,
     "fps_forward": null,
     "fps_predict": null
   },

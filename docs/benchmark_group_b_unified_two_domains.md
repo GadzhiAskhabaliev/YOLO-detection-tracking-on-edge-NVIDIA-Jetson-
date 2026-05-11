@@ -12,7 +12,7 @@ Detailed CrowdHuman-only doc (repro, merge): [`benchmark_unified_cocoeval.md`](b
 
 ## CrowdHuman val
 
-| Backend | Model | mAP50 | mAP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
+| Backend | Model | AP50 | AP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
 |---------|-------|-------|----------|---------------------------|-------------|-------------|--------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.570286 | 0.271584 | 0.402259 | 117.368 | 127.104 | [`yolov8n_crowdhuman_2026-05-09T143848Z.json`](../results/runs/yolov8n_crowdhuman_2026-05-09T143848Z.json), log [`yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](../results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log) |
 | freeyolo | freeyolo_ch_tiny | 0.716557 | 0.356380 | 0.456 | 93.256 | 34.588 | [`freeyolo_ch_tiny_2026-05-09T143328Z.json`](../results/runs/freeyolo_ch_tiny_2026-05-09T143328Z.json), tee [`freeyolo_yolo_free_tiny_20260509T141227Z.log`](../results/logs/freeyolo_yolo_free_tiny_20260509T141227Z.log) |
@@ -28,7 +28,7 @@ Detailed CrowdHuman-only doc (repro, merge): [`benchmark_unified_cocoeval.md`](b
 
 GT: [`scripts/mot17_gt_to_coco.py`](../scripts/mot17_gt_to_coco.py) → one COCO instances JSON (e.g. `mot17_train_frcnn_gt.json`), **5316** images / **112297** GT boxes for the standard FRCNN train split (seven sequences).
 
-| Backend | Model | mAP50 | mAP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
+| Backend | Model | AP50 | AP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
 |---------|-------|-------|----------|---------------------------|-------------|-------------|--------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.647584 | 0.334005 | 0.427085 | 117.368 | 127.104 | [`yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log`](../results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log) |
 | freeyolo | freeyolo_ch_tiny | 0.649053 | 0.321077 | 0.406507 | 93.256 | 34.588 | [`run_freeyolo_mot17_unified_eval.sh`](../scripts/group_b/run_freeyolo_mot17_unified_eval.sh); log [`freeyolo_tiny_mot17_train_unified_20260511T144123Z.log`](../results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log) |

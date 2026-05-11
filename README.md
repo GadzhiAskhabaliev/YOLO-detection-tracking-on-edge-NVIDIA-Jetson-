@@ -25,7 +25,7 @@ All detectors tracked here belong to **Group B** — crowded-scene pedestrian mo
 | CrowdHuman val YAML, MOT17→COCO GT scripts, unified metric docs | FreeYOLO **upstream tree** cloned on the GPU box (`FREEYOLO_HOME`), its venv, `eval.py` for CrowdHuman-native runs |
 | `results/runs/*.json`, committed `results/logs/*.log` transcripts | CrowdDet / MMDet export pipelines (e.g. [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect) per `docs/group_b_remote_mmdet_bridge.md`) |
 
-Cross-model **mAP** comparisons use the same GT and **`scripts/eval_coco_predictions.py`** once each stack emits a COCO-style DT list ([`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)). **FPS** is defined per backend in each run’s `notes` (`fps_forward` vs `fps_predict`).
+Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`scripts/eval_coco_predictions.py`** once each stack emits a COCO-style DT list ([`docs/benchmark_metrics_schema.md`](docs/benchmark_metrics_schema.md)). **FPS** is defined per backend in each run’s `notes` (`fps_forward` vs `fps_predict`).
 
 ## Layout
 
@@ -48,15 +48,15 @@ After each `bench_runner.py` save/merge, the block below updates automatically.
 
 <!-- TABLE_START -->
 
-| Backend | Model | mAP50 | mAP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
-|---------|-------|-------|----------|---------------|---------------|------|----------|------|
+| Backend | Model | AP50 | AP50-95 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
+|---------|-------|------|---------|---------------|---------------|------|----------|------|
 | freeyolo | freeyolo_ch_tiny | 0.7166 | 0.3564 | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
 | freeyolo | freeyolo_yolox_mot17 | 0.6822 | 0.3204 | 57.935 | 23.988 |  | no | 2026-05-09T14:47:53Z |
 | ultralytics_yolo | yolov8n_crowdhuman | 0.5703 | 0.2716 | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |
 
 <!-- TABLE_END -->
 
-### Unified mAP (single evaluator)
+### Unified AP / COCOeval (single evaluator)
 
 CrowdHuman val (YOLOv8 dump + `eval_coco_predictions.py`; FreeYOLO numbers from the same `COCOeval` path in upstream `eval.py`): [`docs/benchmark_unified_cocoeval.md`](docs/benchmark_unified_cocoeval.md).  
 CrowdHuman + MOT17 in one table: [`docs/benchmark_group_b_unified_two_domains.md`](docs/benchmark_group_b_unified_two_domains.md).  
