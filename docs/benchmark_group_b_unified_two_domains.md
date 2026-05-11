@@ -60,7 +60,9 @@ python3 scripts/eval_coco_predictions.py ... 2>&1 | tee ~/yolov8_mot17_eval_full
 ```bash
 export MOT17_ROOT=/root/data/mot17
 export FREEYOLO_HOME=/root/group_b/FreeYOLO
+# venv must exist (create via run_freeyolo_crowdhuman.sh). If path differs:
 export FREEYOLO_VENV=/root/group_b/venv_freeyolo
+# or: export FREEYOLO_PYTHON=/root/group_b/venv_freeyolo/bin/python
 export FREEYOLO_WEIGHT_PATH=/root/models/yolo_free_tiny_ch.pth
 export FREEYOLO_VARIANT=yolo_free_tiny
 bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh

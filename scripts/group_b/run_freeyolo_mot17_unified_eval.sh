@@ -18,6 +18,9 @@ set -euo pipefail
 #   FREEYOLO_WEIGHT_PATH=/root/models/yolo_free_nano_ch.pth \\
 #   FREEYOLO_DT_STEM=freeyolo_nano_mot17_train \\
 #   bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh
+#
+# If venv is elsewhere: FREEYOLO_VENV=/path/to/venv  OR  FREEYOLO_PYTHON=/path/to/venv/bin/python
+# Create venv + install deps: bash scripts/group_b/run_freeyolo_crowdhuman.sh (stop after venv step if needed).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT}"
@@ -51,9 +54,24 @@ if [[ ! -f "${GT_JSON}" ]]; then
   exit 1
 fi
 
-# shellcheck disable=SC1090
-source "${VENV}/bin/activate"
-PY="${VENV}/bin/python"
+if [[ -n "${FREEYOLO_PYTHON:-}" ]]; then
+  PY="${FREEYOLO_PYTHON}"
+  if [[ ! -x "${PY}" ]]; then
+    echo "FREEYOLO_PYTHON is not executable: ${PY}" >&2
+    exit 1
+  fi
+else
+  if [[ ! -f "${VENV}/bin/activate" ]]; then
+    echo "FreeYOLO venv not found: ${VENV}" >&2
+    echo "Fix: export FREEYOLO_VENV=/path/to/venv   (directory with bin/activate)" >&2
+    echo "  or FREEYOLO_PYTHON=/path/to/venv/bin/python" >&2
+    echo "Create venv + deps: bash scripts/group_b/run_freeyolo_crowdhuman.sh" >&2
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  source "${VENV}/bin/activate"
+  PY="${VENV}/bin/python"
+fi
 
 {
   echo "========== $(date -u +%Y-%m-%dT%H:%M:%SZ) dump_freeyolo_mot17 =========="
