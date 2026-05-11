@@ -25,19 +25,17 @@ if [[ -d "${DATA_ROOT}/MOT17/train" ]]; then
   exit 0
 fi
 
-MOT17_SRC="$(python3 <<'PY'
-import contextlib
-import io
+# kagglehub/tqdm often bypass contextlib.redirect_stdout — do not use MOT17_SRC=$(python …).
+MOT17_SRC_FILE="$(mktemp)"
+export MOT17_SRC_FILE
+python3 <<'PY'
+import os
 import sys
 from pathlib import Path
 
 import kagglehub
 
-# kagglehub prints progress to stdout; capturing breaks MOT17_SRC=$(...)
-_buf = io.StringIO()
-with contextlib.redirect_stdout(_buf):
-    cache_root = kagglehub.dataset_download("wenhoujinjust/mot-17")
-
+cache_root = kagglehub.dataset_download("wenhoujinjust/mot-17")
 base = Path(cache_root).resolve()
 print(f"Kagglehub cache path: {base}", file=sys.stderr)
 
@@ -51,9 +49,17 @@ if chosen is None:
     print("Could not find MOT17/train under downloaded tree.", file=sys.stderr)
     sys.exit(1)
 
-print(chosen)
+out = os.environ["MOT17_SRC_FILE"]
+Path(out).write_text(str(chosen) + "\n", encoding="utf-8")
+print(f"MOT17 source dir (written to {out}): {chosen}", file=sys.stderr)
 PY
-)"
+
+MOT17_SRC="$(tr -d '\r\n' <"${MOT17_SRC_FILE}")"
+rm -f "${MOT17_SRC_FILE}"
+if [[ ! -d "${MOT17_SRC}" ]]; then
+  echo "Resolved MOT17 path missing: ${MOT17_SRC}" >&2
+  exit 1
+fi
 
 echo "Copying MOT17 → ${DATA_ROOT}/"
 cp -r "${MOT17_SRC}" "${DATA_ROOT}/"
