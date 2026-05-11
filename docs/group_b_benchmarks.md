@@ -8,7 +8,7 @@ CrowdHuman + MOT17: [`benchmark_group_b_unified_two_domains.md`](benchmark_group
 ## Where artifacts go
 
 - **`results/runs/*.json`** → **`results/benchmark_summary.md`** and the README table (`bench_runner`).
-- Optional transcripts: `results/logs/*.log` (unified eval tees, `run_freeyolo_mot17_unified_eval.sh`, etc.; see two-domains doc).
+- `results/logs/*.log` — keep CrowdHuman **and** MOT17 transcripts: YOLOv8 unified eval, FreeYOLO `eval.py` tees (`freeyolo_yolo_free_*`), MOT17 dump+eval tees (`*_mot17_train_unified_*.log`); see [`benchmark_group_b_unified_two_domains.md`](benchmark_group_b_unified_two_domains.md).
 - Full shell transcript: `bash scripts/run_group_b_benchmarks.sh 2>&1 | tee results/logs/group_b_run_<UTC>.log`
 
 ## Automated runs from this repository

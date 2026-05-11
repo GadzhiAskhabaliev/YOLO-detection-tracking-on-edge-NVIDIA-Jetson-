@@ -15,10 +15,12 @@ Detailed CrowdHuman-only doc (repro, merge): [`benchmark_unified_cocoeval.md`](b
 | Backend | Model | mAP50 | mAP50-95 | Recall (AR maxDets=100) | FPS forward | FPS predict | Source |
 |---------|-------|-------|----------|---------------------------|-------------|-------------|--------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.570286 | 0.271584 | 0.402259 | 117.368 | 127.104 | [`yolov8n_crowdhuman_2026-05-09T143848Z.json`](../results/runs/yolov8n_crowdhuman_2026-05-09T143848Z.json), log [`yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](../results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log) |
-| freeyolo | freeyolo_ch_tiny | 0.716557 | 0.356380 | 0.456 | 93.256 | 34.588 | [`freeyolo_ch_tiny_2026-05-09T143328Z.json`](../results/runs/freeyolo_ch_tiny_2026-05-09T143328Z.json) |
-| freeyolo | freeyolo_yolox_mot17 | 0.682212 | 0.320365 | 0.424 | 57.935 | 23.988 | [`freeyolo_yolox_mot17_2026-05-09T144753Z.json`](../results/runs/freeyolo_yolox_mot17_2026-05-09T144753Z.json) |
+| freeyolo | freeyolo_ch_tiny | 0.716557 | 0.356380 | 0.456 | 93.256 | 34.588 | [`freeyolo_ch_tiny_2026-05-09T143328Z.json`](../results/runs/freeyolo_ch_tiny_2026-05-09T143328Z.json), tee [`freeyolo_yolo_free_tiny_20260509T141227Z.log`](../results/logs/freeyolo_yolo_free_tiny_20260509T141227Z.log) |
+| freeyolo | freeyolo_yolox_mot17 | 0.682212 | 0.320365 | 0.424 | 57.935 | 23.988 | [`freeyolo_yolox_mot17_2026-05-09T144753Z.json`](../results/runs/freeyolo_yolox_mot17_2026-05-09T144753Z.json), tee [`freeyolo_yolo_free_nano_20260509T143905Z.log`](../results/logs/freeyolo_yolo_free_nano_20260509T143905Z.log) |
 
-**Protocol:** YOLOv8 — `dump_ultralytics_coco_dt.py` → `eval_coco_predictions.py --strict` on FreeYOLO-bridge `val.json`. FreeYOLO — same `COCOeval` path inside upstream `eval.py` on CrowdHuman (numbers copied from run JSON).
+**Protocol:** YOLOv8 — `dump_ultralytics_coco_dt.py` → `eval_coco_predictions.py --strict` on FreeYOLO-bridge `val.json`. FreeYOLO — upstream `eval.py` on CrowdHuman val (same `COCOeval`; numbers in run JSON).
+
+**Six committed tee logs (`results/logs/`):** CrowdHuman val — [`yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](../results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log), [`freeyolo_yolo_free_tiny_20260509T141227Z.log`](../results/logs/freeyolo_yolo_free_tiny_20260509T141227Z.log), [`freeyolo_yolo_free_nano_20260509T143905Z.log`](../results/logs/freeyolo_yolo_free_nano_20260509T143905Z.log). MOT17 train — [`yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log`](../results/logs/yolov8n_crowdhuman_mot17_unified_cocoeval_2026-05-11T141600Z.log), [`freeyolo_tiny_mot17_train_unified_20260511T144123Z.log`](../results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log), [`freeyolo_nano_mot17_train_unified_20260511T144951Z.log`](../results/logs/freeyolo_nano_mot17_train_unified_20260511T144951Z.log).
 
 ---
 

@@ -7,10 +7,10 @@ This table is **not** auto-synced with `bench_runner.py`. It exists so **mAP / r
 | Backend | Model | mAP50 | mAP50-95 | Recall (COCO AR maxDets=100) | FPS forward | FPS predict | Source run JSON |
 |---------|-------|-------|--------|-------------------------------|-------------|-------------|-----------------|
 | ultralytics_yolo | yolov8n_crowdhuman | 0.570286 | 0.271584 | 0.402259 | 117.368 | 127.104 | [`yolov8n_crowdhuman_2026-05-09T143848Z.json`](../results/runs/yolov8n_crowdhuman_2026-05-09T143848Z.json) + log [`yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](../results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log) |
-| freeyolo | freeyolo_ch_tiny | 0.716557 | 0.356380 | 0.456 | 93.256 | 34.588 | [`freeyolo_ch_tiny_2026-05-09T143328Z.json`](../results/runs/freeyolo_ch_tiny_2026-05-09T143328Z.json) |
-| freeyolo | freeyolo_yolox_mot17 | 0.682212 | 0.320365 | 0.424 | 57.935 | 23.988 | [`freeyolo_yolox_mot17_2026-05-09T144753Z.json`](../results/runs/freeyolo_yolox_mot17_2026-05-09T144753Z.json) |
+| freeyolo | freeyolo_ch_tiny | 0.716557 | 0.356380 | 0.456 | 93.256 | 34.588 | [`freeyolo_ch_tiny_2026-05-09T143328Z.json`](../results/runs/freeyolo_ch_tiny_2026-05-09T143328Z.json) + tee [`freeyolo_yolo_free_tiny_20260509T141227Z.log`](../results/logs/freeyolo_yolo_free_tiny_20260509T141227Z.log) |
+| freeyolo | freeyolo_yolox_mot17 | 0.682212 | 0.320365 | 0.424 | 57.935 | 23.988 | [`freeyolo_yolox_mot17_2026-05-09T144753Z.json`](../results/runs/freeyolo_yolox_mot17_2026-05-09T144753Z.json) + tee [`freeyolo_yolo_free_nano_20260509T143905Z.log`](../results/logs/freeyolo_yolo_free_nano_20260509T143905Z.log) |
 
-FreeYOLO rows reuse **`metrics`** from each run JSON (upstream `eval.py` already runs pycocotools `COCOeval` on CrowdHuman val; see `notes` there).
+FreeYOLO rows reuse **`metrics`** from each run JSON (upstream `eval.py` + pycocotools `COCOeval` on CrowdHuman val; full console tee in the `freeyolo_yolo_free_*.log` files above).
 
 YOLOv8 row: `dump_ultralytics_coco_dt.py` then `eval_coco_predictions.py` on the same `val.json` as FreeYOLO. README `bench_runner` mAP may differ (Ultralytics `model.val()` protocol). Tee: [`yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log`](../results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T140530Z.log).
 
