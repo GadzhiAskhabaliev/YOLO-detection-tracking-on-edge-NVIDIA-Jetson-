@@ -23,6 +23,7 @@ boxes, then multiply by max(orig_h, orig_w).
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sys
@@ -68,6 +69,12 @@ def main() -> None:
         type=int,
         default=1,
         help="category_id in DT (single-class pedestrian → 1)",
+    )
+    p.add_argument(
+        "--tiny-head-use-upstream-config",
+        action="store_true",
+        help="For yolo_free_tiny only: do not override head_depthwise. "
+        "GitHub release yolo_free_tiny_ch.pth matches depthwise head (see script source).",
     )
     args = p.parse_args()
 
@@ -116,7 +123,13 @@ def main() -> None:
         root=str(fy),
     )
 
-    cfg = build_config(ns)
+    cfg = copy.deepcopy(build_config(ns))
+    # Release yolo_free_tiny_ch.pth was trained with depthwise reg/cls head; upstream
+    # config/yolo_free_config.py now sets head_depthwise False → load_state_dict shape mismatch
+    # (e.g. [64,1,3,3] in ckpt vs [64,64,3,3] in model). Nano already has head_depthwise True.
+    if args.variant == "yolo_free_tiny" and not args.tiny_head_use_upstream_config:
+        cfg["head_depthwise"] = True
+
     model = build_model(args=ns, cfg=cfg, device=device, num_classes=1, trainable=False)
     model = load_weight(model=model, path_to_ckpt=str(wpath))
     model.to(device).eval()
