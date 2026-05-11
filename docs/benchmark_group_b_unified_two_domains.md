@@ -77,13 +77,9 @@ export FREEYOLO_DT_STEM=freeyolo_nano_mot17_train
 bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh
 ```
 
-**Where logs go:** `run_freeyolo_mot17_unified_eval.sh` tees **dump + eval** into **`<bench-repo>/results/logs/${FREEYOLO_DT_STEM}_unified_<UTC>.log`** on the host that runs the script (e.g. on a cloud box: `/root/bench/real-time-people-detection-and-tracking-on-edge/results/logs/...`). COCO DT and per-run metrics JSON are under **`/tmp/`** on that same host. To archive the tee in your laptop clone, copy that file out, for example:
+**Where logs go:** `run_freeyolo_mot17_unified_eval.sh` tees **dump + eval** into **`<bench-repo>/results/logs/${FREEYOLO_DT_STEM}_unified_<UTC>.log`** on the host that runs the script. COCO DT and per-run metrics JSON are under **`/tmp/`** on that same host. The script prints **`--- Full log: <path> ---`** when finished; use that path with `scp` if you need to copy a new run into your checkout.
 
-```bash
-scp -i ~/.ssh/vast_ai -P 20551 \
-  'root@<host>:/root/bench/real-time-people-detection-and-tracking-on-edge/results/logs/freeyolo_nano_mot17_train_unified_20260511T144951Z.log' \
-  ./results/logs/
-```
+**Logs in this repo (full tee):** FreeYOLO tiny — [`freeyolo_tiny_mot17_train_unified_20260511T144123Z.log`](../results/logs/freeyolo_tiny_mot17_train_unified_20260511T144123Z.log); FreeYOLO nano — [`freeyolo_nano_mot17_train_unified_20260511T144951Z.log`](../results/logs/freeyolo_nano_mot17_train_unified_20260511T144951Z.log).
 
 Inference matches **CrowdHumanEvaluator** rescale (`bboxes * max(orig_h, orig_w)`). Defaults: `conf_thresh=0.005`, `nms_thresh=0.6`, `topk=1000`, `img_size=640`.
 
