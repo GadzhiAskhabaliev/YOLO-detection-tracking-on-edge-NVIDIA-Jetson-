@@ -1,0 +1,81 @@
+========== 2026-05-11T14:49:51Z dump_freeyolo_mot17 ==========
+/root/group_b/venv_freeyolo/lib/python3.10/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+==============================
+Config: YOLO_FREE_NANO ...
+==============================
+Build YOLO_FREE_NANO ...
+==============================
+Model Configuration: 
+ {'train_size': 640, 'test_size': 640, 'random_size': [320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640], 'mosaic_prob': 1.0, 'mixup_prob': 0.05, 'format': 'RGB', 'trans_config': {'degrees': 0.0, 'translate': 0.1, 'scale': 0.5, 'shear': 0.0, 'perspective': 0.0, 'hsv_h': 0.015, 'hsv_s': 0.7, 'hsv_v': 0.4}, 'backbone': 'shufflenetv2_1.0x', 'pretrained': True, 'stride': [8, 16, 32], 'neck': 'sppf', 'neck_dim': 232, 'expand_ratio': 0.5, 'pooling_size': 5, 'neck_act': 'lrelu', 'neck_norm': 'BN', 'neck_depthwise': True, 'fpn': 'elan_pafpn', 'fpn_size': 'nano', 'fpn_dim': [116, 232, 232], 'fpn_norm': 'BN', 'fpn_act': 'lrelu', 'fpn_depthwise': True, 'head': 'decoupled_head', 'head_dim': 64, 'head_norm': 'BN', 'head_act': 'lrelu', 'num_cls_head': 2, 'num_reg_head': 2, 'head_depthwise': True, 'head_conv_elan': False, 'matcher': {'center_sampling_radius': 2.5, 'topk_candicate': 10}, 'loss_obj_weight': 1.0, 'loss_cls_weight': 1.0, 'loss_reg_weight': 5.0, 'no_aug_epoch': 15, 'base_lr': 0.00015625, 'min_lr_ratio': 0.05, 'optimizer': 'sgd', 'momentum': 0.9, 'weight_decay': 0.0005, 'warmup': 'linear', 'warmup_factor': 0.00066667, 'wp_epoch': 1}
+==============================
+Build YOLO_FREE_NANO ...
+==============================
+Model Configuration: 
+ {'train_size': 640, 'test_size': 640, 'random_size': [320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640], 'mosaic_prob': 1.0, 'mixup_prob': 0.05, 'format': 'RGB', 'trans_config': {'degrees': 0.0, 'translate': 0.1, 'scale': 0.5, 'shear': 0.0, 'perspective': 0.0, 'hsv_h': 0.015, 'hsv_s': 0.7, 'hsv_v': 0.4}, 'backbone': 'shufflenetv2_1.0x', 'pretrained': True, 'stride': [8, 16, 32], 'neck': 'sppf', 'neck_dim': 232, 'expand_ratio': 0.5, 'pooling_size': 5, 'neck_act': 'lrelu', 'neck_norm': 'BN', 'neck_depthwise': True, 'fpn': 'elan_pafpn', 'fpn_size': 'nano', 'fpn_dim': [116, 232, 232], 'fpn_norm': 'BN', 'fpn_act': 'lrelu', 'fpn_depthwise': True, 'head': 'decoupled_head', 'head_dim': 64, 'head_norm': 'BN', 'head_act': 'lrelu', 'num_cls_head': 2, 'num_reg_head': 2, 'head_depthwise': True, 'head_conv_elan': False, 'matcher': {'center_sampling_radius': 2.5, 'topk_candicate': 10}, 'loss_obj_weight': 1.0, 'loss_cls_weight': 1.0, 'loss_reg_weight': 5.0, 'no_aug_epoch': 15, 'base_lr': 0.00015625, 'min_lr_ratio': 0.05, 'optimizer': 'sgd', 'momentum': 0.9, 'weight_decay': 0.0005, 'warmup': 'linear', 'warmup_factor': 0.00066667, 'wp_epoch': 1}
+==============================
+Backbone: SHUFFLENETV2_1.0X
+model size is  1.0x
+init weights...
+==============================
+Neck: sppf
+==============================
+FPN: elan_pafpn
+==============================
+Head: Decoupled Head
+==============================
+Head: Decoupled Head
+==============================
+Head: Decoupled Head
+Finished loading model!
+{
+  "coco_dt": "/tmp/freeyolo_nano_mot17_train_dt.json",
+  "detections": 2880810,
+  "mot_sequences": 7,
+  "mot_det_root": "/root/data/mot17/detections/freeyolo_nano_mot17_train",
+  "missing_images": 0,
+  "variant": "yolo_free_nano",
+  "weights": "/root/models/yolo_free_nano_ch.pth"
+}
+========== 2026-05-11T14:55:47Z eval_coco_predictions ==========
+[eval_coco_predictions] GT images: 5316, images with ≥1 detection in DT: 5316, detections: 2880810
+
+(recall here = COCO AR maxDets=100 IoU=0.50:0.95; see docs/benchmark_metrics_schema.md)
+Wrote /tmp/freeyolo_nano_mot17_train_unified_metrics.json
+Wrote /tmp/freeyolo_nano_mot17_train_unified_patch.json
+loading annotations into memory...
+Done (t=0.20s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=5.18s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=140.23s).
+Accumulating evaluation results...
+DONE (t=3.57s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.316
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.636
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.286
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.019
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.214
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.461
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.031
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.233
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.409
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.069
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.315
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.558
+{
+  "mAP50": 0.63572,
+  "mAP50-95": 0.316118,
+  "recall": 0.409424
+}
+========== metrics file ==========
+{
+  "mAP50": 0.63572,
+  "mAP50-95": 0.316118,
+  "recall": 0.409424
+}
