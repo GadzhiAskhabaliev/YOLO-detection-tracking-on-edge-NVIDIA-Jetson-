@@ -1,0 +1,69 @@
+--- dump_ultralytics_coco_dt ---
+WARNING ⚠️ user config directory '/root/.config/Ultralytics' is not writable, using '/tmp/Ultralytics'. Set YOLO_CONFIG_DIR to override.
+Creating new Ultralytics Settings v0.0.6 file ✅ 
+View Ultralytics Settings with 'yolo settings' or at '/tmp/Ultralytics/settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+{
+  "out_json": "/tmp/group_b_unified_yolo_three/yolov8n_ch_val_dt.json",
+  "detections": 964702,
+  "gt_images": 4370,
+  "missing_files": 0
+}
+--- eval_coco_predictions ---
+loading annotations into memory...
+Done (t=0.69s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=2.46s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=188.28s).
+Accumulating evaluation results...
+DONE (t=3.91s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.272
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.570
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.231
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.174
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.244
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.315
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.028
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.206
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.402
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.289
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.372
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.448
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=22.08s).
+Accumulating evaluation results...
+DONE (t=0.94s).
+{
+  "AP25": 0.810214,
+  "AP50": 0.570265,
+  "AP75": 0.2312,
+  "AP50-95": 0.271562,
+  "recall": 0.40217,
+  "coco_ar_iou25": 0.882922,
+  "coco_precision_r50_iou25": 0.967371,
+  "coco_fdr_r50_iou25": 0.032629,
+  "coco_ar_iou50": 0.72262,
+  "coco_precision_r50_iou50": 0.770537,
+  "coco_fdr_r50_iou50": 0.229463,
+  "coco_ar_iou75": 0.384847,
+  "coco_precision_r50_iou75": 0.0,
+  "coco_fdr_r50_iou75": 1.0,
+  "precision_iou25": 0.938426,
+  "recall_iou25": 0.512922,
+  "fdr_iou25": 0.061574,
+  "precision_iou50": 0.792989,
+  "recall_iou50": 0.433429,
+  "fdr_iou50": 0.207011,
+  "precision_iou75": 0.506639,
+  "recall_iou75": 0.276917,
+  "fdr_iou75": 0.493361,
+  "precision": 0.792989,
+  "fdr": 0.207011
+}
