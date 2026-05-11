@@ -163,7 +163,6 @@ def main() -> None:
                     ) from e
             else:
                 w, h = wh
-            frame_sizes[frame] = (w, h)
             rel_name = f"{seq_name}/img1/{img_path.name}"
             images.append(
                 {
