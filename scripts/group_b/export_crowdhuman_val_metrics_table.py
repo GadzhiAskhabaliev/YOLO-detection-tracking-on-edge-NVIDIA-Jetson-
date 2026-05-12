@@ -22,6 +22,7 @@ UNIFIED_LOG_GLOB_BY_MODEL: dict[str, str] = {
     "yolov8n_crowdhuman": "yolov8n_crowdhuman_unified_cocoeval_*.log",
     "freeyolo_ch_tiny": "freeyolo_yolo_free_tiny_unified_cocoeval_*.log",
     "freeyolo_yolox_mot17": "freeyolo_yolo_free_nano_unified_cocoeval_*.log",
+    "peoplenet_crowdhuman": "peoplenet_crowdhuman_eval.log",
 }
 
 # model slug -> markdown link text for "Log" column if no unified log file yet (relative to docs/ or URL)
@@ -31,6 +32,8 @@ DEFAULT_LOG_HREF: dict[str, str] = {
     "freeyolo_yolox_mot17": "latest `freeyolo_yolo_free_nano_unified_cocoeval_*.log` (or add a fallback link in `DEFAULT_LOG_HREF`)",
     "ssd300_crowdhuman": "[CV-MMdetect `crowdhuman_val_run_2026-05-11.log`](https://raw.githubusercontent.com/GadzhiAskhabaliev/CV-MMdetect/main/results/logs/crowdhuman_val_run_2026-05-11.log) (shared tee: SSD + FCOS)",
     "fcos_r50_crowdhuman": "[same log as SSD](https://raw.githubusercontent.com/GadzhiAskhabaliev/CV-MMdetect/main/results/logs/crowdhuman_val_run_2026-05-11.log)",
+    "crowddet_rcnn_emd_refine_e30": "[`crowddet_unified_metrics_epoch30.json`](../results/crowdhuman/crowddet_unified_metrics_epoch30.json); fork [CrowdDet-detection](https://github.com/GadzhiAskhabaliev/CrowdDet-detection) (`docs/UNIFIED_EVAL.md`)",
+    "peoplenet_crowdhuman": "[`peoplenet_crowdhuman_eval.log`](../results/logs/peoplenet_crowdhuman_eval.log) (unified metrics JSON); [`peoplenet_unified_metrics_v2.json`](../results/crowdhuman/peoplenet_unified_metrics_v2.json)",
 }
 
 # Preferred column order (then append any other keys sorted)
@@ -160,7 +163,9 @@ def main() -> None:
         "**Log** for YOLO rows: newest `results/logs/*_unified_cocoeval_*.log` matching that model; "
         "otherwise the fallback upstream tee from "
         "`export_crowdhuman_val_metrics_table.py`. "
-        "**SSD and FCOS** share one external tee from [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect).\n\n"
+        "**SSD and FCOS** share one external tee from [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect). "
+        "**CrowdDet** row: unified eval via [CrowdDet-detection](https://github.com/GadzhiAskhabaliev/CrowdDet-detection) fork (same `eval_coco_predictions.py` protocol). "
+        "**PeopleNet** row: ONNXRuntime + NGC PeopleNet → COCO DT; unified metrics in `results/logs/peoplenet_crowdhuman_eval.log` (JSON) and `results/crowdhuman/peoplenet_unified_metrics_v2.json`.\n\n"
     )
     parts.append("| " + " | ".join(hdr) + " |\n")
     parts.append("| " + " | ".join(sep) + " |\n")

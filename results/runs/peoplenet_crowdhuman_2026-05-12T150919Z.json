@@ -55,21 +55,11 @@
   "notes": [
     "Quality from eval_coco_predictions.py on CrowdHuman val + peoplenet_dt_v2.json (--strict).",
     "fps_forward=tensor-only; fps_predict=preprocess+run+light decode scan (ORT CUDA EP).",
-    "Quality: scripts/eval_coco_predictions.py \u2014 COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5.",
+    "Quality: scripts/eval_coco_predictions.py — COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5.",
     "FPS measured on ONNXRuntime CUDAExecutionProvider; warmup=100 iters=500.",
-    "fps_forward: sess.run on preprocessed tensor only.",
-    "fps_predict: preprocess + sess.run + lightweight decode scan.",
     "PeopleNet ONNX (NGC pruned_quantized_decrypted_v2.3.4), CrowdHuman val.",
-    "Quality: scripts/eval_coco_predictions.py --strict on peoplenet_dt_v2.json.",
-    "FPS: ORT CUDA EP; fps_forward=tensor-only, fps_predict=preprocess+run+light decode scan."
-  ],
-  "log": "results/logs/peoplenet_crowdhuman_eval.log",
-  "artifacts": [
-    "results/peoplenet_raw_preds.json",
-    "results/peoplenet_dt_v2.json",
-    "results/peoplenet_metrics_v2.json",
-    "results/peoplenet_quality_patch_v2.json",
-    "results/peoplenet_fps_patch_v2.json"
+    "In-repo mirrors: results/crowdhuman/peoplenet_unified_metrics_v2.json; results/logs/peoplenet_crowdhuman_eval.log",
+    "NGC: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/peoplenet"
   ],
   "date_updated": "2026-05-12T15:15:01Z"
 }

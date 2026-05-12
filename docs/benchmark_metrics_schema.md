@@ -11,7 +11,7 @@ Every detector row in **`results/benchmark_summary.md`** and the README table mu
 | `weights` | yes | Path to checkpoint on the machine that ran the benchmark. |
 | `weights_hub` | no | Registry / zoo id / release URL for reproduction. |
 | `hardware` | yes | GPU or CPU string (e.g. first line of `nvidia-smi`). |
-| `backend` | recommended | Short tag: `mmdet`, `fairmot`, `freeyolo`, `ultralytics_yolo`, `tao_peoplenet`, `onnx_runtime`, … |
+| `backend` | recommended | Short tag: `mmdet`, `fairmot`, `freeyolo`, `ultralytics_yolo`, `crowddet`, `tao_peoplenet`, `onnx_runtime`, … |
 | `batch_size`, `imgsz` | yes | As in the run; fair FPS comparisons usually use `batch_size=1`. |
 | `group`, `detector_id`, `detector_label` | no | Report slots (e.g. Group B manifest). |
 | `metrics` | yes | Numeric metrics (see below). |

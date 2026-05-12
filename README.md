@@ -15,7 +15,7 @@ All detectors tracked here belong to **Group B** — crowded-scene pedestrian mo
 | 7 | **FreeYOLO** | YOLOX-family; MOT17-oriented checkpoints (`integration: manual`) |
 | 8 | **PeopleNet** | NVIDIA TAO / NGC pipeline |
 
-**Persisted runs** in [`results/runs/`](results/runs/) are slots **6** and **7** (YOLOv8n-CrowdHuman, two FreeYOLO CrowdHuman checkpoints). Slots **4, 5, 8** are tracked in the manifest only; their training/inference code lives in **other repositories** (CrowdDet, Pedestron/MMDet, NVIDIA TAO), not here.
+**Persisted runs** in [`results/runs/`](results/runs/) include slot **4** (CrowdDet), **6** and **7** (YOLOv8n-CrowdHuman, two FreeYOLO CrowdHuman checkpoints), **8** (PeopleNet CrowdHuman val, ONNX + unified COCOeval). Slot **5** (Pedestron) is manifest-only; training/inference code lives in **other repositories**, not here.
 
 ### What lives here vs elsewhere
 
@@ -23,7 +23,7 @@ All detectors tracked here belong to **Group B** — crowded-scene pedestrian mo
 |----------------------|-----------------------------------|
 | `bench_runner.py`, `eval_coco_predictions.py`, dump scripts, `scripts/vast/*`, Group B shell drivers | Ultralytics install, CUDA wheels, datasets under `data/`, weights under `models/` ([`.gitignore`](.gitignore)) |
 | CrowdHuman val YAML, MOT17→COCO GT scripts, unified metric docs | FreeYOLO **upstream tree** cloned on the GPU box (`FREEYOLO_HOME`), its venv, `eval.py` for CrowdHuman-native runs |
-| `results/runs/*.json`, committed `results/logs/*.log` transcripts | CrowdDet / MMDet export pipelines (e.g. [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect)) |
+| `results/runs/*.json`, committed `results/logs/*.log`, `results/crowdhuman/*.json` (metric mirrors) | CrowdDet eval fork ([CrowdDet-detection](https://github.com/GadzhiAskhabaliev/CrowdDet-detection)), MMDet export pipelines (e.g. [CV-MMdetect](https://github.com/GadzhiAskhabaliev/CV-MMdetect)), PeopleNet NGC ONNX + host export/bench tree |
 
 Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`scripts/eval_coco_predictions.py`** once each stack emits a COCO-style DT list. **FPS** is defined per backend in each run’s `notes` (`fps_forward` vs `fps_predict`).
 
@@ -53,6 +53,7 @@ After each `bench_runner.py` save/merge, the block below updates automatically.
 
 | Backend | Model | AP25 | AP50 | AP75 | AP50-95 | AR_coco | grP50 | grR50 | grF50 | cAR50 | FPS (forward) | FPS (predict) | MOTA | TRT FP16 | Date |
 |---------|-------|------|------|------|---------|---------|-------|-------|-------|-------|---------------|---------------|------|----------|------|
+| crowddet | crowddet_rcnn_emd_refine_e30 | 0.913 | 0.8662 | 0.5586 | 0.5247 | 0.5814 | 0.7641 | 0.8533 | 0.2359 | 0.8993 |  |  |  | no | 2026-05-12T00:00:00Z |
 | freeyolo | freeyolo_ch_tiny | 0.8608 | 0.7164 | 0.3084 | 0.3563 | 0.456 | 0.6894 | 0.7324 | 0.3106 | 0.8029 | 93.256 | 34.588 |  | no | 2026-05-09T14:33:28Z |
 | freeyolo | freeyolo_yolox_mot17 | 0.8414 | 0.6819 | 0.2595 | 0.3202 | 0.4239 | 0.661 | 0.6948 | 0.339 | 0.7807 | 72.277 | 31.659 |  | no | 2026-05-11T21:16:29Z |
 | ultralytics_yolo | yolov8n_crowdhuman | 0.8102 | 0.5703 | 0.2312 | 0.2716 | 0.4022 | 0.793 | 0.4334 | 0.207 | 0.7226 | 117.368 | 127.104 |  | no | 2026-05-09T14:37:40Z |

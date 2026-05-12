@@ -20,7 +20,7 @@ Sources: `results/runs/*.json`. Updated by `scripts/bench_runner.py` and callers
 - **Greedy legacy** (`precision` / `fdr` @ `--precision-iou-thr`): 0.7642 / 0.2358
 - **FPS forward**: 214.7649
 - **FPS predict**: 147.8996
-- **Notes**: Quality from eval_coco_predictions.py on CrowdHuman val + peoplenet_dt_v2.json (--strict).; fps_forward=tensor-only; fps_predict=preprocess+run+light decode scan (ORT CUDA EP).; Quality: scripts/eval_coco_predictions.py — COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5.; FPS measured on ONNXRuntime CUDAExecutionProvider; warmup=100 iters=500.; fps_forward: sess.run on preprocessed tensor only.; fps_predict: preprocess + sess.run + lightweight decode scan.; PeopleNet ONNX (NGC pruned_quantized_decrypted_v2.3.4), CrowdHuman val.; Quality: scripts/eval_coco_predictions.py --strict on peoplenet_dt_v2.json.; FPS: ORT CUDA EP; fps_forward=tensor-only, fps_predict=preprocess+run+light decode scan.
+- **Notes**: Quality from eval_coco_predictions.py on CrowdHuman val + peoplenet_dt_v2.json (--strict).; fps_forward=tensor-only; fps_predict=preprocess+run+light decode scan (ORT CUDA EP).; Quality: scripts/eval_coco_predictions.py — COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5.; FPS measured on ONNXRuntime CUDAExecutionProvider; warmup=100 iters=500.; PeopleNet ONNX (NGC pruned_quantized_decrypted_v2.3.4), CrowdHuman val.; In-repo mirrors: results/crowdhuman/peoplenet_unified_metrics_v2.json; results/logs/peoplenet_crowdhuman_eval.log; NGC: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/peoplenet
 
 ## [peoplenet_crowdhuman] — 2026-05-12T15:08:56Z
 - **File**: `results/runs/peoplenet_crowdhuman_2026-05-12T150856Z.json`
@@ -42,6 +42,27 @@ Sources: `results/runs/*.json`. Updated by `scripts/bench_runner.py` and callers
 - **FPS forward**: 214.7649
 - **FPS predict**: 147.8996
 - **Notes**: Quality from eval_coco_predictions.py on CrowdHuman val + peoplenet_dt_v2.json (--strict).; fps_forward=tensor-only; fps_predict=preprocess+run+light decode scan (ORT CUDA EP).; Quality: scripts/eval_coco_predictions.py — COCOeval bbox on --gt-json/--dt-json; recall=COCO AR maxDets=100 IoU=0.50:0.95; coco_ar_iou25/50/75 + coco_precision_r*_iou* + coco_fdr_* from official pycocotools tensors (PR recall grid=0.5); AP25 extra eval IoU=[0.25]; greedy P/R/FDR score>=0.5, IoUs [0.25, 0.5, 0.75]; legacy precision/fdr greedy @ IoU=0.5.; FPS measured on ONNXRuntime CUDAExecutionProvider; warmup=100 iters=500.; fps_forward: sess.run on preprocessed tensor only.; fps_predict: preprocess + sess.run + lightweight decode scan.
+
+## [crowddet_rcnn_emd_refine_e30] — 2026-05-12T00:00:00Z
+- **File**: `results/runs/crowddet_rcnn_emd_refine_e30_crowdhuman.json`
+- **Weights (path)**: `/Users/criptyn97/CrowdDet/model/rcnn_emd_refine/epoch_30.pth`
+- **Weights (id / hub)**: `https://github.com/GadzhiAskhabaliev/CrowdDet-detection`
+- **Hardware**: TBD
+- **Backend**: `crowddet`
+- **AP50**: 0.8662
+- **AP25**: 0.913
+- **AP75**: 0.5586
+- **COCO AR (recall, IoU=0.50:0.95, maxDets=100)**: 0.5814
+- **coco AR @IoU0.25**: 0.9317
+- **coco AR @IoU0.50**: 0.8993
+- **coco AR @IoU0.75**: 0.6303
+- **Greedy micro @IoU0.25** (score≥thr in eval): P=0.7901 R=0.8823 FDR=0.2099
+- **Greedy micro @IoU0.50** (score≥thr in eval): P=0.7641 R=0.8533 FDR=0.2359
+- **Greedy micro @IoU0.75** (score≥thr in eval): P=0.5512 R=0.6155 FDR=0.4488
+- **Greedy legacy** (`precision` / `fdr` @ `--precision-iou-thr`): 0.7641 / 0.2359
+- **FPS forward**: 
+- **FPS predict**: 
+- **Notes**: Quality: scripts/eval_coco_predictions.py (same protocol as this repo) on CrowdHuman val COCO GT + CrowdDet DT; see docs/benchmark_metrics_schema.md.; backend=crowddet mode=rcnn_emd_refine resume epoch 30; inference + export in fork https://github.com/GadzhiAskhabaliev/CrowdDet-detection (docs/UNIFIED_EVAL.md).; metrics_json=results/crowdhuman/crowddet_unified_metrics_epoch30.json (copied from CrowdDet clone); Upstream CrowdDet: https://github.com/xg-chu/CrowdDet
 
 ## [freeyolo_yolox_mot17] — 2026-05-11T21:16:29Z
 - **File**: `results/runs/freeyolo_yolox_mot17_2026-05-11T211629Z.json`
@@ -156,6 +177,7 @@ Legend: **AR_coco** = `metrics.recall` (COCO AR maxDets=100, IoU 0.50:0.95). **g
 |---------|--------|------|------|------|------|---------|---------|-------|-------|-------|-------|------------|---------|----------|------|-----|
 | onnx_runtime | peoplenet_crowdhuman | 2026-05-12T15:09:19Z | 0.3327 | 0.2076 | 0.0363 | 0.0717 | 0.1021 | 0.7642 | 0.1872 | 0.2358 | 0.2401 | 6.7613 | 214.7649 | 147.8996 |  | no |
 | onnx_runtime | peoplenet_crowdhuman | 2026-05-12T15:08:56Z | 0.3327 | 0.2076 | 0.0363 | 0.0717 | 0.1021 | 0.7642 | 0.1872 | 0.2358 | 0.2401 | 6.7613 | 214.7649 | 147.8996 |  | no |
+| crowddet | crowddet_rcnn_emd_refine_e30 | 2026-05-12T00:00:00Z | 0.913 | 0.8662 | 0.5586 | 0.5247 | 0.5814 | 0.7641 | 0.8533 | 0.2359 | 0.8993 |  |  |  |  | no |
 | freeyolo | freeyolo_yolox_mot17 | 2026-05-11T21:16:29Z | 0.8414 | 0.6819 | 0.2595 | 0.3202 | 0.4239 | 0.661 | 0.6948 | 0.339 | 0.7807 | 31.5871 | 72.277 | 31.659 |  | no |
 | mmdet | fcos_r50_crowdhuman | 2026-05-11T00:00:00Z | 0.5425 | 0.3284 | 0.1108 | 0.144 | 0.2938 | 0.7714 | 0.0845 | 0.2286 | 0.5899 |  |  |  |  | no |
 | mmdet | ssd300_crowdhuman | 2026-05-11T00:00:00Z | 0.5976 | 0.2874 | 0.0473 | 0.0965 | 0.181 | 0.7132 | 0.1741 | 0.2868 | 0.4634 |  |  |  |  | no |
