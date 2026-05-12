@@ -5,17 +5,19 @@ Timing runs are usually on a cloud GPU; on-board FPS/power stay out of this repo
 
 ## What we benchmark
 
-All detectors tracked here belong to **Group B** — crowded-scene pedestrian models enumerated in [`docs/group_b_pedestrian_detectors.yaml`](docs/group_b_pedestrian_detectors.yaml):
+**Group B** is the manifest in [`docs/group_b_pedestrian_detectors.yaml`](docs/group_b_pedestrian_detectors.yaml) (IDs **4–8**). Each row’s `integration` is either **`ultralytics`** (bench code in this repo) or **`manual`** (export + eval elsewhere; we only store unified JSON/logs when provided).
 
-| ID | Short name | Description |
-|----|------------|-------------|
-| 4 | **CrowdDet** | RCNN EMD Refine, ResNet-50 + FPN |
-| 5 | **Pedestron** | Cascade Mask R-CNN, HRNet-W32 |
-| 6 | **YOLOv8n-CH** | YOLOv8 nano trained on CrowdHuman (`integration: ultralytics`) |
-| 7 | **FreeYOLO** | YOLOX-family; MOT17-oriented checkpoints (`integration: manual`) |
-| 8 | **PeopleNet** | NVIDIA TAO / NGC pipeline |
+| ID | Short name | Description (from manifest + how we measure) |
+|----|------------|------------------------------------------------|
+| 4 | **CrowdDet** | *Detection in Crowded Scenes* (CVPR’20): RCNN **EMD Refine**, ResNet-50 + FPN. `integration: manual`. Persisted: unified COCOeval on CrowdHuman val. |
+| 5 | **Pedestron** | Cascade **Mask** R-CNN, HRNet-W32. `integration: manual`. Listed for coverage; **no** `results/runs/` row yet — MMDet/Pedestron export is out-of-tree. |
+| 6 | **YOLOv8n-CH** | YOLOv8 **nano**, CrowdHuman-trained (HF [`yakhyo/yolov8-crowdhuman`](https://huggingface.co/yakhyo/yolov8-crowdhuman)). `integration: ultralytics`. |
+| 7 | **FreeYOLO** | [FreeYOLO](https://github.com/yjh0410/FreeYOLO) YOLOX-family heads. `integration: manual`. **CrowdHuman val** rows use author **`yolo_free_*_ch.pth`** checkpoints (e.g. tiny + nano); manifest `bench_slug` still points at the MOT17-oriented naming for one slot. |
+| 8 | **PeopleNet** | [NVIDIA PeopleNet](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/peoplenet), **ResNet-34**, TAO/NGC training. `integration: manual`. **Persisted run** = NGC **pruned INT8 ONNX** + **ONNX Runtime** (CUDA EP) on CrowdHuman val + unified `eval_coco_predictions.py` — not the full TAO `.etlt` / TensorRT-only path from the catalog blurb. |
 
-**Persisted runs** in [`results/runs/`](results/runs/) include slot **4** (CrowdDet), **6** and **7** (YOLOv8n-CrowdHuman, two FreeYOLO CrowdHuman checkpoints), **8** (PeopleNet CrowdHuman val, ONNX + unified COCOeval). Slot **5** (Pedestron) is manifest-only; training/inference code lives in **other repositories**, not here.
+**Also in the unified CrowdHuman val table (same GT + evaluator, not YAML IDs 4–8):** MMDetection **FCOS R50** and **SSD300** COCO-pretrained dumps — see [`docs/crowdhuman_val_full_metrics_table.md`](docs/crowdhuman_val_full_metrics_table.md).
+
+**Persisted runs** under [`results/runs/`](results/runs/): slots **4**, **6**, **7**, **8** as above, plus the two **mmdet** comparators. Slot **5** (Pedestron) remains manifest-only until a run JSON is added.
 
 ### What lives here vs elsewhere
 
