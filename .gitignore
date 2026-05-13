@@ -2,6 +2,9 @@
 data/
 models/
 tools/
+artifacts/
+Yolov8n_crowdhuman_ONNX/
+RUNBOOK.md
 
 # Under results/: keep manifests, run JSON, figures, committed logs only
 results/*

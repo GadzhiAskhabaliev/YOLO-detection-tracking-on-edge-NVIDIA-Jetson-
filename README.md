@@ -4,6 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-Jetson%20%7C%20Vast.ai-green)
 ![Tracking](https://img.shields.io/badge/tracking-ByteTrack%20%7C%20StrongSORT%20%7C%20BoT--SORT%20%7C%20HybridSORT%20%7C%20DeepOCSORT-orange)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+[![HF ONNX Model](https://img.shields.io/badge/HuggingFace-ONNX%20winner-yellow)](https://huggingface.co/hackhackhack66666/Yolov8n_crowdhuman_ONNX)
 
 Focused benchmark repository for pedestrian detection and MOT tracking on edge GPUs.
 
@@ -66,9 +67,32 @@ Unified tracking comparison across all detectors and trackers:
 
 Per your latest requirement, tracking benchmark artifacts were not rewritten and remain preserved.
 
-## Jetson no-risk mode
+## ONNX winner model
 
-For lab-safe execution (Docker only, no host mutation):
+Winner detector ONNX is published here:
+
+- [Hugging Face model repo](https://huggingface.co/hackhackhack66666/Yolov8n_crowdhuman_ONNX)
+
+Quick access widget:
+
+<iframe
+  src="https://huggingface.co/hackhackhack66666/Yolov8n_crowdhuman_ONNX/embed"
+  frameborder="0"
+  width="850"
+  height="450"
+></iframe>
+
+### Deployment note (TensorRT compatibility)
+
+- Build TensorRT engines on the target device (or an identical stack) for best compatibility and performance.
+- Do not reuse `.engine` binaries across mismatched JetPack/L4T/CUDA/TensorRT versions.
+- For Jetson deployment, export ONNX once, then optimize/compile on that exact Jetson hardware.
+
+## Jetson no-risk mode (local helper)
+
+This workflow is documented in `RUNBOOK.md`. The helper script is intentionally local-only (not versioned in git).
+
+For lab-safe execution (Docker only, no host mutation), run locally:
 
 ```bash
 bash scripts/tracking/run_jetson_winner_safe.sh
