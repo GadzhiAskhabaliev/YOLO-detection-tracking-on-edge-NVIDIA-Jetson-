@@ -47,6 +47,96 @@ Cross-model **AP** (keys **`AP50`**, **`AP50-95`**, …) use the same GT and **`
 | [`scripts/bench_runner.py`](scripts/bench_runner.py) | Orchestration + README / summary refresh |
 | [`scripts/eval_coco_predictions.py`](scripts/eval_coco_predictions.py) | Unified COCOeval on dumped predictions |
 
+## One-command pipeline (Vast/Jetson)
+
+For a reproducible YOLO-only run from a fresh machine, use:
+
+```bash
+bash scripts/run_yolo_edge_pipeline.sh
+```
+
+The pipeline executes:
+
+1. dependency install (`scripts/vast/install_deps.sh`)
+2. dataset + weights bootstrap (`scripts/vast/run_cloud_bootstrap.sh`)
+3. YOLO benchmark (`scripts/bench_runner.py --bench-mode all`)
+4. MOT17 dump for tracker input (`scripts/dump_ultralytics_mot17.py`)
+5. unified metrics + merge into latest run JSON (`scripts/eval_coco_predictions.py` + `--merge-json`)
+
+Useful overrides:
+
+```bash
+SKIP_INSTALL=1 \
+SKIP_BOOTSTRAP=1 \
+WEIGHTS=/workspace/models/yolov8n_crowdhuman.pt \
+DEVICE=cuda:0 \
+bash scripts/run_yolo_edge_pipeline.sh
+```
+
+## Tracking pipeline: YOLOv8n + ByteTrack/BoxMOT trackers
+
+Tracking utilities are isolated in `scripts/tracking/` and keep detection benchmarks intact.
+Path defaults are auto-detected in this order: `EDGE_WORK_ROOT`, `/workspace`, `/root/workspace`, `/root`.
+So scripts run on instances without `/workspace` too.
+
+Quick start on a Vast instance:
+
+```bash
+bash scripts/vast/install_deps.sh
+pip install -r requirements-tracking.txt
+bash scripts/vast/download_mot17.sh
+python3 scripts/tracking/check_dataset_layout.py --out-json results/tracking/dataset_layout_check.json
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_bytetrack_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_strongsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_botsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_hybridsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_deepocsort_mot17.sh
+```
+
+Convert/export (if you have only raw tracking JSON):
+
+```bash
+python3 scripts/tracking/export_ultralytics_to_mot.py \
+  --in-json results/tracking/<run_tag>_raw_tracks.json \
+  --out-txt results/tracking/<run_tag>.txt \
+  --strict
+```
+
+TrackEval (MOTA/IDF1/HOTA):
+
+```bash
+MOT17_SEQ=MOT17-02-FRCNN \
+TRACKER_NAME=yolov8_bytetrack \
+PRED_TXT=results/tracking/<run_tag>.txt \
+bash scripts/tracking/eval_trackeval_mot17.sh
+
+MOT17_SEQ=MOT17-02-FRCNN \
+TRACKER_NAME=yolov8_strongsort \
+PRED_TXT=results/tracking/<run_tag>.txt \
+bash scripts/tracking/eval_trackeval_mot17.sh
+```
+
+Important: this TrackEval flow uses `MOT17 train` GT and should be treated as a **development benchmark**
+(not an official MOTChallenge test-server submission).
+
+Default benchmark sweep for three configs:
+
+```bash
+python3 scripts/tracking/run_tracking_benchmarks.py --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_strongsort.py --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type botsort --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type hybridsort --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type deepocsort --mot17-seq MOT17-02-FRCNN
+
+# sequential automation for BoT-SORT + HybridSORT + DeepOCSORT
+bash scripts/tracking/run_tracking_benchmarks_top_trackers.sh
+```
+
+Known limitations:
+- Cloud GPU FPS is not equal to Jetson FPS; re-run with Jetson-specific torch/onnx/tensorrt stack.
+- MOT17 evaluation quality depends on sequence choice and GT consistency (`gt/gt.txt`).
+- Some instances do not expose `/workspace`; override `MOT17_ROOT` / data paths when needed.
+
 ## Benchmark table (auto-generated)
 
 After each `bench_runner.py` save/merge, the block below updates automatically.

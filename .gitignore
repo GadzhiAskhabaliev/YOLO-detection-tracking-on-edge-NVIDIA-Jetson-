@@ -1,6 +1,7 @@
 # Large inputs (typical cloud mount: /workspace/data, /workspace/models)
 data/
 models/
+tools/
 
 # Under results/: keep manifests, run JSON, figures, committed logs only
 results/*
@@ -17,6 +18,14 @@ results/*
 !results/logs/*.log
 !results/crowdhuman/
 !results/crowdhuman/*.json
+!results/tracking/
+!results/tracking/.gitkeep
+!results/tracking/*.json
+!results/tracking/*.md
+!results/tracking/trackeval/
+!results/tracking/trackeval/.gitkeep
+!results/tracking/trackeval/*.json
+!results/tracking/trackeval/*.md
 
 # Exported weights / engines
 *.pt

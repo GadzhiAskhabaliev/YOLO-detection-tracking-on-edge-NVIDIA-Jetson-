@@ -1,0 +1,135 @@
+{
+  "trackers": [
+    "bytetrack",
+    "strongsort",
+    "botsort",
+    "hybridsort",
+    "deepocsort"
+  ],
+  "scoring": {
+    "formula": "score_normalized = norm(HOTA)+norm(IDF1)+norm(MOTA)+norm(FPS)",
+    "normalization_scope": "all configs across all compared trackers",
+    "ranges": {
+      "HOTA": [
+        0.2620564217700261,
+        0.3140340054667182
+      ],
+      "IDF1": [
+        0.29155516560649264,
+        0.38289689034369884
+      ],
+      "MOTA": [
+        0.21312092998223992,
+        0.28701361605941555
+      ],
+      "FPS": [
+        14.7048,
+        46.8053
+      ]
+    }
+  },
+  "ranked_trackers": [
+    {
+      "tracker": "bytetrack",
+      "tracker_name": "yolov8_bytetrack",
+      "config": {
+        "conf": 0.35,
+        "iou": 0.7
+      },
+      "fps": 46.8053,
+      "mota": 0.26957644906086864,
+      "idf1": 0.38289689034369884,
+      "hota": 0.3140340054667182,
+      "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173311Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json",
+      "score_normalized": 3.7640203932993446,
+      "score_raw_sum": 47.77180734487129,
+      "rank": 1
+    },
+    {
+      "tracker": "hybridsort",
+      "tracker_name": "yolov8_hybridsort",
+      "config": {
+        "conf": 0.2,
+        "iou": 0.6
+      },
+      "fps": 14.7048,
+      "mota": 0.28701361605941555,
+      "idf1": 0.35069885641677256,
+      "hota": 0.30665710940587243,
+      "run_report": "results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c02_i06_20260513T182227Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_hybridsort_MOT17-02-FRCNN_metrics.json",
+      "score_normalized": 2.5055746014107685,
+      "score_raw_sum": 15.649169581882061,
+      "rank": 2
+    },
+    {
+      "tracker": "deepocsort",
+      "tracker_name": "yolov8_deepocsort",
+      "config": {
+        "conf": 0.35,
+        "iou": 0.7
+      },
+      "fps": 19.2282,
+      "mota": 0.22759808406436682,
+      "idf1": 0.34097222222222223,
+      "hota": 0.3061085177312626,
+      "run_report": "results/tracking/yolov8_deepocsort_MOT17-02-FRCNN_c035_i07_20260513T182354Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_deepocsort_MOT17-02-FRCNN_metrics.json",
+      "score_normalized": 1.7253690335324676,
+      "score_raw_sum": 20.102878824017854,
+      "rank": 3
+    },
+    {
+      "tracker": "strongsort",
+      "tracker_name": "yolov8_strongsort",
+      "config": {
+        "conf": 0.25,
+        "iou": 0.7
+      },
+      "fps": 16.9263,
+      "mota": 0.21312092998223992,
+      "idf1": 0.3130258578917228,
+      "hota": 0.2900521417463626,
+      "run_report": "results/tracking/yolov8_strongsort_MOT17-02-FRCNN_c025_i07_20260513T175813Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_MOT17-02-FRCNN_metrics.json",
+      "score_normalized": 0.8428749219589701,
+      "score_raw_sum": 17.742498929620325,
+      "rank": 4
+    },
+    {
+      "tracker": "botsort",
+      "tracker_name": "yolov8_botsort",
+      "config": {
+        "conf": 0.2,
+        "iou": 0.6
+      },
+      "fps": 17.0857,
+      "mota": 0.22011732414832355,
+      "idf1": 0.2999085644620543,
+      "hota": 0.2680029796375975,
+      "run_report": "results/tracking/yolov8_botsort_MOT17-02-FRCNN_c02_i06_20260513T182009Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_botsort_MOT17-02-FRCNN_metrics.json",
+      "score_normalized": 0.37471172949116804,
+      "score_raw_sum": 17.873728868247973,
+      "rank": 5
+    }
+  ],
+  "winner": {
+    "tracker": "bytetrack",
+    "tracker_name": "yolov8_bytetrack",
+    "config": {
+      "conf": 0.35,
+      "iou": 0.7
+    },
+    "fps": 46.8053,
+    "mota": 0.26957644906086864,
+    "idf1": 0.38289689034369884,
+    "hota": 0.3140340054667182,
+    "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173311Z_run_report.json",
+    "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json",
+    "score_normalized": 3.7640203932993446,
+    "score_raw_sum": 47.77180734487129,
+    "rank": 1
+  }
+}

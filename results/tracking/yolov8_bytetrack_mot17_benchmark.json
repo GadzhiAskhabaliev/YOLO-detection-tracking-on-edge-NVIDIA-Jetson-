@@ -1,0 +1,59 @@
+{
+  "sequence": "MOT17-02-FRCNN",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "device": "cuda:0",
+  "rows": [
+    {
+      "config": {
+        "conf": 0.2,
+        "iou": 0.6
+      },
+      "fps_e2e": 40.1551,
+      "latency_ms_e2e": 24.9034,
+      "MOTA": "0.28034013239330496",
+      "IDF1": "0.37722560734351507",
+      "HOTA": "0.31203533661227006",
+      "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c02_i06_20260513T173329Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.35,
+        "iou": 0.7
+      },
+      "fps_e2e": 46.8053,
+      "latency_ms_e2e": 21.3651,
+      "MOTA": "0.26957644906086864",
+      "IDF1": "0.38289689034369884",
+      "HOTA": "0.3140340054667182",
+      "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173311Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.25,
+        "iou": 0.7
+      },
+      "fps_e2e": 39.872,
+      "latency_ms_e2e": 25.0803,
+      "MOTA": "0.2776492115601959",
+      "IDF1": "0.3642969984202212",
+      "HOTA": "0.30262565900563854",
+      "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c025_i07_20260513T173250Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json"
+    }
+  ],
+  "recommended_baseline": {
+    "config": {
+      "conf": 0.2,
+      "iou": 0.6
+    },
+    "fps_e2e": 40.1551,
+    "latency_ms_e2e": 24.9034,
+    "MOTA": "0.28034013239330496",
+    "IDF1": "0.37722560734351507",
+    "HOTA": "0.31203533661227006",
+    "run_report": "results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c02_i06_20260513T173329Z_run_report.json",
+    "trackeval_json": "results/tracking/trackeval/yolov8_bytetrack_MOT17-02-FRCNN_metrics.json"
+  }
+}

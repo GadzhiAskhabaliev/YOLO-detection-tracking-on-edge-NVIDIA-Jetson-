@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-05-13T18:21:34Z",
+  "run_tag": "yolov8_hybridsort_MOT17-02-FRCNN_c025_i07_20260513T182052Z",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "source": "/workspace/data/mot17/MOT17/train/MOT17-02-FRCNN/img1",
+  "tracker": "hybridsort",
+  "tracker_label": "hybridsort",
+  "reid_weights": "osnet_x0_25_msmt17.pt",
+  "fps_e2e": 14.8998,
+  "latency_ms_e2e": 67.1151,
+  "wall_seconds": 40.2691,
+  "frames": 600,
+  "params": {
+    "imgsz": 640,
+    "conf": 0.25,
+    "iou": 0.7,
+    "device": "cuda:0",
+    "classes": [
+      0
+    ]
+  },
+  "artifacts": {
+    "raw_tracks_json": "/root/yolo-edge-bench/results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c025_i07_20260513T182052Z_raw_tracks.json",
+    "mot_txt": "/root/yolo-edge-bench/results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c025_i07_20260513T182052Z.txt",
+    "video": ""
+  }
+}

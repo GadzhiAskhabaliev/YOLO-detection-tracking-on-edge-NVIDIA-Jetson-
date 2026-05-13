@@ -1,0 +1,62 @@
+{
+  "tracker_type": "botsort",
+  "tracker_name": "yolov8_botsort",
+  "sequence": "MOT17-02-FRCNN",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "reid_weights": "osnet_x0_25_msmt17.pt",
+  "device": "cuda:0",
+  "rows": [
+    {
+      "config": {
+        "conf": 0.2,
+        "iou": 0.6
+      },
+      "fps_e2e": 17.0857,
+      "latency_ms_e2e": 58.5283,
+      "MOTA": "0.22011732414832355",
+      "IDF1": "0.2999085644620543",
+      "HOTA": "0.2680029796375975",
+      "run_report": "results/tracking/yolov8_botsort_MOT17-02-FRCNN_c02_i06_20260513T182009Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_botsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.25,
+        "iou": 0.7
+      },
+      "fps_e2e": 17.0925,
+      "latency_ms_e2e": 58.505,
+      "MOTA": "0.2185565900651203",
+      "IDF1": "0.2983406113537118",
+      "HOTA": "0.26745646682882707",
+      "run_report": "results/tracking/yolov8_botsort_MOT17-02-FRCNN_c025_i07_20260513T181844Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_botsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.35,
+        "iou": 0.7
+      },
+      "fps_e2e": 17.0575,
+      "latency_ms_e2e": 58.6253,
+      "MOTA": "0.21635003498197083",
+      "IDF1": "0.29155516560649264",
+      "HOTA": "0.2620564217700261",
+      "run_report": "results/tracking/yolov8_botsort_MOT17-02-FRCNN_c035_i07_20260513T181927Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_botsort_MOT17-02-FRCNN_metrics.json"
+    }
+  ],
+  "recommended_baseline": {
+    "config": {
+      "conf": 0.2,
+      "iou": 0.6
+    },
+    "fps_e2e": 17.0857,
+    "latency_ms_e2e": 58.5283,
+    "MOTA": "0.22011732414832355",
+    "IDF1": "0.2999085644620543",
+    "HOTA": "0.2680029796375975",
+    "run_report": "results/tracking/yolov8_botsort_MOT17-02-FRCNN_c02_i06_20260513T182009Z_run_report.json",
+    "trackeval_json": "results/tracking/trackeval/yolov8_botsort_MOT17-02-FRCNN_metrics.json"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "tracker_type": "hybridsort",
+  "tracker_name": "yolov8_hybridsort",
+  "sequence": "MOT17-02-FRCNN",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "reid_weights": "osnet_x0_25_msmt17.pt",
+  "device": "cuda:0",
+  "rows": [
+    {
+      "config": {
+        "conf": 0.2,
+        "iou": 0.6
+      },
+      "fps_e2e": 14.7048,
+      "latency_ms_e2e": 68.0051,
+      "MOTA": "0.28701361605941555",
+      "IDF1": "0.35069885641677256",
+      "HOTA": "0.30665710940587243",
+      "run_report": "results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c02_i06_20260513T182227Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_hybridsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.25,
+        "iou": 0.7
+      },
+      "fps_e2e": 14.8998,
+      "latency_ms_e2e": 67.1151,
+      "MOTA": "0.2799095850600075",
+      "IDF1": "0.34308681672025726",
+      "HOTA": "0.3051259968497599",
+      "run_report": "results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c025_i07_20260513T182052Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_hybridsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "config": {
+        "conf": 0.35,
+        "iou": 0.7
+      },
+      "fps_e2e": 15.478,
+      "latency_ms_e2e": 64.6079,
+      "MOTA": "0.264356062644637",
+      "IDF1": "0.30750675816177997",
+      "HOTA": "0.2910167820274519",
+      "run_report": "results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c035_i07_20260513T182140Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/yolov8_hybridsort_MOT17-02-FRCNN_metrics.json"
+    }
+  ],
+  "recommended_baseline": {
+    "config": {
+      "conf": 0.2,
+      "iou": 0.6
+    },
+    "fps_e2e": 14.7048,
+    "latency_ms_e2e": 68.0051,
+    "MOTA": "0.28701361605941555",
+    "IDF1": "0.35069885641677256",
+    "HOTA": "0.30665710940587243",
+    "run_report": "results/tracking/yolov8_hybridsort_MOT17-02-FRCNN_c02_i06_20260513T182227Z_run_report.json",
+    "trackeval_json": "results/tracking/trackeval/yolov8_hybridsort_MOT17-02-FRCNN_metrics.json"
+  }
+}

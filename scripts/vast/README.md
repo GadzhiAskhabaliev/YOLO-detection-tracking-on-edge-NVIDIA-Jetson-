@@ -51,5 +51,55 @@ bash scripts/vast/run_cloud_bootstrap.sh
 | `../plot_group_b_results.py` | Group B figure generator (optional, local analysis only) |
 | `val_yolov8_crowdhuman.sh` | `model.val` on CrowdHuman yaml |
 | `run_cloud_bootstrap.sh` | install + datasets + convert + layout + weights |
+| `../tracking/check_dataset_layout.py` | Validate CrowdHuman + MOT17 layout and print summary |
+| `../tracking/run_yolov8_bytetrack_mot17.py` | YOLOv8n + ByteTrack run with FPS/latency report |
+| `../tracking/run_yolov8_boxmot_mot17.py` | YOLOv8n + BoxMOT tracker run (BoT-SORT/HybridSORT/DeepOCSORT/StrongSORT) |
+| `../tracking/run_yolov8_strongsort_mot17.py` | YOLOv8n + StrongSORT run with FPS/latency report |
+| `../tracking/run_yolov8_botsort_mot17.sh` | BoT-SORT wrapper for MOT17 runs |
+| `../tracking/run_yolov8_hybridsort_mot17.sh` | HybridSORT wrapper for MOT17 runs |
+| `../tracking/run_yolov8_deepocsort_mot17.sh` | DeepOCSORT wrapper for MOT17 runs |
+| `../tracking/export_ultralytics_to_mot.py` | Convert raw tracks JSON to MOTChallenge txt |
+| `../tracking/eval_trackeval_mot17.sh` | TrackEval wrapper (HOTA/CLEAR/Identity, outputs json+md) |
+| `../tracking/run_tracking_benchmarks.py` | 3-config tracking sweep and benchmark aggregation |
+| `../tracking/run_tracking_benchmarks_strongsort.py` | 3-config StrongSORT sweep and benchmark aggregation |
+| `../tracking/run_tracking_benchmarks_boxmot.py` | 3-config sweep for selected BoxMOT tracker |
+| `../tracking/run_tracking_benchmarks_top_trackers.sh` | Sequential sweep for BoT-SORT + HybridSORT + DeepOCSORT |
 
 Config: `configs/datasets/crowdhuman_val.yaml`.
+
+## Tracking quick run (MOT17)
+
+Default tracking paths auto-resolve by:
+`EDGE_WORK_ROOT` -> `/workspace` -> `/root/workspace` -> `/root`.
+
+```bash
+pip install -r requirements-tracking.txt
+bash scripts/vast/download_mot17.sh
+python3 scripts/tracking/check_dataset_layout.py --out-json results/tracking/dataset_layout_check.json
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_bytetrack_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_strongsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_botsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_hybridsort_mot17.sh
+MOT17_SEQ=MOT17-02-FRCNN bash scripts/tracking/run_yolov8_deepocsort_mot17.sh
+```
+
+TrackEval:
+
+```bash
+MOT17_SEQ=MOT17-02-FRCNN \
+PRED_TXT=results/tracking/<run_tag>.txt \
+TRACKER_NAME=yolov8_bytetrack \
+bash scripts/tracking/eval_trackeval_mot17.sh
+```
+
+StrongSORT benchmark sweep:
+
+```bash
+python3 scripts/tracking/run_tracking_benchmarks_strongsort.py --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type botsort --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type hybridsort --mot17-seq MOT17-02-FRCNN
+python3 scripts/tracking/run_tracking_benchmarks_boxmot.py --tracker-type deepocsort --mot17-seq MOT17-02-FRCNN
+bash scripts/tracking/run_tracking_benchmarks_top_trackers.sh
+```
+
+Note: evaluation runs against `MOT17 train` GT for development iteration.

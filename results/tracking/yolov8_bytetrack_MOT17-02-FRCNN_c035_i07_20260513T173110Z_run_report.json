@@ -1,0 +1,24 @@
+{
+  "created_at": "2026-05-13T17:31:23Z",
+  "run_tag": "yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173110Z",
+  "weights": "/workspace/models/yolov8n_crowdhuman.pt",
+  "source": "/workspace/data/mot17/MOT17/train/MOT17-02-FRCNN/img1",
+  "fps_e2e": 47.51,
+  "latency_ms_e2e": 21.0482,
+  "wall_seconds": 12.6289,
+  "frames": 600,
+  "params": {
+    "imgsz": 640,
+    "conf": 0.35,
+    "iou": 0.7,
+    "device": "cuda:0",
+    "tracker": "bytetrack.yaml",
+    "classes": [
+      0
+    ]
+  },
+  "artifacts": {
+    "raw_tracks_json": "/root/yolo-edge-bench/results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173110Z_raw_tracks.json",
+    "mot_txt": "/root/yolo-edge-bench/results/tracking/yolov8_bytetrack_MOT17-02-FRCNN_c035_i07_20260513T173110Z.txt"
+  }
+}

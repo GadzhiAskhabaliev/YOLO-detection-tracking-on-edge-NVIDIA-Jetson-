@@ -1,0 +1,190 @@
+{
+  "crowdhuman": {
+    "root": "/workspace/data/crowdhuman",
+    "exists": false,
+    "images_exists": false,
+    "images_count": 0,
+    "annotation_val_odgt_exists": false,
+    "annotation_val_odgt_rows": 0,
+    "yolo_images_val_exists": false,
+    "yolo_images_val_count": 0,
+    "yolo_labels_val_exists": false,
+    "yolo_labels_val_count": 0
+  },
+  "mot17": {
+    "root": "/workspace/data/mot17/MOT17/train",
+    "exists": true,
+    "sequences": [
+      {
+        "name": "MOT17-02-DPM",
+        "img1_exists": true,
+        "frames": 600,
+        "gt_exists": true,
+        "gt_rows": 30003,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-02-FRCNN",
+        "img1_exists": true,
+        "frames": 600,
+        "gt_exists": true,
+        "gt_rows": 30003,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-02-SDP",
+        "img1_exists": true,
+        "frames": 600,
+        "gt_exists": true,
+        "gt_rows": 30003,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-04-DPM",
+        "img1_exists": true,
+        "frames": 1050,
+        "gt_exists": true,
+        "gt_rows": 108005,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-04-FRCNN",
+        "img1_exists": true,
+        "frames": 1050,
+        "gt_exists": true,
+        "gt_rows": 108005,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-04-SDP",
+        "img1_exists": true,
+        "frames": 1050,
+        "gt_exists": true,
+        "gt_rows": 108005,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-05-DPM",
+        "img1_exists": true,
+        "frames": 837,
+        "gt_exists": true,
+        "gt_rows": 8013,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-05-FRCNN",
+        "img1_exists": true,
+        "frames": 837,
+        "gt_exists": true,
+        "gt_rows": 8013,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-05-SDP",
+        "img1_exists": true,
+        "frames": 837,
+        "gt_exists": true,
+        "gt_rows": 8013,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-09-DPM",
+        "img1_exists": true,
+        "frames": 525,
+        "gt_exists": true,
+        "gt_rows": 10411,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-09-FRCNN",
+        "img1_exists": true,
+        "frames": 525,
+        "gt_exists": true,
+        "gt_rows": 10411,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-09-SDP",
+        "img1_exists": true,
+        "frames": 525,
+        "gt_exists": true,
+        "gt_rows": 10411,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-10-DPM",
+        "img1_exists": true,
+        "frames": 654,
+        "gt_exists": true,
+        "gt_rows": 17450,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-10-FRCNN",
+        "img1_exists": true,
+        "frames": 654,
+        "gt_exists": true,
+        "gt_rows": 17450,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-10-SDP",
+        "img1_exists": true,
+        "frames": 654,
+        "gt_exists": true,
+        "gt_rows": 17450,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-11-DPM",
+        "img1_exists": true,
+        "frames": 900,
+        "gt_exists": true,
+        "gt_rows": 10617,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-11-FRCNN",
+        "img1_exists": true,
+        "frames": 900,
+        "gt_exists": true,
+        "gt_rows": 10617,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-11-SDP",
+        "img1_exists": true,
+        "frames": 900,
+        "gt_exists": true,
+        "gt_rows": 10617,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-13-DPM",
+        "img1_exists": true,
+        "frames": 750,
+        "gt_exists": true,
+        "gt_rows": 20202,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-13-FRCNN",
+        "img1_exists": true,
+        "frames": 750,
+        "gt_exists": true,
+        "gt_rows": 20202,
+        "seqinfo_exists": true
+      },
+      {
+        "name": "MOT17-13-SDP",
+        "img1_exists": true,
+        "frames": 750,
+        "gt_exists": true,
+        "gt_rows": 20202,
+        "seqinfo_exists": true
+      }
+    ],
+    "sequence_count": 21,
+    "total_frames": 15948
+  }
+}
