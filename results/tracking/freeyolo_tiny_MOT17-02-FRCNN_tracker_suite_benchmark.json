@@ -1,0 +1,72 @@
+{
+  "detector": "freeyolo_tiny",
+  "sequence": "MOT17-02-FRCNN",
+  "rows": [
+    {
+      "detector": "freeyolo_tiny",
+      "tracker": "bytetrack",
+      "fps_e2e": 53.5395,
+      "latency_ms_e2e": 18.6778,
+      "MOTA": "0.16193961573650503",
+      "IDF1": "0.35299787931366877",
+      "HOTA": "0.2829342410567454",
+      "run_report": "results/tracking/freeyolo_tiny_bytetrack_MOT17-02-FRCNN_20260513T185655Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_bytetrack_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "detector": "freeyolo_tiny",
+      "tracker": "botsort",
+      "fps_e2e": 16.3749,
+      "latency_ms_e2e": 61.0691,
+      "MOTA": "0.21026855389914428",
+      "IDF1": "0.3939037109309289",
+      "HOTA": "0.31605017368651245",
+      "run_report": "results/tracking/freeyolo_tiny_botsort_MOT17-02-FRCNN_20260513T185902Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_botsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "detector": "freeyolo_tiny",
+      "tracker": "deepocsort",
+      "fps_e2e": 12.3156,
+      "latency_ms_e2e": 81.1975,
+      "MOTA": "0.27506592756041115",
+      "IDF1": "0.38086201233531625",
+      "HOTA": "0.30016467279056297",
+      "run_report": "results/tracking/freeyolo_tiny_deepocsort_MOT17-02-FRCNN_20260513T190301Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_deepocsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "detector": "freeyolo_tiny",
+      "tracker": "strongsort",
+      "fps_e2e": 7.2321,
+      "latency_ms_e2e": 138.2723,
+      "MOTA": "0.28340778214304935",
+      "IDF1": "0.4009190553316509",
+      "HOTA": "0.3134695967594589",
+      "run_report": "results/tracking/freeyolo_tiny_strongsort_MOT17-02-FRCNN_20260513T185722Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_strongsort_MOT17-02-FRCNN_metrics.json"
+    },
+    {
+      "detector": "freeyolo_tiny",
+      "tracker": "hybridsort",
+      "fps_e2e": 3.5518,
+      "latency_ms_e2e": 281.5478,
+      "MOTA": "-0.3452989613045584",
+      "IDF1": "0.27549081697276756",
+      "HOTA": "0.21333280472108554",
+      "run_report": "results/tracking/freeyolo_tiny_hybridsort_MOT17-02-FRCNN_20260513T185955Z_run_report.json",
+      "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_hybridsort_MOT17-02-FRCNN_metrics.json"
+    }
+  ],
+  "recommended_baseline": {
+    "detector": "freeyolo_tiny",
+    "tracker": "bytetrack",
+    "fps_e2e": 53.5395,
+    "latency_ms_e2e": 18.6778,
+    "MOTA": "0.16193961573650503",
+    "IDF1": "0.35299787931366877",
+    "HOTA": "0.2829342410567454",
+    "run_report": "results/tracking/freeyolo_tiny_bytetrack_MOT17-02-FRCNN_20260513T185655Z_run_report.json",
+    "trackeval_json": "results/tracking/trackeval/freeyolo_tiny_bytetrack_MOT17-02-FRCNN_metrics.json"
+  }
+}

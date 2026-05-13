@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-05-13T19:10:09Z",
+  "run_tag": "freeyolo_nano_hybridsort_MOT17-02-FRCNN_20260513T190703Z",
+  "detector_label": "freeyolo_nano",
+  "tracker_type": "hybridsort",
+  "tracker_label": "hybridsort",
+  "sequence": "MOT17-02-FRCNN",
+  "det_txt": "/workspace/data/mot17/detections/freeyolo_nano_MOT17-02-FRCNN/MOT17-02-FRCNN/det.txt",
+  "fps_e2e": 3.4188,
+  "latency_ms_e2e": 292.5013,
+  "wall_seconds": 175.5008,
+  "frames": 600,
+  "artifacts": {
+    "raw_tracks_json": "/root/yolo-edge-bench/results/tracking/freeyolo_nano_hybridsort_MOT17-02-FRCNN_20260513T190703Z_raw_tracks.json",
+    "mot_txt": "/root/yolo-edge-bench/results/tracking/freeyolo_nano_hybridsort_MOT17-02-FRCNN_20260513T190703Z.txt"
+  }
+}

@@ -1,4 +1,4 @@
-# YOLOv8n + yolov8_deepocsort benchmark (MOT17)
+# yolov8_deepocsort benchmark (MOT17)
 
 | conf | iou | FPS e2e | latency ms | MOTA | IDF1 | HOTA |
 |------|-----|---------|------------|------|------|------|

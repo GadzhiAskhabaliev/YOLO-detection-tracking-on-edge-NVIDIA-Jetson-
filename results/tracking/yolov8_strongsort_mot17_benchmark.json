@@ -15,7 +15,7 @@
       "IDF1": "0.3130258578917228",
       "HOTA": "0.2900521417463626",
       "run_report": "results/tracking/yolov8_strongsort_MOT17-02-FRCNN_c025_i07_20260513T175813Z_run_report.json",
-      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_MOT17-02-FRCNN_metrics.json"
+      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_c025_i07_MOT17-02-FRCNN_metrics.json"
     },
     {
       "config": {
@@ -28,7 +28,7 @@
       "IDF1": "0.3130258578917228",
       "HOTA": "0.2900521417463626",
       "run_report": "results/tracking/yolov8_strongsort_MOT17-02-FRCNN_c035_i07_20260513T175856Z_run_report.json",
-      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_MOT17-02-FRCNN_metrics.json"
+      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_c035_i07_MOT17-02-FRCNN_metrics.json"
     },
     {
       "config": {
@@ -41,7 +41,7 @@
       "IDF1": "0.3130258578917228",
       "HOTA": "0.2900521417463626",
       "run_report": "results/tracking/yolov8_strongsort_MOT17-02-FRCNN_c02_i06_20260513T175940Z_run_report.json",
-      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_MOT17-02-FRCNN_metrics.json"
+      "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_c02_i06_MOT17-02-FRCNN_metrics.json"
     }
   ],
   "recommended_baseline": {
@@ -55,6 +55,6 @@
     "IDF1": "0.3130258578917228",
     "HOTA": "0.2900521417463626",
     "run_report": "results/tracking/yolov8_strongsort_MOT17-02-FRCNN_c025_i07_20260513T175813Z_run_report.json",
-    "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_MOT17-02-FRCNN_metrics.json"
+    "trackeval_json": "results/tracking/trackeval/yolov8_strongsort_c025_i07_MOT17-02-FRCNN_metrics.json"
   }
 }

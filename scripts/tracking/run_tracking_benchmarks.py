@@ -23,6 +23,10 @@ CONFIGS = [
 ]
 
 
+def cfg_suffix(conf: float, iou: float) -> str:
+    return f"c{str(conf).replace('.', '')}_i{str(iou).replace('.', '')}"
+
+
 def run_cmd(cmd: list[str], cwd: Path, env_overrides: dict[str, str] | None = None) -> None:
     env = os.environ.copy()
     if env_overrides:
@@ -59,7 +63,8 @@ def main() -> None:
     for cfg in CONFIGS:
         conf = cfg["conf"]
         iou = cfg["iou"]
-        run_name = f"yolov8_bytetrack_{args.mot17_seq}_c{str(conf).replace('.', '')}_i{str(iou).replace('.', '')}"
+        suffix = cfg_suffix(conf, iou)
+        run_name = f"yolov8_bytetrack_{args.mot17_seq}_{suffix}"
         source = f"{args.mot17_root}/MOT17/train/{args.mot17_seq}/img1"
 
         run_cmd(
@@ -94,11 +99,15 @@ def main() -> None:
         run_cmd(
             ["bash", "scripts/tracking/eval_trackeval_mot17.sh"],
             repo_root,
-            env_overrides={"PRED_TXT": mot_txt, "MOT17_SEQ": args.mot17_seq},
+            env_overrides={
+                "PRED_TXT": mot_txt,
+                "MOT17_SEQ": args.mot17_seq,
+                "TRACKER_NAME": f"yolov8_bytetrack_{suffix}",
+            },
         )
 
         metrics_path = load_latest_json(
-            f"{trackeval_dir.relative_to(repo_root)}/yolov8_bytetrack_{args.mot17_seq}_metrics.json"
+            f"{trackeval_dir.relative_to(repo_root)}/yolov8_bytetrack_{suffix}_{args.mot17_seq}_metrics.json"
         )
         teval = json.loads(metrics_path.read_text(encoding="utf-8"))
         m = teval.get("metrics", {})

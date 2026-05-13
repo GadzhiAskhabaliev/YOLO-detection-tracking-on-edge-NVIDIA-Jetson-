@@ -1,4 +1,4 @@
-# YOLOv8n + ByteTrack benchmark (MOT17)
+# yolov8_bytetrack benchmark (MOT17)
 
 | conf | iou | FPS e2e | latency ms | MOTA | IDF1 | HOTA |
 |------|-----|---------|------------|------|------|------|
