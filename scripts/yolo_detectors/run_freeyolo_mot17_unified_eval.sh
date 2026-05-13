@@ -7,31 +7,31 @@ set -euo pipefail
 #
 # Example (tiny):
 #   MOT17_ROOT=/root/data/mot17 \\
-#   FREEYOLO_HOME=/root/group_b/FreeYOLO \\
-#   FREEYOLO_VENV=/root/group_b/venv_freeyolo \\
+#   FREEYOLO_HOME=/root/yolo_detectors/FreeYOLO \\
+#   FREEYOLO_VENV=/root/yolo_detectors/venv_freeyolo \\
 #   FREEYOLO_VARIANT=yolo_free_tiny \\
 #   FREEYOLO_WEIGHT_PATH=/root/models/yolo_free_tiny_ch.pth \\
-#   bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh
+#   bash scripts/yolo_detectors/run_freeyolo_mot17_unified_eval.sh
 #
 # Example (nano → bench slug freeyolo_yolox_mot17):
 #   FREEYOLO_VARIANT=yolo_free_nano \\
 #   FREEYOLO_WEIGHT_PATH=/root/models/yolo_free_nano_ch.pth \\
 #   FREEYOLO_DT_STEM=freeyolo_nano_mot17_train \\
-#   bash scripts/group_b/run_freeyolo_mot17_unified_eval.sh
+#   bash scripts/yolo_detectors/run_freeyolo_mot17_unified_eval.sh
 #
 # If venv is elsewhere: FREEYOLO_VENV=/path/to/venv  OR  FREEYOLO_PYTHON=/path/to/venv/bin/python
-# Create venv + install deps: bash scripts/group_b/run_freeyolo_crowdhuman.sh (stop after venv step if needed).
+# Create venv + install deps: bash scripts/yolo_detectors/run_freeyolo_crowdhuman.sh (stop after venv step if needed).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT}"
 
-# If FreeYOLO was just cloned: python3 scripts/group_b/patch_freeyolo_torch_load.py + patch_freeyolo_numpy_aliases.py
+# If FreeYOLO was just cloned: python3 scripts/yolo_detectors/patch_freeyolo_torch_load.py + patch_freeyolo_numpy_aliases.py
 MOT17_ROOT="${MOT17_ROOT:-/workspace/data/mot17}"
 GT_JSON="${MOT17_GT_JSON:-${MOT17_ROOT}/annotations/mot17_train_frcnn_gt.json}"
 TRAIN_ROOT="${MOT17_ROOT}/MOT17/train"
 
-FREEYOLO_HOME="${FREEYOLO_HOME:-${GROUP_B_ROOT:-/workspace/group_b}/FreeYOLO}"
-VENV="${FREEYOLO_VENV:-${GROUP_B_ROOT:-/workspace/group_b}/venv_freeyolo}"
+FREEYOLO_HOME="${FREEYOLO_HOME:-${YOLO_DETECTORS_ROOT:-/workspace/yolo_detectors}/FreeYOLO}"
+VENV="${FREEYOLO_VENV:-${YOLO_DETECTORS_ROOT:-/workspace/yolo_detectors}/venv_freeyolo}"
 FREEYOLO_VARIANT="${FREEYOLO_VARIANT:-yolo_free_tiny}"
 WEIGHT_PATH="${FREEYOLO_WEIGHT_PATH:?Set FREEYOLO_WEIGHT_PATH to .pth}"
 
@@ -65,7 +65,7 @@ else
     echo "FreeYOLO venv not found: ${VENV}" >&2
     echo "Fix: export FREEYOLO_VENV=/path/to/venv   (directory with bin/activate)" >&2
     echo "  or FREEYOLO_PYTHON=/path/to/venv/bin/python" >&2
-    echo "Create venv + deps: bash scripts/group_b/run_freeyolo_crowdhuman.sh" >&2
+    echo "Create venv + deps: bash scripts/yolo_detectors/run_freeyolo_crowdhuman.sh" >&2
     exit 1
   fi
   # shellcheck disable=SC1090
@@ -75,7 +75,7 @@ fi
 
 {
   echo "========== $(date -u +%Y-%m-%dT%H:%M:%SZ) dump_freeyolo_mot17 =========="
-  "${PY}" "${ROOT}/scripts/group_b/dump_freeyolo_mot17.py" \
+  "${PY}" "${ROOT}/scripts/yolo_detectors/dump_freeyolo_mot17.py" \
     --freeyolo-home "${FREEYOLO_HOME}" \
     --variant "${FREEYOLO_VARIANT}" \
     --weights "${WEIGHT_PATH}" \

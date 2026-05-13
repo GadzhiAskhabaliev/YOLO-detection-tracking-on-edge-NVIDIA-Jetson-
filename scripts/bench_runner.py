@@ -604,7 +604,7 @@ def main(argv: list[str] | None = None) -> None:
         help="With --merge-json: deep-merge arbitrary JSON into the run file (e.g. group B meta)",
     )
     p.add_argument("--group", default="", help='Experiment tag in saved JSON, e.g. "B"')
-    p.add_argument("--detector-id", type=int, default=None, help="Slot id from docs/group_b_pedestrian_detectors.yaml")
+    p.add_argument("--detector-id", type=int, default=None, help="Slot id from docs/yolo_detectors_manifest.yaml")
     p.add_argument("--detector-label", default="", help="Display name for reports")
     p.add_argument(
         "--backend",

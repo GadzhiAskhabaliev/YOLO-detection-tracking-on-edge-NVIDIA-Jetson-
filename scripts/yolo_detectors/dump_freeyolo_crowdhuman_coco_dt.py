@@ -9,7 +9,7 @@ CrowdHumanEvaluator / MOT17 dumper: normalized coords * max(orig_h, orig_w).
 Example:
 
   FREEYOLO_HOME=/path/to/FreeYOLO /path/to/venv/bin/python \\
-    scripts/group_b/dump_freeyolo_crowdhuman_coco_dt.py \\
+    scripts/yolo_detectors/dump_freeyolo_crowdhuman_coco_dt.py \\
     --freeyolo-home "$FREEYOLO_HOME" \\
     --variant yolo_free_tiny \\
     --weights /path/to/yolo_free_tiny_ch.pth \\

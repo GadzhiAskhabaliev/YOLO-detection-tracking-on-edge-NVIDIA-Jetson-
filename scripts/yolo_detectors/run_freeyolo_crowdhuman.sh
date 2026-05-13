@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# FreeYOLO: CrowdHuman val eval → results/runs/ JSON (Group B, detector_id=7).
+# FreeYOLO: CrowdHuman val eval → results/runs/ JSON (YOLO detectors, detector_id=7).
 # Separate venv with torch cu124; NumPy pinned <2 (FreeYOLO legacy aliases).
 # If CUDA mismatches: set TORCH_INDEX_URL to cu118 wheels, etc.
 #
 #   CROWDHUMAN_ROOT=/workspace/data/crowdhuman MODEL_DIR=/workspace/models \\
-#     bash scripts/group_b/run_freeyolo_crowdhuman.sh
+#     bash scripts/yolo_detectors/run_freeyolo_crowdhuman.sh
 #
 # Optional: FREEYOLO_REV / FREEYOLO_FORCE_REV pin the FreeYOLO clone (see block below).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT}"
 
-GROUP_B_ROOT="${GROUP_B_ROOT:-/workspace/group_b}"
-FREEYOLO_HOME="${FREEYOLO_HOME:-${GROUP_B_ROOT}/FreeYOLO}"
-VENV="${FREEYOLO_VENV:-${GROUP_B_ROOT}/venv_freeyolo}"
+YOLO_DETECTORS_ROOT="${YOLO_DETECTORS_ROOT:-/workspace/yolo_detectors}"
+FREEYOLO_HOME="${FREEYOLO_HOME:-${YOLO_DETECTORS_ROOT}/FreeYOLO}"
+VENV="${FREEYOLO_VENV:-${YOLO_DETECTORS_ROOT}/venv_freeyolo}"
 CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT:-/workspace/data/crowdhuman}"
 MODEL_DIR="${MODEL_DIR:-/workspace/models}"
-BRIDGE="${FREEYOLO_CH_BRIDGE:-${GROUP_B_ROOT}/freeyolo_crowdhuman_bridge}"
+BRIDGE="${FREEYOLO_CH_BRIDGE:-${YOLO_DETECTORS_ROOT}/freeyolo_crowdhuman_bridge}"
 
 FREEYOLO_VARIANT="${FREEYOLO_VARIANT:-yolo_free_nano}"
 WEIGHT_URL="${FREEYOLO_WEIGHT_URL:-https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_ch.pth}"
@@ -33,7 +33,7 @@ if [[ -z "${FREEYOLO_BENCH_MODEL:-}" ]]; then
 fi
 FREEYOLO_DETECTOR_LABEL="${FREEYOLO_DETECTOR_LABEL:-FreeYOLO ${FREEYOLO_VARIANT} CrowdHuman}"
 
-mkdir -p "${GROUP_B_ROOT}" "${MODEL_DIR}"
+mkdir -p "${YOLO_DETECTORS_ROOT}" "${MODEL_DIR}"
 
 # Release weights (e.g. yolo_free_tiny_ch.pth) match an older tree; shallow `master`
 # often breaks load_state_dict (FPN 256 vs 512, etc.). Pin a known-good commit by default.
@@ -53,13 +53,13 @@ elif [[ "${FREEYOLO_FORCE_REV:-0}" == "1" ]]; then
 fi
 
 echo "--- Patch FreeYOLO: torch.load(weights_only=False) for PyTorch 2.6+ ---"
-python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
 
 echo "--- Patch FreeYOLO: np.int / np.float / np.bool → built-ins (NumPy 2.x) ---"
-python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
 
 echo "--- Patch FreeYOLO: tiny config flags (see patch_freeyolo_tiny_ckpt_compat.py) ---"
-python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
 
 if [[ ! -f "${WEIGHT_PATH}" ]]; then
   echo "--- Download FreeYOLO weights ---"
@@ -87,7 +87,7 @@ echo "--- NumPy version in venv (expect 1.x; 2.x triggers alias patches) ---"
 
 echo "--- Prepare CrowdHuman bridge for FreeYOLO ---"
 FREEYOLO_CH_BRIDGE="${BRIDGE}" CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT}" \
-  "${PY}" scripts/group_b/freeyolo_prepare_crowdhuman.py \
+  "${PY}" scripts/yolo_detectors/freeyolo_prepare_crowdhuman.py \
   --crowdhuman-root "${CROWDHUMAN_ROOT}" \
   --bridge-root "${BRIDGE}"
 
@@ -118,7 +118,7 @@ if [[ "${EC}" -ne 0 ]]; then
   exit "${EC}"
 fi
 
-"${PY}" scripts/group_b/freeyolo_save_run.py \
+"${PY}" scripts/yolo_detectors/freeyolo_save_run.py \
   --eval-log "${FREEYOLO_LOG}" \
   --weights "${WEIGHT_PATH}" \
   --variant "${FREEYOLO_VARIANT}" \
@@ -130,4 +130,4 @@ fi
   --wall-seconds "${WALL}" \
   --num-images "${NIMG}"
 
-echo "--- FreeYOLO done; log: ${FREEYOLO_LOG}; plots: python3 scripts/plot_group_b_results.py ---"
+echo "--- FreeYOLO done; log: ${FREEYOLO_LOG} ---"

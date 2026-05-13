@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# CrowdHuman val — same metrics for all three YOLO-family Group B rows:
+# CrowdHuman val — same metrics for all three YOLO-family YOLO detectors rows:
 #   1) Ultralytics yolov8n_crowdhuman  (dump_ultralytics_coco_dt.py)
 #   2) FreeYOLO yolo_free_tiny         (dump_freeyolo_crowdhuman_coco_dt.py)
 #   3) FreeYOLO yolo_free_nano         (same dumper)
 # Then scripts/eval_coco_predictions.py --strict → bench_runner --merge-json (keeps FPS).
 #
 # Prerequisites:
-#   - Bridge val.json:  python3 scripts/group_b/freeyolo_prepare_crowdhuman.py ...
+#   - Bridge val.json:  python3 scripts/yolo_detectors/freeyolo_prepare_crowdhuman.py ...
 #   - Ultralytics + CUDA for slot (1); FreeYOLO clone + venv for (2)(3)
 #   - Existing results/runs/*.json from prior bench (for merge targets)
 #
 # Typical GPU host:
 #   export CROWDHUMAN_ROOT=/workspace/data/crowdhuman
 #   export MODEL_DIR=/workspace/models
-#   export GROUP_B_ROOT=/workspace/group_b
-#   export FREEYOLO_HOME="${GROUP_B_ROOT}/FreeYOLO"
-#   export FREEYOLO_VENV="${GROUP_B_ROOT}/venv_freeyolo"
-#   bash scripts/group_b/run_unified_coco_eval_group_b_three_yolo.sh
+#   export YOLO_DETECTORS_ROOT=/workspace/yolo_detectors
+#   export FREEYOLO_HOME="${YOLO_DETECTORS_ROOT}/FreeYOLO"
+#   export FREEYOLO_VENV="${YOLO_DETECTORS_ROOT}/venv_freeyolo"
+#   bash scripts/yolo_detectors/run_unified_coco_eval_three_yolo.sh
 #
 # Skip steps: SKIP_YOLOV8=1  SKIP_FREEYOLO_TINY=1  SKIP_FREEYOLO_NANO=1
 
@@ -26,13 +26,13 @@ cd "${ROOT}"
 
 CROWDHUMAN_ROOT="${CROWDHUMAN_ROOT:-/workspace/data/crowdhuman}"
 MODEL_DIR="${MODEL_DIR:-/workspace/models}"
-GROUP_B_ROOT="${GROUP_B_ROOT:-/workspace/group_b}"
-BRIDGE="${FREEYOLO_CH_BRIDGE:-${GROUP_B_ROOT}/freeyolo_crowdhuman_bridge}"
+YOLO_DETECTORS_ROOT="${YOLO_DETECTORS_ROOT:-/workspace/yolo_detectors}"
+BRIDGE="${FREEYOLO_CH_BRIDGE:-${YOLO_DETECTORS_ROOT}/freeyolo_crowdhuman_bridge}"
 VAL_JSON="${VAL_JSON:-${BRIDGE}/CrowdHuman/annotations/val.json}"
 IMAGES_DIR="${IMAGES_DIR:-${CROWDHUMAN_ROOT}/Images}"
 
-FREEYOLO_HOME="${FREEYOLO_HOME:-${GROUP_B_ROOT}/FreeYOLO}"
-FREEYOLO_PY="${FREEYOLO_PYTHON:-${FREEYOLO_VENV:-${GROUP_B_ROOT}/venv_freeyolo}/bin/python}"
+FREEYOLO_HOME="${FREEYOLO_HOME:-${YOLO_DETECTORS_ROOT}/FreeYOLO}"
+FREEYOLO_PY="${FREEYOLO_PYTHON:-${FREEYOLO_VENV:-${YOLO_DETECTORS_ROOT}/venv_freeyolo}/bin/python}"
 
 YOLOV8_WEIGHTS="${YOLOV8_WEIGHTS:-${MODEL_DIR}/yolov8n_crowdhuman.pt}"
 MERGE_YOLOV8="${MERGE_YOLOV8:-${ROOT}/results/runs/yolov8n_crowdhuman_2026-05-09T143848Z.json}"
@@ -43,7 +43,7 @@ MERGE_TINY="${MERGE_FREEYOLO_TINY:-${ROOT}/results/runs/freeyolo_ch_tiny_2026-05
 NANO_WEIGHTS="${FREEYOLO_NANO_WEIGHTS:-${MODEL_DIR}/yolo_free_nano_ch.pth}"
 MERGE_NANO="${MERGE_FREEYOLO_NANO:-${ROOT}/results/runs/freeyolo_yolox_mot17_2026-05-09T144753Z.json}"
 
-WORKDIR="${UNIFIED_EVAL_WORKDIR:-/tmp/group_b_unified_yolo_three}"
+WORKDIR="${UNIFIED_EVAL_WORKDIR:-/tmp/yolo_detectors_unified_three}"
 mkdir -p "${WORKDIR}" "${ROOT}/results/logs"
 
 stamp_utc() { date -u +%Y-%m-%dT%H%M%SZ; }
@@ -68,7 +68,7 @@ p.write_text(json.dumps(patch, indent=2), encoding='utf-8')
 if [[ ! -f "${VAL_JSON}" ]]; then
   echo "Missing bridge GT: ${VAL_JSON}" >&2
   echo "Run: FREEYOLO_CH_BRIDGE=${BRIDGE} CROWDHUMAN_ROOT=${CROWDHUMAN_ROOT} \\" >&2
-  echo "  python3 scripts/group_b/freeyolo_prepare_crowdhuman.py" >&2
+  echo "  python3 scripts/yolo_detectors/freeyolo_prepare_crowdhuman.py" >&2
   exit 1
 fi
 if [[ ! -d "${IMAGES_DIR}" ]]; then
@@ -125,7 +125,7 @@ run_freeyolo_variant() {
 
   {
     echo "--- dump_freeyolo_crowdhuman_coco_dt (${variant}) ---"
-    "${FREEYOLO_PY}" "${ROOT}/scripts/group_b/dump_freeyolo_crowdhuman_coco_dt.py" \
+    "${FREEYOLO_PY}" "${ROOT}/scripts/yolo_detectors/dump_freeyolo_crowdhuman_coco_dt.py" \
       --freeyolo-home "${FREEYOLO_HOME}" \
       --variant "${variant}" \
       --weights "${weights}" \
@@ -153,7 +153,7 @@ run_freeyolo_variant "yolo_free_nano" "${NANO_WEIGHTS}" "${MERGE_NANO}" "${SKIP_
 
 echo ""
 echo "--- Paste into docs/benchmark_unified_cocoeval.md (verify numbers) ---"
-python3 "${ROOT}/scripts/group_b/print_crowdhuman_unified_md_rows.py" \
+python3 "${ROOT}/scripts/yolo_detectors/print_crowdhuman_unified_md_rows.py" \
   "${MERGE_YOLOV8}" "${MERGE_TINY}" "${MERGE_NANO}" || true
 
 echo "--- Done ---"

@@ -44,7 +44,7 @@ def run_speed_bench(
     warmup: int,
     iters: int,
 ) -> dict | None:
-    script = REPO_ROOT / "scripts" / "group_b" / "freeyolo_speed_bench.py"
+    script = REPO_ROOT / "scripts" / "yolo_detectors" / "freeyolo_speed_bench.py"
     cmd = [
         sys.executable,
         str(script),

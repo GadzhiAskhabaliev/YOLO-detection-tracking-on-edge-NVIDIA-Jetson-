@@ -1,0 +1,37 @@
+# Canonical detector set used in this repository.
+# Scope is intentionally narrowed to the 3 YOLO-family detectors
+# used for detection benchmarks and tracking handoff.
+
+group: B
+title: "YOLO-only pedestrian detectors"
+
+detectors:
+  - id: 6
+    short_name: YOLOv8n-CH
+    paper_name: "YOLOv8n-CrowdHuman"
+    backbone: "YOLO nano"
+    bench_slug: yolov8n_crowdhuman
+    repo_url: "https://huggingface.co/yakhyo/yolov8-crowdhuman"
+    weights_note: "Ultralytics .pt"
+    integration: ultralytics
+    train_domains: ["CrowdHuman"]
+
+  - id: 7
+    short_name: FreeYOLO-tiny
+    paper_name: "FreeYOLO tiny CrowdHuman"
+    backbone: "YOLOX-family tiny"
+    bench_slug: freeyolo_ch_tiny
+    repo_url: "https://github.com/yjh0410/FreeYOLO"
+    weights_note: "yolo_free_tiny_ch.pth"
+    integration: manual
+    train_domains: ["CrowdHuman"]
+
+  - id: 8
+    short_name: FreeYOLO-nano
+    paper_name: "FreeYOLO nano CrowdHuman"
+    backbone: "YOLOX-family nano"
+    bench_slug: freeyolo_yolox_mot17
+    repo_url: "https://github.com/yjh0410/FreeYOLO"
+    weights_note: "yolo_free_nano_ch.pth"
+    integration: manual
+    train_domains: ["CrowdHuman", "MOT17"]

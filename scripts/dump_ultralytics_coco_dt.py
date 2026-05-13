@@ -10,7 +10,7 @@ Use the **same** CrowdHuman val GT as FreeYOLO (`freeyolo_prepare_crowdhuman.py`
 Example (after preparing GT + images):
 
   python3 scripts/dump_ultralytics_coco_dt.py \\
-    --gt-json /workspace/group_b/freeyolo_crowdhuman_bridge/CrowdHuman/annotations/val.json \\
+    --gt-json /workspace/yolo_detectors/freeyolo_crowdhuman_bridge/CrowdHuman/annotations/val.json \\
     --images-dir /workspace/data/crowdhuman/Images \\
     --weights /workspace/models/yolov8n_crowdhuman.pt \\
     --out-json /tmp/yolov8n_ch_val_dt.json
@@ -22,7 +22,7 @@ Example (after preparing GT + images):
     --out-patch-json /tmp/yolov8_unified_metrics.json
 
 FreeYOLO CrowdHuman: for the same COCO DT file fed to `eval_coco_predictions.py`,
-use `scripts/group_b/dump_freeyolo_crowdhuman_coco_dt.py` (FreeYOLO venv). Upstream
+use `scripts/yolo_detectors/dump_freeyolo_crowdhuman_coco_dt.py` (FreeYOLO venv). Upstream
 `eval.py` also runs `COCOeval` internally; numbers can differ slightly from a dump
 if decode/NMS paths differ.
 """

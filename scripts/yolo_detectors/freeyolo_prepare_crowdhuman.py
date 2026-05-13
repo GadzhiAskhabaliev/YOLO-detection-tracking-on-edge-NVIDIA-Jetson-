@@ -30,7 +30,7 @@ def main() -> None:
     )
     p.add_argument(
         "--bridge-root",
-        default=os.environ.get("FREEYOLO_CH_BRIDGE", "/workspace/group_b/freeyolo_crowdhuman_bridge"),
+        default=os.environ.get("FREEYOLO_CH_BRIDGE", "/workspace/yolo_detectors/freeyolo_crowdhuman_bridge"),
         help="Parent directory for CrowdHuman/ subtree (passed as --root to eval.py)",
     )
     args = p.parse_args()

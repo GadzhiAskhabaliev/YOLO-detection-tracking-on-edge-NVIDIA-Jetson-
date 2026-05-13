@@ -8,7 +8,7 @@ fps_predict / inference_time_ms — ValTransforms + full decode/NMS (no_decode=F
 
 Prints one JSON line to stdout; run under FreeYOLO venv.
 
-  FREEYOLO_HOME=/path/to/FreeYOLO /path/to/venv/bin/python scripts/group_b/freeyolo_speed_bench.py \\
+  FREEYOLO_HOME=/path/to/FreeYOLO /path/to/venv/bin/python scripts/yolo_detectors/freeyolo_speed_bench.py \\
     --freeyolo-home "$FREEYOLO_HOME" --weights model.pth --variant yolo_free_nano
 """
 from __future__ import annotations

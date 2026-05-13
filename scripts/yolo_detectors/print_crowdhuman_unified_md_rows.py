@@ -5,7 +5,7 @@ from one or more `results/runs/*.json` files (after unified eval merge).
 
 Example:
 
-  python3 scripts/group_b/print_crowdhuman_unified_md_rows.py \\
+  python3 scripts/yolo_detectors/print_crowdhuman_unified_md_rows.py \\
     results/runs/yolov8n_crowdhuman_2026-05-09T143848Z.json \\
     --tee-log results/logs/yolov8n_crowdhuman_unified_cocoeval_2026-05-11T203804Z.log
 """

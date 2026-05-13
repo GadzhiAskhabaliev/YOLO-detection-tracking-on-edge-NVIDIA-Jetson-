@@ -16,9 +16,9 @@ MOT17_SEQ="${MOT17_SEQ:-MOT17-02-FRCNN}"
 SEQ_IMG1="${MOT17_ROOT}/MOT17/train/${MOT17_SEQ}/img1"
 TRACKERS="${TRACKERS:-bytetrack,strongsort,botsort,hybridsort,deepocsort}"
 
-GROUP_B_ROOT="${GROUP_B_ROOT:-${TRACKING_WORK_ROOT}/group_b}"
-FREEYOLO_HOME="${FREEYOLO_HOME:-${GROUP_B_ROOT}/FreeYOLO}"
-FREEYOLO_VENV="${FREEYOLO_VENV:-${GROUP_B_ROOT}/venv_freeyolo}"
+YOLO_DETECTORS_ROOT="${YOLO_DETECTORS_ROOT:-${TRACKING_WORK_ROOT}/yolo_detectors}"
+FREEYOLO_HOME="${FREEYOLO_HOME:-${YOLO_DETECTORS_ROOT}/FreeYOLO}"
+FREEYOLO_VENV="${FREEYOLO_VENV:-${YOLO_DETECTORS_ROOT}/venv_freeyolo}"
 FREEYOLO_REV="${FREEYOLO_REV:-30ca71424c965bb61917e1a9579dabd71b55c64e}"
 
 MODEL_DIR="${MODEL_DIR:-${TRACKING_MODEL_ROOT}}"
@@ -44,9 +44,9 @@ if [[ ! -d "${FREEYOLO_HOME}/.git" ]]; then
 fi
 git -C "${FREEYOLO_HOME}" fetch origin
 git -C "${FREEYOLO_HOME}" checkout "${FREEYOLO_REV}"
-python3 scripts/group_b/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
-python3 scripts/group_b/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
-python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_torch_load.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_numpy_aliases.py --freeyolo-home "${FREEYOLO_HOME}"
+python3 scripts/yolo_detectors/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home "${FREEYOLO_HOME}"
 
 if [[ ! -d "${FREEYOLO_VENV}" ]]; then
   python3 -m venv "${FREEYOLO_VENV}"
@@ -72,7 +72,7 @@ run_variant() {
   local det_root="${MOT17_ROOT}/detections/${detector_slug}_${MOT17_SEQ}"
   local det_txt="${det_root}/${MOT17_SEQ}/det.txt"
 
-  "${FY_PY}" scripts/group_b/dump_freeyolo_mot17.py \
+  "${FY_PY}" scripts/yolo_detectors/dump_freeyolo_mot17.py \
     --freeyolo-home "${FREEYOLO_HOME}" \
     --variant "${variant}" \
     --weights "${weight_path}" \

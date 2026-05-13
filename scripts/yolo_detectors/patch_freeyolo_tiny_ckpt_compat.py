@@ -6,7 +6,7 @@ Official `yolo_free_tiny_ch.pth` (~49.5 MiB) matches upstream `fpn_depthwise: Fa
 and `head_depthwise: False`. If those were set to True in `yolo_free_config.py`,
 this script sets them back to False inside the `yolo_free_tiny` block only.
 
-  python3 scripts/group_b/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home /path/to/FreeYOLO
+  python3 scripts/yolo_detectors/patch_freeyolo_tiny_ckpt_compat.py --freeyolo-home /path/to/FreeYOLO
 """
 from __future__ import annotations
 
